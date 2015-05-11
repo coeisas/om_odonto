@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">  
+    <h:head>        
+        <title>Apertura y Cierre de Cajas</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormCajas">              
+            <p:growl id="IdMensajeCajas"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>
+            #{abrirCerrarCajasMB.inicializar()}
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
+                <p:tab title="#{abrirCerrarCajasMB.tituloTab}">   
+                    <br/>
+                    <p:panelGrid styleClass="panelGridSinBordes" columns="2" style="width: 190px; margin-left: auto; margin-right: auto;" rendered="#{abrirCerrarCajasMB.cajaSeleccionada == null}">
+                        <h:graphicImage  value="../recursos/img/alert30x30.png" width="100" height="40" />   
+                        <p:outputLabel  value="El usuario actual no tiene una caja asignada"/>                        
+                    </p:panelGrid>
+                    <p:panelGrid styleClass="panelGridSinBordes" rendered="#{abrirCerrarCajasMB.cajaSeleccionada != null}">
+                        <p:panelGrid id="IdPanelAbrirCaja" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;" rendered="#{abrirCerrarCajasMB.cajaCerrada}">
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Estado caja:"/>
+                            <p:outputLabel value="CERRADA"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Codigo Caja"/>
+                            <p:outputLabel   value="#{abrirCerrarCajasMB.codigoCaja}"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Nombre Caja"/>
+                            <p:outputLabel   value="#{abrirCerrarCajasMB.nombreCaja}"/>                        
+                            <p:outputLabel styleClass="campoObligatorio" value="Valor Apertura"/>
+                            <pe:inputNumber  styleClass="campoFormulario" decimalSeparator="," maxlength="15" minValue="0" value="#{abrirCerrarCajasMB.valorBaseCaja}"/>
+                            <p:commandButton value="Abrir Caja" actionListener="#{abrirCerrarCajasMB.abrirCaja}"/>                            
+                        </p:panelGrid>
+                        <p:panelGrid id="IdPanelCerrarCaja" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;" rendered="#{!abrirCerrarCajasMB.cajaCerrada}">                    
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Estado caja:"/>
+                            <p:outputLabel value="ABIERTA"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Codigo Caja"/>
+                            <p:outputLabel   value="#{abrirCerrarCajasMB.codigoCaja}"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Nombre Caja"/>
+                            <p:outputLabel   value="#{abrirCerrarCajasMB.nombreCaja}"/>                        
+                            <p:outputLabel styleClass="campoObligatorio" value="Valor Cierre"/>
+                            <pe:inputNumber  styleClass="campoFormulario" decimalSeparator="," maxlength="15" minValue="0" value="#{abrirCerrarCajasMB.valorBaseCaja}"/>
+                            <p:commandButton value="Cerrar Caja" actionListener="#{abrirCerrarCajasMB.cerrarCaja}"/>
+                        </p:panelGrid>
+                    </p:panelGrid>
+                    <br/>
+                </p:tab>                
+            </p:tabView>               
+        </h:form>        
+    </h:body>
+</html>

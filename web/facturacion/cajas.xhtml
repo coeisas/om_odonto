@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Clasificaciones</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormCajas">              
+            <p:growl id="IdMensajeCajas"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <div style="margin: 15px;">
+                <p:outputLabel styleClass="labelFormularioBold" value="Sede: "/>
+                <p:selectOneMenu styleClass="campoFormulario" value="#{cajasMB.idSedeSeleccionada}" style="width: 200px;" filter="true" filterMatchMode="contains">
+                    <f:ajax event="change" listener="#{cajasMB.cambiaSede}" render="IdFormCajas"/>
+                    <f:selectItem itemLabel=""/>
+                    <f:selectItems value="#{aplicacionGeneralMB.listaSedes}"/>
+                </p:selectOneMenu>
+            </div>            
+            <div>
+                <p:commandButton 
+                    rendered="#{cajasMB.mostrarControlesCajas}"
+                    title="Nueva caja" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{cajasMB.limpiarFormularioCajas}"
+                    update=":IdFormCajas"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    rendered="#{cajasMB.mostrarControlesCajas}"
+                    title="Buscar caja" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{cajasMB.buscarCaja}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    rendered="#{cajasMB.mostrarControlesCajas}"
+                    title="Eliminar caja" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                    actionListener="#{cajasMB.eliminarCaja}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    rendered="#{cajasMB.mostrarControlesCajas}"
+                    title="Guardar/Actualizar caja" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    actionListener="#{cajasMB.guardarCaja}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>  
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" rendered="#{cajasMB.mostrarControlesCajas}">                 
+                <p:tab title="#{cajasMB.tituloTabCaja}">                    
+                    <br/>
+                    <p:panelGrid id="IdPanelEditarCaja" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;">                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Código"/>
+                        <p:inputText   value="#{cajasMB.codigoCaja}" size="35" maxlength="10" />                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>
+                        <p:inputText   value="#{cajasMB.nombreCaja}" size="35" maxlength="100" />                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Valor Base"/>
+                        <pe:inputNumber  styleClass="campoFormulario" decimalSeparator="," maxlength="15" minValue="0" value="#{cajasMB.valorBaseCaja}"/>
+                        <p:outputLabel styleClass="campoObligatorio" value="Usuario asignado"/>
+                        <p:selectOneMenu styleClass="campoFormulario" value="#{cajasMB.usuarioCaja}" style="width: 200px;" filter="true" filterMatchMode="contains">                        
+                            <f:selectItems value="#{aplicacionGeneralMB.listaUsuarios}" var="usuario" itemValue="#{usuario.idUsuario}" itemLabel="#{usuario.primerNombre} #{usuario.segundoNombre} #{usuario.primerApellido} #{usuario.segundoApellido}"/>
+                        </p:selectOneMenu>                        
+                    </p:panelGrid>
+                    <br/>
+                </p:tab>                
+            </p:tabView>               
+        </h:form>
+        <h:form id="IdFormDialogs">            
+            <p:dialog id="IdDialogoBuscarCajas" header="BUSCAR CAJAS" widgetVar="dialogoBuscarCajas" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaCajas" 
+                                var="caja" 
+                                widgetVar="wvTablaCajas"
+                                value="#{cajasMB.listaCajas}" 
+                                rowKey="#{caja.idCaja}"  
+                                selection="#{cajasMB.cajaSeleccionadaTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay cajas"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="1" filterBy="#{caja.codigoCaja}" filterMatchMode="contains">
+                                    #{caja.codigoCaja}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="20" filterBy="#{caja.nombreCaja}" filterMatchMode="contains">
+                                    #{caja.nombreCaja}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton value="Cargar caja" update=":IdFormCajas" actionListener="#{cajasMB.cargarCaja}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarCaja" header="ELIMINAR CAJA" widgetVar="dialogoEliminarCaja" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarCaja" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminación de esta caja ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarCaja').hide();"
+                        actionListener="#{cajasMB.confirmarEliminarCaja}"                        
+                        update=":IdFormCajas"/>
+                </p:panelGrid>
+            </p:dialog>                         
+        </h:form>
+    </h:body>
+</html>

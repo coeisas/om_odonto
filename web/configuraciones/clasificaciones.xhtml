@@ -1,0 +1,221 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">  
+    <h:head>        
+        <title>Clasificaciones</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"/>
+    </h:head>
+    <h:body>     
+
+        <h:form id="IdFormClasificaciones">              
+            <p:growl id="IdMensajeClasificaciones"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <!--===================================================================================-->            
+            <br/>
+            <div style="margin-left: 15px;">
+                <p:commandButton 
+                    title="Nueva Clasificacion" value="&nbsp;"                                        
+                    oncomplete="PF('dialogoNuevaClasificacion').show()"
+                    styleClass="icon-new fg-lightBlue bg-white no-border"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar Clasificación" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoBuscarClasificacion').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar Clasificación" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"                     
+                    actionListener="#{clasificacionesMB.eliminarClasificacion}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;                
+
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" rendered="#{clasificacionesMB.renderedTabClasificacion}" > 
+                <p:tab title="Categorias clasificación: #{clasificacionesMB.nombreClasificacionSeleccionada}">  
+                    <table style="margin-left: auto; margin-right: auto;">                    
+                        <tr>
+                            <td colspan="2">
+                                <br/><br/>
+                                <p:dataTable 
+                                    id="IdTablaCategorias" 
+                                    var="categoria" 
+                                    widgetVar="wvTablaCategorias"
+                                    value="#{clasificacionesMB.listaCategorias}"                                     
+                                    rowKey="#{categoria.id}"  
+                                    selection="#{clasificacionesMB.categoriaSeleccionada}" 
+                                    paginator="true"
+                                    style="width: 600px; height: 300px;"
+                                    rows="10"                                    
+                                    paginatorPosition="bottom"                                
+                                    emptyMessage="No hay clasificaciones"
+                                    scrollable="true" 
+                                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                    
+                                    pageLinks="5"                                   
+                                    selectionMode="single"
+                                    resizableColumns="true">   
+                                    <p:ajax
+                                        event="rowSelect"
+                                        update=":IdFormClasificaciones:IdTabView:IdBtnEditar :IdFormClasificaciones:IdTabView:IdBtnEliminar" 
+                                        listener="#{clasificacionesMB.seleccionaCategoria}"                                    
+                                        />
+                                    <p:column headerText="CODIGO" width="2" filterBy="#{categoria.codigo}" filterMatchMode="contains">  
+                                        #{categoria.codigo}  
+                                    </p:column>                              
+                                    <p:column headerText="DESCRIPCION" width="40" filterBy="#{categoria.descripcion}" filterMatchMode="contains">  
+                                        #{categoria.descripcion}  
+                                    </p:column>                                                      
+                                    <p:column headerText="OBSERVACION" width="48" filterBy="#{categoria.observacion}" filterMatchMode="contains">  
+                                        #{categoria.observacion}  
+                                    </p:column>                            
+                                </p:dataTable>  
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td colspan="2">
+                                <br/>
+                                <p:commandButton id="IdBtnEliminar" value="Eliminar categoría" oncomplete="PF('dialogoEliminarCategoria').show()" disabled="#{clasificacionesMB.btnDisabled}" icon="ui-icon-close"/>
+                                <p:commandButton id="IdBtnEditar" value="Editar categoría" actionListener="#{clasificacionesMB.editarCategoria}" disabled="#{clasificacionesMB.btnDisabled}" icon="ui-icon-pencil"/>
+                                <p:commandButton id="IdBtnNuevo" value="Nueva categoría" actionListener="#{clasificacionesMB.nuevaCategoria}" icon="ui-icon-document"/>
+                                <br/><br/><br/>
+                            </td>
+                        </tr>
+
+                    </table>                    
+                </p:tab>                
+            </p:tabView>
+        </h:form>
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarClasificaion" header="BUSCAR CLASIFICACION" widgetVar="dialogoBuscarClasificacion" resizable="false" modal="true">  
+                <p:ajax event="close" oncomplete="PF('wvTablaClasificaciones').clearFilters(); PF('wvTablaClasificaciones').getPaginator().setPage(0);" update="IdTablaClasificaciones" />
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaClasificaciones" 
+                                var="clasificacion" 
+                                widgetVar="wvTablaClasificaciones"
+                                value="#{clasificacionesMB.listaClasificaciones}"
+                                rowKey="#{clasificacion.maestro}"  
+                                selection="#{clasificacionesMB.clasificacionSeleccionada}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay clasificaciones"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                    
+                                pageLinks="5"                                   
+                                selectionMode="single"
+                                resizableColumns="true">                                   
+                                <p:column headerText="NOMBRE" width="2" filterBy="#{clasificacion.maestro}" filterMatchMode="contains">  
+                                    #{clasificacion.maestro}  
+                                </p:column>                            
+                                <p:column headerText="DESCRIPCION" width="80" filterBy="#{clasificacion.descripcion}" filterMatchMode="contains">  
+                                    #{clasificacion.descripcion}  
+                                </p:column>                            
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar seleccionado"                                
+                                actionListener="#{clasificacionesMB.cargarClasificacion}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog>
+            <p:dialog id="IdDialogoNuevaClasificacion" header="NUEVA CLASIFICACION" widgetVar="dialogoNuevaClasificacion" resizable="false" modal="true">  
+                <p:ajax event="close" update="@form"/>
+                <p:panelGrid id="IdPanelNuevaClasificacion" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>                        
+                            <p:inputText value="#{clasificacionesMB.nombreNuevaClasificacion}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton 
+                                value="Crear" 
+                                actionListener="#{clasificacionesMB.crearClasificaion}"/>                           
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarClasificacion" header="ELIMINAR CLASIFICACION" widgetVar="dialogoEliminarClasificacion" resizable="false" modal="true">  
+                <p:ajax event="close" update=":IdFormClasificaciones"/>
+                <p:panelGrid id="panelEliminarPerfil" styleClass="panelGridSinBordes" columns="1">
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="¿ Confirma la eliminación de la clasificación: #{clasificacionesMB.nombreClasificacionSeleccionada} ?"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Eliminar" 
+                                actionListener="#{clasificacionesMB.confirmarEliminarClasificacion}"/>                           
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+        <h:form id="IdFormDialogoNuevaCategoria">
+            <p:dialog id="IdDialogoNuevaCategoria" header="NUEVA CATEGORIA PARA:  #{clasificacionesMB.nombreClasificacionSeleccionada}" widgetVar="dialogoNuevaCategoria" resizable="false" modal="true">                
+                <p:panelGrid id="IdPanelNuevaCategoria" styleClass="panelGridSinBordes" columns="2">                    
+                    <p:outputLabel styleClass="campoObligatorio" value="Codigo"/>
+                    <p:inputText   value="#{clasificacionesMB.codigoCategoria}" />                    
+                    <p:outputLabel styleClass="campoObligatorio" value="Descripción"/>
+                    <p:inputText   value="#{clasificacionesMB.descripcionCategoria}" />                        
+                    <p:outputLabel styleClass="campoNoObligatorio" value="Observación"/>
+                    <p:inputText   value="#{clasificacionesMB.observacionCategoria}" />                        
+                    <p:commandButton value="Crear" actionListener="#{clasificacionesMB.crearCategoria}"/>                
+                </p:panelGrid>
+            </p:dialog> 
+        </h:form>
+        <h:form id="IdFormDialogoEditarCategoria">
+            <p:dialog id="IdDialogoEditarCategoria" header="EDITAR CATEGORIA PARA: #{clasificacionesMB.nombreClasificacionSeleccionada}" widgetVar="dialogoEditarCategoria" resizable="false" modal="true">                
+                <p:panelGrid id="IdPanelEditarCategoria" styleClass="panelGridSinBordes" columns="2">                    
+                    <p:outputLabel styleClass="campoObligatorio" value="Codigo"/>
+                    <p:inputText value="#{clasificacionesMB.codigoCategoria}" />                    
+                    <p:outputLabel     styleClass="campoObligatorio" value="Descripción"/>
+                    <p:inputText value="#{clasificacionesMB.descripcionCategoria}" />                        
+                    <p:outputLabel     styleClass="campoNoObligatorio" value="Observación"/>
+                    <p:inputText value="#{clasificacionesMB.observacionCategoria}" />                        
+                    <p:commandButton value="Actualizar"  actionListener="#{clasificacionesMB.actualizarCategoria}"/>                        
+                </p:panelGrid>
+            </p:dialog>         
+            <p:dialog id="IdDialogoEliminarCategoria" header="ELIMINAR CATEGORIA" widgetVar="dialogoEliminarCategoria" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarCategoria" styleClass="panelGridSinBordes" columns="1">
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="¿ Confirma la eliminación de la categoría: #{clasificacionesMB.nombreCategoriaSeleccionada} ?"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Eliminar" 
+                                oncomplete="PF('dialogoEliminarCategoria').hide();"
+                                actionListener="#{clasificacionesMB.eliminarCategoria}"
+                                update=":IdFormClasificaciones:IdTabView"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

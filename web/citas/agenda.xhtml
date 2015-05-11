@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+        <script type="text/javascript">
+            var identificadorIntervalo;
+            function Repetir() {
+                rcRecargarAgenda();
+            }
+            function IniciarIntervalo() {
+                identificadorIntervalo = setInterval("Repetir()", 10000);
+            }
+            function PararIntervalo() {
+                clearInterval(identificadorIntervalo);
+            }
+
+        </script>
+    </h:head>
+    <h:body onload="IniciarIntervalo()">
+        <!-- AGENDA CORRESPONDEIENTE AL MEDICO -->
+        #{agendaPrestadorMB.loadEvents()}
+        <!-- p:commandButton value="Recargar Agenda" icon="ui-icon-arrowrefresh-1-s" actionListener="# {agendaPrestadorMB.loadEvents()}" update=":formAgendaPrestador:agenda"/ -->        
+        <br/>
+        <h:form id="formAgendaPrestador">
+            <p:remoteCommand name="rcRecargarAgenda" action="#{agendaPrestadorMB.loadEvents}" update=":formAgendaPrestador:agenda"/>                
+            <p:growl id="message" showDetail="true" autoUpdate="true"/>
+            <h2 align="center">#{agendaPrestadorMB.prestadorActual eq null ? "No eres Prestador" : agendaPrestadorMB.nombreCompleto}</h2>
+            <br/>
+            <p:panel rendered="#{agendaPrestadorMB.rendAgenda}">
+                <table>
+                    <tr>
+                        <td><p:outputLabel value="Asignado"/></td>
+                        <td><div class="asignado" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="En espera" /></td>
+                        <td><div class="no_atendido" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="Libre"/></td>
+                        <td><div class="libre" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="Atendido"/></td>
+                        <td><div class="atendido" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                    </tr>
+                </table>
+            </p:panel>
+            <br/>
+            <p:schedule id="agenda" rendered="#{agendaPrestadorMB.rendAgenda}" draggable="false" resizable="false" value="#{agendaPrestadorMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" view="agendaDay" rightHeaderTemplate="agendaDay" leftHeaderTemplate="today" minTime="#{agendaPrestadorMB.minTime}" maxTime="#{agendaPrestadorMB.maxTime}" timeFormat="hh:mm" allDaySlot="false">
+                <p:ajax event="eventSelect" listener="#{agendaPrestadorMB.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show(); PararIntervalo();"/>
+            </p:schedule> 
+            <p:dialog id="pdialog" widgetVar="eventDialog" header="Detalles de la cita" modal="true" resizable="false">
+                <p:ajax event="close" oncomplete="IniciarIntervalo();"/>
+                <h:panelGrid id="eventDetails" columns="2">
+                    <p:outputLabel for="title" value="Id turno:" />
+                    <p:inputText id="title" value="#{agendaPrestadorMB.event.title}" required="true" readonly="true" size="60"/>
+                    <p:outputLabel for="paciente" value="Paciente:" rendered="#{agendaPrestadorMB.rend}"/>
+                    <p:inputText rendered="#{agendaPrestadorMB.rend}" readonly="true" id="paciente" value="#{agendaPrestadorMB.citCita.idPaciente.nombreCompleto()}" size="60"/>
+                    <p:outputLabel  rendered="#{agendaPrestadorMB.rend}" for="administradora" value="Administradora:"/>
+                    <p:inputText rendered="#{agendaPrestadorMB.rend}" id="administradora" readonly="true" value="#{agendaPrestadorMB.citCita.idPaciente.idAdministradora.razonSocial}" size="60"/>
+
+                    <p:outputLabel  rendered="#{agendaPrestadorMB.rend}" value="Autorizacion:"/>
+                    <p:inputText rendered="#{agendaPrestadorMB.rend}" readonly="true" value="#{agendaPrestadorMB.citCita.idAutorizacion.numAutorizacion}" size="60"/>
+
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton 
+                                id="btnHistoriaClinica"
+                                value = "&nbsp;"
+                                title="Historia Clinica"
+                                styleClass="icon-folder-2 fg-lightBlue bg-white no-border"
+                                style="font-size: 20px; width: 20px; height: 20px; "                        
+                                rendered="#{agendaPrestadorMB.rendBtnHistoriClinica}"
+                                actionListener="#{agendaPrestadorMB.openHistoriaClinica}"/>                    
+                        </p:column>
+                    </p:row>
+                </h:panelGrid>
+            </p:dialog>            
+        </h:form>
+    </h:body>
+</html>
+

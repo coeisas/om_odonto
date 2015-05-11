@@ -1,0 +1,404 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>                
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+    </h:head>
+    <h:body id="cuerpo">
+        <br/>
+        <p:growl id="message" showDetail="true" autoUpdate="true" />
+        <h:form id="formAsignarPrestador">            
+            <p:panel styleClass="centrar-maximo">
+                <table>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="labelFormularioBold" value="PRESTADOR:" />
+                            <p:inputText id="IdTxtIdentificacion" styleClass="campoFormulario"  size="35" value="#{generadorTurnosMB.identificacionPrestador}">                        
+                                <p:ajax event="blur" listener="#{generadorTurnosMB.validarIdentificacion}"/>
+                            </p:inputText>  
+                            <p:watermark for="IdTxtIdentificacion" value="Digite identificación prestador"/>
+                            <p:commandButton styleClass="campoFormulario"  style="width: 22px; height: 22px;" onclick="PF('dlgfindPrestador').show();" title="Prestador" icon="ui-icon-search"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Nombre:" />
+                            <p:outputLabel  styleClass="labelFormulario" value="#{generadorTurnosMB.prestadorSeleccionado.primerNombre} #{generadorTurnosMB.prestadorSeleccionado.segundoNombre} #{generadorTurnosMB.prestadorSeleccionado.primerApellido} #{generadorTurnosMB.prestadorSeleccionado.segundoApellido}" />
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td >
+                            <p:outputLabel styleClass="labelFormularioBold " value="No Registro:"/>
+                            <p:outputLabel styleClass="labelFormulario" value="#{generadorTurnosMB.prestadorSeleccionado.registroProfesional}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Especialidad:"/>
+                            <p:outputLabel styleClass="labelFormulario" value="#{generadorTurnosMB.prestadorSeleccionado.especialidad.descripcion}"/>
+                        </td>
+                    </tr>
+                </table>
+            </p:panel>
+        </h:form>
+        <br/>
+        <h:form id="formCrearAgenda" style="display: #{generadorTurnosMB.display};">
+            <p:panel styleClass="centrar-maximo">
+                <table id="tableGeneradoTurnos">
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Sede:"/>                            
+                                <p:selectOneMenu id="selectsedes" value="#{generadorTurnosMB.id_sede}" styleClass="campoFormulario" style="width: 170px;">
+                                    <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems  value="#{aplicacionGeneralMB.listaSedes}" /> 
+                                    <p:ajax event="change" listener="#{generadorTurnosMB.cargarListaConsultorios}" update="selectconsultorios" />
+                                </p:selectOneMenu>                            
+                                <p:outputLabel styleClass="campoObligatorio" value="Consultorio:"/>                            
+                                <p:selectOneMenu id="selectconsultorios" styleClass="campoFormulario" style="width: 100px;" value="#{generadorTurnosMB.id_consultorio}">
+                                    <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{generadorTurnosMB.listaConsultorios}" />
+                                </p:selectOneMenu>                            
+                                <p:outputLabel value="Duracion:" styleClass="campoObligatorio"  for="duracion"/>
+                                <p:inputText id="duracion" styleClass="campoFormulario" style="width: 40px;" value="#{generadorTurnosMB.duracion}" >
+                                    <!--<f:convertDateTime pattern="HH:mm" timeZone="America/Bogota" />-->
+                                </p:inputText>                                                            
+                                <p:outputLabel value="Concurrencia:" styleClass="campoObligatorio" for="concurrencia"/>
+                                <p:inputText id="concurrencia" value="#{generadorTurnosMB.concurrencia}" style="width: 20px;"/>
+                            </td>
+                        </tr>                         
+                        <tr>
+                            <td>
+
+                                <p:outputLabel value="Horario:" styleClass="campoObligatorio"/>
+                                <p:selectOneMenu id="idHorario" value="#{generadorTurnosMB.id_horario}" styleClass="campoFormulario">
+                                    <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{generadorTurnosMB.listahorarios}" />
+                                    <p:ajax event="change" listener="#{generadorTurnosMB.seleccionarHorario()}" update=":formcfghorario"/>
+                                </p:selectOneMenu>
+                                <p:commandButton title="Horario" icon="ui-icon-clock" styleClass="campoFormulario" style="width: 22px; height: 22px;" onclick="PF('dlghorario').show();"/>                                                            
+                                <p:outputLabel value="Fecha Inicial:" styleClass="campoObligatorio"/>
+                                <p:calendar navigator="true" id="fechIni" widgetVar="calwidgetini" value="#{generadorTurnosMB.fechaIni}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="10" styleClass="campoFormulario"/>                                
+                                <p:outputLabel value="Fecha Final:" styleClass="campoObligatorio"/>                            
+                                <p:calendar navigator="true" id="fechFin" widgetVar="calwidgetfin" value="#{generadorTurnosMB.fechaFin}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="10" styleClass="campoFormulario"/>
+                                <p:commandButton
+                                    styleClass="campoFormulario"
+                                    id="cbtnguardar"
+                                    title="Crear Agenda"
+                                    value="Crear Agenda"
+                                    actionListener="#{generadorTurnosMB.generarTurnos}"
+                                    icon="ui-icon-disk"/>
+                                <p:commandButton
+                                    styleClass="campoFormulario"
+                                    id="btnCrearTurno"
+                                    title="Turno Adicional"
+                                    value="Turno Adicional"
+                                    update=":idFormCrearTurnoDlg"
+                                    onclick="PF('dlgCrearTurno').show()"
+                                    icon="ui-icon-newwin"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="text-align: center;padding: .5em 0">
+                    <p:commandButton id="idCBeliminarAgenda" value="Eliminar Agenda" icon="ui-icon-cancel" title="Eliminar agenda" style="display: #{generadorTurnosMB.displayBtnEliminarAgenda}; margin: 0 auto" actionListener="#{generadorTurnosMB.eliminarAgenda}"/>
+                </div>
+            </p:panel>
+            <br/>
+            <p:panel>
+                <table>
+                    <tr>
+                        <td><p:outputLabel value="No Disponible"/></td>
+                        <td><div class="no_disponible" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="Sin Asignar" /></td>
+                        <td><div class="color_sin_asignar" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="Disponible"/></td>
+                        <td><div class="disponible" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                    </tr>
+                </table>
+            </p:panel>
+            <br/>
+            <p:schedule id="schTurnos" draggable="false" resizable="false" value="#{generadorTurnosMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" style="height: 100%" timeFormat="hh:mm" allDaySlot="false"/>
+            <p:blockUI block=":cuerpo" trigger="cbtnguardar">
+                <p:panelGrid id="blockcontent" columns="2"> 
+                    <h:graphicImage value="../../recursos/img/loading.gif" height="30px" width="30px" />
+                    <h:outputText value="Por favor espere, agenda creándose ..."/>
+                </p:panelGrid>
+            </p:blockUI>
+            <p:blockUI block=":cuerpo" trigger="idCBeliminarAgenda">
+                <p:panelGrid id="blockcontentDos" columns="2"> 
+                    <h:graphicImage value="../../recursos/img/loading.gif" height="30px" width="30px" />
+                    <h:outputText value="Por favor espere, agenda eliminandose ..."/>
+                </p:panelGrid>
+            </p:blockUI>
+            <!-- </c:if> -->
+        </h:form>
+
+        <p:dialog header="Crear Turno" widgetVar="dlgCrearTurno" resizable="false" modal="true">
+            <h:form id="idFormCrearTurnoDlg">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="campoObligatorio" value="Sede:"/>                            
+                            <p:selectOneMenu id="selectsedesdlg" value="#{generadorTurnosMB.id_sede}" styleClass="campoFormulario" style="width: 170px;">
+                                <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems  value="#{aplicacionGeneralMB.listaSedes}" /> 
+                                <p:ajax event="change" listener="#{generadorTurnosMB.cargarListaConsultorios}" update="selectconsultoriosdlg" />
+                            </p:selectOneMenu>                            
+                            <p:outputLabel styleClass="campoObligatorio" value="Consultorio:"/>                            
+                            <p:selectOneMenu id="selectconsultoriosdlg" styleClass="campoFormulario" style="width: 100px;" value="#{generadorTurnosMB.id_consultorio}">
+                                <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{generadorTurnosMB.listaConsultorios}" />
+                            </p:selectOneMenu>                            
+                            <p:outputLabel value="Duracion:" styleClass="campoObligatorio"  for="duraciondlg"/>
+                            <p:inputText id="duraciondlg" styleClass="campoFormulario" style="width: 40px;" value="#{generadorTurnosMB.duracion}" >
+                                <!--<f:convertDateTime pattern="HH:mm" timeZone="America/Bogota" />-->
+                            </p:inputText>                                                            
+                            <p:outputLabel value="Concurrencia:" styleClass="campoObligatorio" for="concurrenciadlg"/>
+                            <p:inputText id="concurrenciadlg" value="#{generadorTurnosMB.concurrencia}" style="width: 20px;"/>       
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Hora Inicial:" styleClass="campoObligatorio"/>
+                            <p:calendar id="horainidlg" styleClass="campoFormulario" mask="99:99" value="#{generadorTurnosMB.horaInicial}" pattern="HH:mm" timeZone="America/Bogota"  size="6"  timeOnly="true" locale="es"/>
+                            <p:outputLabel value="Fecha Inicial:" styleClass="campoObligatorio"/>
+                            <p:calendar navigator="true" id="fechInidlg" widgetVar="calwidgetinidlg" value="#{generadorTurnosMB.fechaIni}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="10" styleClass="campoFormulario"/>                                
+                            <p:outputLabel value="Fecha Final:" styleClass="campoObligatorio"/>                            
+                            <p:calendar navigator="true" id="fechFindlg" widgetVar="calwidgetfindlg" value="#{generadorTurnosMB.fechaFin}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="10" styleClass="campoFormulario"/>
+                            <p:commandButton
+                                styleClass="campoFormulario"
+                                id="cbtnguardardlg"
+                                title="Crear Turno "
+                                value="Crear Turno"
+                                update="@form"
+                                actionListener="#{generadorTurnosMB.crearTurno()}"
+                                icon="ui-icon-disk"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:blockUI block=":idFormCrearTurnoDlg" trigger="cbtnguardardlg">
+                    <p:panelGrid id="blockcontentDlg" columns="2"> 
+                        <h:graphicImage value="../../recursos/img/loading.gif" height="30px" width="30px" />
+                        <h:outputText value="Por favor espere, Turnos creándose ..."/>
+                    </p:panelGrid>
+                </p:blockUI>                
+            </h:form>            
+        </p:dialog>
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgfindPrestador" resizable="false" modal="true">
+            <br/>
+            <h:form id="formFindPrestador">
+                <p:dataTable 
+                    id="tablePrestadorEsp"
+                    var="prestador" 
+                    value="#{generadorTurnosMB.listaPrestadores}"
+                    rowKey="#{prestador.idUsuario}"  
+                    selection="#{generadorTurnosMB.prestadorSeleccionado}" 
+                    paginator="true"
+                    lazy="true"
+                    style="width: 600px;"
+                    rows="10"
+                    widgetVar="prestadoresTable"
+                    paginatorPosition="bottom"                                
+                    emptyMessage="No hay prestadores"
+                    scrollable="true" 
+                    rowsPerPageTemplate="5,10,15"
+                    pageLinks="5"
+                    selectionMode="single"
+                    resizableColumns="true">
+                    <p:column headerText="Nombre" filterBy="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" filterMatchMode="contains" filterStyle="width: 250px;">
+                        <h:outputText value="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" />
+                    </p:column>
+                    <p:column headerText="Especialidad" filterBy="#{prestador.especialidad.id}" filterMatchMode="exact">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('prestadoresTable').filter()" style="width: 250px;" >
+                                <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems  value="#{generadorTurnosMB.listaEspecialidades}" />
+                            </p:selectOneMenu>
+                        </f:facet>        
+                        <h:outputText value="#{prestador.especialidad.descripcion}" />
+                    </p:column>                          
+                </p:dataTable>
+
+                <br/>
+                <p:commandButton
+                    id='cbtnprestador'
+                    value = "Cargar Prestador"
+                    actionListener="#{generadorTurnosMB.loadEvents}"
+                    action="#{generadorTurnosMB.functionDisplay()}"
+                    update=":formAsignarPrestador"
+                    oncomplete = "PF('dlgfindPrestador').hide();">
+                </p:commandButton>
+                <br/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Configurar Horario" widgetVar="dlghorario" resizable="false" modal="true" >
+            <p:ajax event="close" listener="#{generadorTurnosMB.limpiarFormHorario()}" update=":formcfghorario"/>
+            <h:form id="formcfghorario">
+                <p:growl showDetail="true" autoUpdate="true"/>
+                <table>
+                    <tr>
+                        <!--
+                        <td style="background-color: #eaecfe;"><p:outputLabel value="Codigo:"/></td>
+                        <td>
+                            <p:inputText value="# {horarioMB.cod}">
+                                <p:ajax event="blur" listener="# {horarioMB.validarCodigo}" update="desc, :formhorario, :formhorario:tableHorario"/>
+                            </p:inputText>
+                        </td>
+                        -->
+                        <td style="background-color: #eaecfe;"><p:outputLabel value="Horario:"/></td>
+                        <td>
+                            <p:inputText id="desc" value="#{horarioMB.desc}" readonly="#{horarioMB.renderizar == false}"  size="50"/>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <p:commandButton  
+                                value="&nbsp;"
+                                styleClass="icon-checkmark fg-lightBlue bg-white no-border"
+                                style="font-size: 20px; width: 20px; height: 20px;"
+                                actionListener="#{horarioMB.validarNombreHorario}"
+                                rendered="#{horarioMB.renderizar}"
+                                />
+
+                        </td>
+                    </tr>
+                </table>
+
+
+                <!--
+                <h:inputHidden value="# {horarioMB.cod}"/>
+                -->
+                <table style="display: #{itemsHorarioMB.display}">
+                    <tr>
+                        <td align="center" colspan="4">
+                            <p:fieldset id="diasLaborales" legend="Días Laborales">
+                                <p:selectManyCheckbox id="basic" value="#{itemsHorarioMB.selectedDays}"  >
+                                    <f:selectItem itemLabel="Lunes" itemValue="1"  />
+                                    <f:selectItem itemLabel="Martes" itemValue="2" />
+                                    <f:selectItem itemLabel="Miercoles" itemValue="3" />
+                                    <f:selectItem itemLabel="Jueves" itemValue="4" />
+                                    <f:selectItem itemLabel="Viernes" itemValue="5"/>
+                                    <f:selectItem itemLabel="Sábado" itemValue="6" />
+                                    <f:selectItem itemLabel="Domingo" itemValue="0" />
+                                </p:selectManyCheckbox>
+                            </p:fieldset>
+
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <table align="center" style="display: #{itemsHorarioMB.display}">
+                    <tr>
+                        <td style="background-color: #eaecfe;">
+                            <p:outputLabel for="horaini" value="Hora Incial:"/>
+                        </td>
+                        <td>
+                            <p:calendar id="horaini" mask="99:99" value="#{itemsHorarioMB.horaIni}" pattern="HH:mm" timeZone="America/Bogota"  size="6"  timeOnly="true" locale="es"/>
+                        </td>
+
+                        <td style="background-color: #eaecfe;">
+                            <p:outputLabel for="horafin" value="Hora Final:"/>
+
+                        </td>
+                        <td>
+                            <p:calendar id="horafin" mask="99:99" value="#{itemsHorarioMB.horaFin}" pattern="HH:mm" timeZone="America/Bogota"  size="6"  timeOnly="true" locale="es"/>
+                        </td>
+                        <td>&nbsp;</td>
+                        <td>
+                            <p:commandButton  
+                                value="&nbsp;"
+                                styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                                style="font-size: 20px; width: 20px; height: 20px;"
+                                actionListener="#{itemsHorarioMB.addItemHorario()}"
+                                rendered="#{itemsHorarioMB.renderizarAddItems}"
+                                update="@form" />
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <p:dataTable
+                    id="tableHorario"
+                    var="dia" 
+                    value="#{itemsHorarioMB.listaItemsHorario}" 
+                    style="width: 450px;"                            
+                    emptyMessage="aun no se ha creado el horario"
+                    scrollable="true" 
+                    scrollHeight="150"
+                    resizableColumns="false"
+                    editable="#{itemsHorarioMB.tablaEditable}">
+                    <f:facet name="header">
+                        HORARIO
+                    </f:facet>
+                    <!--<p:column>
+                        <p:commandButton value="&nbsp;"/>
+                    </p:column>-->
+
+                    <p:ajax event="rowEdit" update="tableHorario" />
+                    <p:ajax event="rowEditCancel" update="tableHorario" />
+                    <p:column style="width: 10%">
+                        <p:commandButton rendered="#{itemsHorarioMB.tablaEditable}" style="font-size: 15px; width: 15px; height: 15px;" styleClass="icon-cancel fg-lightBlue bg-white no-border" title="Remover dia" value="&nbsp;" actionListener="#{itemsHorarioMB.removeItem}" update="tableHorario">
+                            <f:attribute name="id_item" value="#{dia.idItemHorario}"/>
+                        </p:commandButton>
+                    </p:column>
+                    <p:column headerText="Dia">
+                        <h:outputText value="#{dia.nombredia}" />
+                    </p:column>
+                    <p:column headerText="Hora Inicio">
+                        <p:cellEditor>
+
+                            <f:facet name="output">
+                                <h:outputText value="#{dia.horaInicio}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Bogota" />
+                                </h:outputText>
+                            </f:facet>
+
+
+                            <f:facet name="input">
+                                <p:inputMask value="#{dia.horaInicio}" mask="99:99">
+                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Bogota" />
+                                </p:inputMask>
+                            </f:facet>
+
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="Hora Final">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{dia.horaFinal}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Bogota" />
+                                </h:outputText>
+                            </f:facet>
+
+
+                            <f:facet name="input">
+                                <p:inputMask mask="99:99" value="#{dia.horaFinal}" >
+                                    <f:convertDateTime pattern="HH:mm" timeZone="America/Bogota" />
+                                </p:inputMask>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column style="width:32px">
+                        <p:rowEditor />
+                    </p:column>
+                </p:dataTable>
+                <div align="center">
+                    <p:commandButton
+                        rendered="#{itemsHorarioMB.renderizar}"
+                        id='cbtnhorario'
+                        value = "Guardar Horario"
+                        update="@form"
+                        actionListener="#{generadorTurnosMB.saveHorarioAndItems()}"
+                        >
+                    </p:commandButton>
+                </div>
+
+
+            </h:form>
+            <!--</h:form>-->
+        </p:dialog>
+
+    </h:body>
+</html>
+

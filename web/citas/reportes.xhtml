@@ -1,0 +1,413 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+        <style type="text/css"> 
+            .ui-panelgrid td, .ui-panelgrid tr
+            {
+                border-style: none !important;
+            }
+        </style>    
+    </h:head>
+    <h:body>
+        <br/>
+        <p:growl autoUpdate="true" showDetail="true"/>
+        <h:form id="formReporte">
+            <p:panel>
+                <p:panelGrid style="margin: 0 auto;" columns="3">
+                    <p:outputLabel value="Tipo de Reporte:" />
+                    <p:selectOneMenu value="#{reporteCitasMB.tipoReporte}" >
+                        <f:selectItems value="#{reporteCitasMB.listaReportes}"/>
+                        <p:ajax event="change" listener="#{reporteCitasMB.habilitarFuncionalidadReporte}" update="@form"/>
+                    </p:selectOneMenu>
+                    &nbsp;
+                    <p:outputLabel value="Paciente: " style="display:#{reporteCitasMB.displayBusquedaPaciente}"/>
+                    <p:inputText id="idTextIdentificacion" value="#{reporteCitasMB.identificacionPaciente}" style="display:#{reporteCitasMB.displayBusquedaPaciente}">
+                        <p:ajax event="blur" listener="#{reporteCitasMB.findPaciente}" update="@form"/>
+                    </p:inputText>
+                    <p:commandButton
+                        id="cbtnPaciente"
+                        title="Paciente"
+                        style="display:#{reporteCitasMB.displayBusquedaPaciente}"
+                        onclick="PF('dlgPaciente').show();"
+                        icon="ui-icon-search"
+                        />
+                    <p:outputLabel value="Fecha Inicial:" />
+                    <p:calendar 
+                        navigator="true" 
+                        id="fechIni" 
+                        widgetVar="calwidgetini" 
+                        value="#{reporteCitasMB.fechaInicial}" 
+                        locale="es" 
+                        maxlength="10" 
+                        timeZone="America/Bogota" 
+                        pattern="dd/MM/yyyy"  
+                        mask="99/99/9999" 
+                        size="10"/>
+                    &nbsp;
+                    <p:outputLabel value="Fecha Final:" />
+                    <p:calendar 
+                        navigator="true" 
+                        id="fechFin" 
+                        widgetVar="calwidgetfin" 
+                        value="#{reporteCitasMB.fechaFinal}" 
+                        locale="es" 
+                        maxlength="10" 
+                        timeZone="America/Bogota" 
+                        pattern="dd/MM/yyyy" 
+                        mask="99/99/9999"  
+                        size="10" />
+                    &nbsp;
+                    <p:commandButton id="idButtonFiltrar" rendered="#{reporteCitasMB.renBtnFiltrar}" value="Filtrar" onclick="PF('dlgfiltrar').show()"/>
+                    <p:commandButton id="idButtonReporte" rendered="#{reporteCitasMB.renBtnReporte}" actionListener="#{reporteCitasMB.generarReporte}" value="Generar Reporte" ajax="false" onclick="this.form.target = '_blank'">
+                        <f:attribute name="logo_empresa" value="#{loginMB.rutaCarpetaImagenes}#{loginMB.empresaActual.logo.urlImagen}" />
+                    </p:commandButton>
+                    &nbsp;
+                </p:panelGrid>
+            </p:panel>
+        </h:form>
+
+        <p:dialog widgetVar="dlgfiltrar" modal="true" resizable="false" header="Filtrar">
+            <h:form id="formfiltrado">
+                <p:panelGrid style="width: 500px">
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column><p:outputLabel value="Pacientes"/></p:column>
+                            <p:column><p:outputLabel value="Prestadores"/></p:column>
+                            <p:column><p:outputLabel value="Administradoras"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><p:commandButton value="&nbsp;" styleClass="icon-filter fg-lightBlue bg-white" style="font-size: 1em; width: 1.5em; height: 1.3em;" onclick="PF('dlgPacienteFiltrar').show()"/></p:column>
+                            <p:column><p:commandButton value="&nbsp;" styleClass="icon-filter fg-lightBlue bg-white" style="font-size: 1em; width: 1.5em; height: 1.3em;" onclick="PF('dlgPrestador').show()"/></p:column>
+                            <p:column><p:commandButton value="&nbsp;" styleClass="icon-filter fg-lightBlue bg-white" style="font-size: 1em; width: 1.5em; height: 1.3em;" onclick="PF('dlgAdministradora').show()"/></p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:dataList value="#{reporteCitasMB.listaPacientes}" var="paciente" type="ordered" emptyMessage="No hay pacientes para filtrar">
+                                #{paciente.primerNombre} #{paciente.primerApellido}
+                            </p:dataList>                            
+                        </p:column>
+                        <p:column>
+                            <p:dataList value="#{reporteCitasMB.listaPrestadores}" var="prestador" type="ordered" emptyMessage="No hay prestadores para filtrar">
+                                #{prestador.primerNombre} #{prestador.primerApellido}
+                            </p:dataList>
+                        </p:column>
+
+                        <p:column>
+                            <p:dataList value="#{reporteCitasMB.listaAdministradoras}" var="administradora" type="ordered" emptyMessage="No hay administradoras para filtrar">
+                                #{administradora.razonSocial}
+                            </p:dataList>                            
+                        </p:column>
+                    </p:row>
+                </p:panelGrid> 
+            </h:form>
+            <br/>
+            <div align="center">
+                <p:commandButton value="Aceptar" onclick="PF('dlgfiltrar').hide();"/>
+                <p:commandButton value="Reiniciar Filtros" actionListener="#{reporteCitasMB.limpiarFiltros}" update=":formReporte :formfiltrado" onclick="PF('dlgfiltrar').hide();"/>
+            </div>
+        </p:dialog>
+
+        <p:dialog widgetVar="dlgfiltrarAutorizaciones" modal="true" resizable="false" header="Filtrar">
+            <h:form id="formfiltradoAutorizaciones">
+                <p:panelGrid columns="4">
+                    <p:outputLabel value="Num. Autorizacion"/>
+                    <p:inputText value="#{reporteCitasMB.numAutorizacion}"/>
+                    <p:outputLabel value="Estado autorizaciones:"/>
+                    <p:selectOneMenu value="#{reporteCitasMB.estadoAutorizacion}">
+                        <f:selectItems value="#{reporteCitasMB.listaEstadoAutorizacion}"/>
+                        <p:ajax event="change" listener="#{reporteCitasMB.eventoChange()}" update="@none" />
+                    </p:selectOneMenu>                    
+                </p:panelGrid>
+                <br/>
+                <p:panelGrid style="width: 500px">
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column><p:outputLabel value="Pacientes"/></p:column>
+                            <p:column><p:outputLabel value="Administradoras"/></p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column><p:commandButton value="&nbsp;" styleClass="icon-filter fg-lightBlue bg-white" style="font-size: 1em; width: 1.5em; height: 1.3em;" onclick="PF('dlgPacienteFiltrar').show()"/></p:column>
+                            <p:column><p:commandButton value="&nbsp;" styleClass="icon-filter fg-lightBlue bg-white" style="font-size: 1em; width: 1.5em; height: 1.3em;" onclick="PF('dlgAdministradora').show()"/></p:column>
+                        </p:row>
+                    </f:facet>
+                    <p:row>
+                        <p:column>
+                            <p:dataList value="#{reporteCitasMB.listaPacientes}" var="paciente" type="ordered" emptyMessage="No hay pacientes para filtrar">
+                                #{paciente.primerNombre} #{paciente.primerApellido}
+                            </p:dataList>                            
+                        </p:column>
+                        <p:column>
+                            <p:dataList value="#{reporteCitasMB.listaAdministradoras}" var="administradora" type="ordered" emptyMessage="No hay administradoras para filtrar">
+                                #{administradora.razonSocial}
+                            </p:dataList>                            
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <div align="center">
+                    <p:commandButton value="Generar Reporte" onclick="this.form.target = '_blank'" ajax="false" actionListener="#{reporteCitasMB.generarReporte}">
+                        <f:attribute name="logo_empresa" value="#{loginMB.rutaCarpetaImagenes}#{loginMB.empresaActual.logo.urlImagen}" />
+                    </p:commandButton>
+                    <p:commandButton value="Reiniciar Filtros" actionListener="#{reporteCitasMB.limpiarFiltrosDos}" update=":formfiltradoAutorizaciones"/>
+                </div>
+            </h:form>
+            <br/>
+        </p:dialog>
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+            <h:form id="formFindPaciente">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable
+                                id="tableElegirPaciente"
+                                var="paciente" 
+                                value="#{reporteCitasMB.pacientes}"
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{reporteCitasMB.pacienteSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                lazy="true"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No se encontraron pacientes"
+                                scrollable="true" 
+                                pageLinks="5"
+                                widgetVar="pacientesTable"
+                                selectionMode="single"
+                                resizableColumns="true"
+                                >
+                                <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                                    <h:outputText value="#{paciente.identificacion}"/>                                  
+                                </p:column>
+                                <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                                    <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <!--
+                            cuando los servicios dependen de la administradora y del paciente, adicionar el actionListener, 
+                            actionListener=pacientesCitasMB.loadServicios
+                            falta los # y las {}
+                            -->
+                            <p:commandButton
+                                id="cbtnPaciente"
+                                value="Cargar Paciente"
+                                actionListener="#{reporteCitasMB.addPacienteFiltro}"
+                                update=":formfiltrado"
+                                oncomplete = "PF('dlgPaciente').hide();"                                
+                                />
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgPrestador" resizable="false" modal="true">
+
+            <br/>
+            <h:form id="formFindPrestador">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorEsp"
+                                var="prestador" 
+                                value="#{reporteCitasMB.prestadores}"
+                                rowKey="#{prestador.idUsuario}"  
+                                selection="#{reporteCitasMB.prestadorSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                widgetVar="prestadoresTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay prestadores"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">
+                                <p:column headerText="Nombre" filterBy="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}"  filterMatchMode="contains" filterStyle="width: 250px;">
+                                    <h:outputText value="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" />
+                                </p:column>
+                                <p:column headerText="Especialidad" filterBy="#{prestador.especialidad.id}" filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('prestadoresTable').filter()" style="width: 250px;" >
+                                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems  value="#{prestadoresCitasMB.listaEspecialidades}" />
+                                        </p:selectOneMenu>
+                                    </f:facet>        
+                                    <h:outputText value="#{prestador.especialidad.descripcion}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnprestador'
+                                value = "Cargar Prestador"
+                                actionListener="#{reporteCitasMB.addPrestadorFiltro}"
+                                update=":formfiltrado"
+                                oncomplete = "PF('dlgPrestador').hide();">
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Buscar Administradora" widgetVar="dlgAdministradora" resizable="false" modal="true">
+            <br/>
+            <h:form id="formFindAdministradora">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorEsp"
+                                var="administradora" 
+                                value="#{aplicacionGeneralMB.listaAdministradoras}"
+                                rowKey="#{administradora.idAdministradora}"  
+                                selection="#{reporteCitasMB.administradoraSeleccionada}" 
+                                paginator="true"
+                                style="width: 400px;"
+                                rows="10"
+                                widgetVar="admnistradoraTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay administradoras"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="false">
+                                <p:column headerText="Codigo" filterBy="#{administradora.codigoAdministradora}"  filterMatchMode="contains" filterStyle="width: 100px;">
+                                    <h:outputText value="#{administradora.codigoAdministradora}"/>
+                                </p:column>
+                                <p:column headerText="Nombre" filterBy="#{administradora.razonSocial}" filterMatchMode="contains" filterStyle="width: 150px;">     
+                                    <h:outputText value="#{administradora.razonSocial}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnadministradora'
+                                value = "Cargar Administradora"
+                                actionListener="#{reporteCitasMB.addAdministradoraFiltro}"
+                                oncomplete = "PF('dlgAdministradora').hide();">
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+            <h:form id="formPaciente">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable
+                                id="tableElegirPaciente"
+                                var="paciente" 
+                                value="#{reporteCitasMB.listaPacientesBusqueda}"
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{reporteCitasMB.pacienteHC}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                lazy="true"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No se encontraron pacientes"
+                                scrollable="true" 
+                                pageLinks="5"
+                                widgetVar="pacientesTableFiltrar"
+                                selectionMode="single"
+                                resizableColumns="true"
+                                >
+                                <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                                    <h:outputText value="#{paciente.identificacion}"/>                                  
+                                </p:column>
+                                <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                                    <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <p:commandButton
+                                id="cbtnPaciente"
+                                value="Cargar Paciente"
+                                update = ":formReporte"
+                                actionListener="#{reporteCitasMB.actualizarPaciente()}"
+                                oncomplete = "PF('dlgPaciente').hide();"                                
+                                />
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </p:dialog>  
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPacienteFiltrar" resizable="false" modal="true">
+            <h:form id="formPacienteFiltrar">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable
+                                id="tableElegirPacientefiltrar"
+                                var="paciente" 
+                                value="#{reporteCitasMB.listaPacientesBusqueda}"
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{reporteCitasMB.pacienteSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                lazy="true"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No se encontraron pacientes"
+                                scrollable="true" 
+                                pageLinks="5"
+                                widgetVar="pacientesTable"
+                                selectionMode="single"
+                                resizableColumns="true"
+                                >
+                                <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                                    <h:outputText value="#{paciente.identificacion}"/>                                  
+                                </p:column>
+                                <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                                    <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <p:commandButton
+                                id="cbtnPacienteFiltrar"
+                                value="Cargar Paciente"
+                                actionListener="#{reporteCitasMB.addPacienteFiltro()}"
+                                oncomplete = "PF('dlgPacienteFiltrar').hide();"                                
+                                />
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </p:dialog>         
+    </h:body>
+</html>
+

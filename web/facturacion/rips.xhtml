@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Clasificaciones</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormRips">              
+            <p:growl id="IdMensajeRips"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                        
+            <p:tabView id="IdTabView">                
+                <p:tab title="Generar RIPS">
+                    <br/>
+                    <p:panel>
+                        <table class="centrar">
+                            <tr>                            
+                                <td>
+                                    <h2>Configuraci&oacute;n</h2>
+                                </td>                        
+                            </tr>   
+                            <tr>                            
+                                <td>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Nombre RIPS" style="width: 110px;"/>
+                                    <p:inputText value="#{ripsMB.nombreRIPS}" size="63"/>
+                                </td>                        
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Administradora" style="width: 110px;"/>
+                                    <p:selectOneMenu styleClass="campoFormulario" value="#{ripsMB.idAdministradora}" style="width: 340px;" filter="true" filterMatchMode="contains">                            
+                                        <f:ajax event="change" listener="#{ripsMB.cambiaAdministradora}" render=":IdFormRips"/>
+                                        <f:selectItem itemLabel=""/>
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemValue="#{administradora.idAdministradora}" itemLabel="#{administradora.razonSocial}"/>
+                                    </p:selectOneMenu>                        
+                                </td>                        
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Contrato" style="width: 110px;"/>
+                                    <p:selectOneMenu id="IdListaContratos" styleClass="campoFormulario" value="#{ripsMB.idContrato}" style="width: 340px;" filter="true" filterMatchMode="contains">
+                                        <f:ajax event="change" listener="#{ripsMB.cambiaContrato}"/>
+                                        <f:selectItem itemValue="-1" itemLabel="Todos"/>
+                                        <f:selectItems value="#{ripsMB.listaContratos}" var="contrato" itemValue="#{contrato.idContrato}" itemLabel="#{contrato.descripcion}"/>
+                                    </p:selectOneMenu>                                                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Fecha inicial" style="width: 110px;"/>
+                                    <p:calendar navigator="true" styleClass="campoFormulario" locale="es" pattern="dd/MM/yyyy" mask="99/99/9999" size="16" maxlength="10" value="#{ripsMB.fechaInicial}"/>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Fecha final" style="width: 110px;"/>
+                                    <p:calendar navigator="true" styleClass="campoFormulario" locale="es" pattern="dd/MM/yyyy" mask="99/99/9999" size="16" maxlength="10" value="#{ripsMB.fechaFinal}"/>                                
+                                </td>                                        
+                            </tr>
+                        </table>
+                    </p:panel>
+                    <br/>
+                    <p:panel>
+                        <table class="centrar">
+                            <tr>                            
+                                <td>
+                                    <h2>Archivos</h2>
+                                </td>                        
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <h:outputText styleClass="campoNoObligatorio" value="CT - ARCHIVO DE CONTROL" style="width: 200px;"/>
+                                    <p:selectBooleanCheckbox styleClass="campoFormulario"  value="#{ripsMB.ripCT}" />
+
+                                    <h:outputText styleClass="campoNoObligatorio" value="AF - ARCHIVO DE TRANSACCIONES" style="width: 200px;"/>
+                                    <p:selectBooleanCheckbox styleClass="campoFormulario"  value="#{ripsMB.ripAF}" />
+                                </td>                        
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <h:outputText styleClass="campoNoObligatorio" value="US - ARCHIVO DE USUARIOS" style="width: 200px;"/>
+                                    <p:selectBooleanCheckbox styleClass="campoFormulario"  value="#{ripsMB.ripUS}" />
+
+                                    <h:outputText styleClass="campoNoObligatorio" value="AP - ARCHIVO DE PROCEDIMIENTOS" style="width: 200px;"/>
+                                    <p:selectBooleanCheckbox styleClass="campoFormulario"  value="#{ripsMB.ripAP}" />
+                                </td>                        
+                            </tr>   
+                            <tr>
+                                <td>
+                                    <h:outputText styleClass="campoNoObligatorio" value="AC - ARCHIVO DE CONSULTA" style="width: 200px;"/>
+                                    <p:selectBooleanCheckbox styleClass="campoFormulario" value="#{ripsMB.ripAC}" />
+                                    <h:outputText styleClass="campoNoObligatorio" value="LISTA DE DIAGNOSTICOS" style="width: 200px;"/>
+                                    <p:selectBooleanCheckbox styleClass="campoFormulario" value="#{ripsMB.diagnosticos}" />
+                                </td>                        
+                            </tr>                           
+                            <tr>
+                                <td>
+                                    <br/>
+                                    <p:commandButton 
+                                        title="Generar RIPS" value="&nbsp;"
+                                        styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                                        update=":IdFormRips:IdMensajeRips"
+                                        actionListener="#{ripsMB.generarRIPS}"
+                                        style="font-size: 20px; width: 20px; height: 20px;"/>                                                    
+                                </td>                        
+                            </tr>                           
+                        </table>
+                    </p:panel>
+                    <br/>
+                </p:tab>
+                <p:tab title="RIPS Existentes">
+                    <br/>
+                    <p:dataTable 
+                        id="IdTablaRipsAlmacenados" 
+                        var="ripAlmacenado" 
+                        widgetVar="wvTablaRipsAlmacenados"
+                        value="#{ripsMB.listaRipsAlmacenados}"
+                        rowKey="#{ripAlmacenado.idRipAlmacenado}"  
+                        selection="#{ripsMB.ripSeleccionado}"                                     
+                        paginator="true"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No exinten RIPS generados"
+                        scrollable="true" 
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <p:ajax event="rowSelect" update=":IdFormRips:IdTabView:IdPanelControles" />
+                        <f:facet name="header">
+                            RIPS EXISTENTES
+                        </f:facet>
+                        <p:column headerText="CREADO" width="150" filterBy="#{ripAlmacenado.fecha}" filterMatchMode="contains">
+                            <h:outputText value="#{ripAlmacenado.fecha}">
+                                <f:convertDateTime type="date" pattern="dd/MM/yyyy hh:mm"/>
+                            </h:outputText>                            
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="150" filterBy="#{ripAlmacenado.nombre}" filterMatchMode="contains">
+                            #{ripAlmacenado.nombre}
+                        </p:column>
+                        <p:column headerText="ARCHIVOS" width="200" filterBy="#{ripAlmacenado.archivos}" filterMatchMode="contains">
+                            #{ripAlmacenado.archivos}
+                        </p:column>                        
+                        <p:column headerText="FECHA INICIAL" width="70" filterBy="#{ripAlmacenado.fechaInicial}" filterMatchMode="contains">                            
+                            <h:outputText value="#{ripAlmacenado.fechaInicial}">
+                                <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="FECHA FINAL" width="70" filterBy="#{ripAlmacenado.fechaFinal}" filterMatchMode="contains">
+                            <h:outputText value="#{ripAlmacenado.fechaFinal}">
+                                <f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="ADMINISTRADORA" width="150" filterBy="#{ripAlmacenado.idAdministradora.razonSocial}" filterMatchMode="contains">
+                            #{ripAlmacenado.idAdministradora.razonSocial}
+                        </p:column>                        
+                        <p:column headerText="CONTRATO" width="150" filterBy="#{ripAlmacenado.idContrato.descripcion}" filterMatchMode="contains">
+                            #{ripAlmacenado.idContrato.descripcion}
+                        </p:column>     
+                    </p:dataTable>                    
+                    <br/>                    
+                    <p:panel id="IdPanelControles">
+                        <p:commandButton 
+                            title="Descargar RIPS" value="&nbsp;"
+                            styleClass="icon-box-add fg-lightBlue bg-white no-border"                             
+                            disabled="#{ripsMB.ripSeleccionado==null}"
+                            ajax="false"
+                            style="font-size: 20px; width: 20px; height: 20px;">
+                            <p:fileDownload value="#{ripsMB.generarZip()}" />
+                        </p:commandButton>
+                        <p:commandButton
+                            title="Eliminar RIPS" value="&nbsp;"                                        
+                            styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                            disabled="#{ripsMB.ripSeleccionado==null}"
+                            onclick="PF('dialogoEliminarRips').show();"            
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        <p:dialog id="IdDialogoEliminarRips" header="CONFIRMAR ELIMINACION DE RIPS" widgetVar="dialogoEliminarRips" resizable="false" modal="true">  
+                            <p:panelGrid id="panelAnularFactura" styleClass="panelGridSinBordes" columns="1">
+                                <p:inputTextarea 
+                                    value="¿ Confirma la eliminación de estos RIPS ?"
+                                    readonly="true" 
+                                    styleClass="textAreaDialogo"/>                                                    
+                                <p:commandButton 
+                                    value="Eliminar"    
+                                    oncomplete="PF('wvTablaRipsAlmacenados').clearFilters(); PF('wvTablaRipsAlmacenados').getPaginator().setPage(0); PF('dialogoEliminarRips').hide()"                    
+                                    update=":IdFormRips:IdTabView:IdTablaRipsAlmacenados :IdFormRips:IdTabView:IdPanelControles"
+                                    actionListener="#{ripsMB.confirmarEliminarRips}"/>
+                            </p:panelGrid>
+                        </p:dialog>
+                    </p:panel>
+                    <br/>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+    </h:body>
+</html>

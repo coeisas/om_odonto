@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Consecutivos</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormConsecutivos">              
+            <p:growl id="IdMensajeConsecutivos"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                                    
+            <div>
+                <p:commandButton 
+                    title="Nuevo consecutivo" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{consecutivosMB.limpiarFormularioConsecutivos}"
+                    update=":IdFormConsecutivos"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton
+                    title="Buscar consecutivos" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{consecutivosMB.buscarConsecutivos}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton
+                    title="Eliminar consecutivo" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                    actionListener="#{consecutivosMB.eliminarConsecutivo}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar/Actualizar consecutivo" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    actionListener="#{consecutivosMB.guardarConsecutivo}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>  
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
+                <p:tab title="#{consecutivosMB.tituloTabConsecutivos}">                    
+                    <br/>
+                    <p:panelGrid id="IdPanelEditarConsecutivo" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;">                    
+                        <h:outputText styleClass="campoObligatorio" value="Tipo documento"/>                    
+                        <p:selectOneMenu styleClass="campoFormulario" style="width: 250px;" value="#{consecutivosMB.tipoDocumento}"  filter="true" filterMatchMode="contains" disabled="#{consecutivosMB.consecutivoSeleccionado!=null}">
+                            <f:selectItems value="#{aplicacionGeneralMB.listaTipoFacturacion}"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Resolución"/>                        
+                        <p:inputText   value="#{consecutivosMB.resolucion}" size="13" maxlength="10" />
+                        <p:outputLabel styleClass="campoObligatorio" value="Inicio"/>
+                        <p:spinner value="#{consecutivosMB.inicio}" min="1" size="10" />
+                        <p:outputLabel styleClass="campoObligatorio" value="Fin"/>
+                        <p:spinner value="#{consecutivosMB.fin}" min="1" size="10" />
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Actual"/>
+                        <p:inputText   value="#{consecutivosMB.actual}" size="13" maxlength="10" disabled="true"/>                    
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Prefijo"/>
+                        <p:inputText   value="#{consecutivosMB.prefijo}" size="5" maxlength="10" />                    
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Texto"/>                        
+                        <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{consecutivosMB.texto}"/>
+                    </p:panelGrid>
+                    <br/>
+                </p:tab>                
+            </p:tabView>               
+        </h:form>
+        <h:form id="IdFormDialogs">            
+            <p:dialog id="IdDialogoBuscarConsecutivos" header="BUSCAR CONSECUTIVOS" widgetVar="dialogoBuscarConsecutivos" resizable="false" modal="true">                
+                <br/>
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaConsecutivos" 
+                                var="consecutivo" 
+                                widgetVar="wvTablaConsecutivos"
+                                value="#{consecutivosMB.listaConsecutivos}" 
+                                rowKey="#{consecutivo.idConsecutivo}"  
+                                selection="#{consecutivosMB.consecutivoSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 650px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay consecutivos"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="TIPO" width="200" filterBy="#{consecutivo.tipoDocumento.descripcion}" filterMatchMode="contains">
+                                    #{consecutivo.tipoDocumento.descripcion}
+                                </p:column>                                
+                                <p:column headerText="RESOLUCION" width="100" filterBy="#{consecutivo.resolucionDian}" filterMatchMode="contains">
+                                    #{consecutivo.resolucionDian}
+                                </p:column>                                
+                                <p:column headerText="INICIO" width="50" filterBy="#{consecutivo.inicio}" filterMatchMode="contains">
+                                    #{consecutivo.inicio}
+                                </p:column>                                
+                                <p:column headerText="FIN" width="50" filterBy="#{consecutivo.fin}" filterMatchMode="contains">
+                                    #{consecutivo.fin}
+                                </p:column>                                
+                                <p:column headerText="ACTUAL" width="50" filterBy="#{consecutivo.actual}" filterMatchMode="contains">
+                                    #{consecutivo.actual}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton value="Cargar consecutivo" update=":IdFormConsecutivos" actionListener="#{consecutivosMB.cargarConsecutivo}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarConsecutivo" header="ELIMINAR CONSECUTIVO" widgetVar="dialogoEliminarConsecutivo" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarConsecutivo" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminación de este consecutivo ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarConsecutivo').hide();"
+                        actionListener="#{consecutivosMB.confirmarEliminarConsecutivo}"                        
+                        update=":IdFormConsecutivos"/>
+                </p:panelGrid>
+            </p:dialog>              
+        </h:form>
+    </h:body>
+</html>

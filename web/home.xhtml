@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>OPENMEDICAL</title>
+        <link href="recursos/img/favicon.png" type="image/png" rel="icon"/>
+        <link href="recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="recursos/css/metro-bootstrap.css" rel="stylesheet"/>        
+        <link href="recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="recursos/js/calendario.js"></script> 
+        <script type="text/javascript">
+            function cargarPaciente(titulo, url, idPaciente) {
+                rcTest([{name: 'titulo', value: titulo}, {name: 'url', value: url}, {name: 'idPaciente', value: idPaciente}]);
+            }
+            ;
+            function cargarTab(titulo, url, id) {
+                rcCargarTab([{name: 'titulo', value: titulo}, {name: 'url', value: url}, {name: 'id', value: id}]);
+            }
+            ;
+        </script> 
+    </h:head>
+    <h:body style="font-size: 11px;">                
+        <h:form id="IdFormHome">                                
+            <p:remoteCommand name="rcTest" action="#{loginMB.cargarPacienteDesdeHistorias}" update=":IdFormCenter"/>                
+            <p:remoteCommand name="rcCargarTab" action="#{loginMB.cargarTab}" update=":IdFormCenter"/>                
+        </h:form> 
+        <p:layout fullPage="true"> 
+            <p:layoutUnit position="west" size="200" gutter="2" header="&nbsp;" collapsible="true" style="border: none; text-align: center;">
+                <h:form>
+                    <h:form style="overflow: hidden;">                            
+                        <p:panel style="width:190px; left: 0px; margin: 0px; padding: 0px; margin-left: 0px !important; padding-left: 0px !important;">
+                            <table>
+                                <tr>
+                                    <td>
+                                        <img src="recursos/img/logo.png" width="120" height="40" style="left: 100px;"/>                
+                                    </td>             
+                                </tr>
+
+                                <!-- tr>
+                                    <td colspan="3">
+                                        <h:outputLabel value="BD # {loginMB.baseDeDatosActual}" styleClass="labelFormularioBold textoEnUnaLinea" />
+                                        
+                                    </td>
+                                </tr -->
+                                <tr>
+                                    <td >
+                                        <h:outputLabel  value="#{loginMB.centroDeAtencionactual.nombreSede}" style="width: 150px;" styleClass="labelFormularioBold textoEnUnaLinea" />                                        
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>                                    
+                                        <h:outputLabel value="#{loginMB.usuarioActual.primerNombre} #{loginMB.usuarioActual.primerApellido}" style="width: 150px;" styleClass="labelFormulario textoEnUnaLinea" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <p:commandButton 
+                                            title="Inicio" value="&nbsp;"                                        
+                                            styleClass=" icon-home fg-lightBlue bg-white no-border"                            
+                                            onclick="cargarTab('Inicio','paginaInformativa.xhtml','-');"
+                                            style="font-size: 30px; width: 30px; height: 30px;"/>
+                                        <p:commandButton 
+                                            title="Cerrar sesión" value="&nbsp;"                                        
+                                            styleClass="icon-switch fg-lightBlue bg-white no-border"                            
+                                            actionListener="#{loginMB.cerrarSesion}" 
+                                            style="font-size: 30px; width: 30px; height: 30px;"/>
+                                        
+                                    </td>
+                                </tr>
+                            </table>
+                        </p:panel>
+                    </h:form>
+                </h:form>
+                <br/>
+                <h:form  id="IdFormMenu" style="overflow: hidden;">  
+                    <p:growl id="messages" showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
+                    <p:slideMenu 
+                        style="width:180px; height: 350px; left: 2px;"
+                        backLabel="Regresar"
+                        model="#{loginMB.simpleMenuModel}"/>                                                                
+                    <br/>
+                </h:form>
+
+            </p:layoutUnit>
+            <p:layoutUnit position="center" gutter="2" style="overflow: hidden; border: none;">                
+                <h:form id="IdFormCenter" prependId="false" style="width: 100%; height: 100%;" >    
+                    <c:if test="#{loginMB.listadoDeTabs.size() != 0}">
+                        <p:tabView id="tabView" activeIndex="#{loginMB.indexTabActiva}" cache="true" scrollable="true" styleClass="bd-white" style="overflow: hidden; margin: 0px; padding: 0px;"> 
+                            <p:ajax event="tabClose" listener="#{loginMB.cerrarTab}" update=":IdFormCenter" />                
+                            <p:ajax event="tabChange" listener="#{loginMB.cambiaTab}" update=":IdFormCenter"/>                                                
+                            <c:forEach var="pagina" items="#{loginMB.listadoDeTabs}">                       
+                                <p:tab  title="#{pagina.titulo}" closable="true"/>
+                            </c:forEach>                
+                        </p:tabView> 
+                    </c:if>                                                                                                               
+                    <iframe  src="#{loginMB.urlTabActual}"   style="position: absolute;  border: 0px; border-width: 1px; border-color:  #adc9fe; width: 99.9%; height: calc(100% - 45px); margin: 0px; padding: 0px;"/>
+                </h:form>
+            </p:layoutUnit>
+        </p:layout>
+    </h:body>
+</html>
+

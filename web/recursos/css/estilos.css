@@ -1,0 +1,254 @@
+.InactivityLayer {
+    display: none;
+    position: absolute;
+    text-align: center;   
+    font-size: 20px;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    filter:alpha(opacity=10);
+    -moz-opacity: 0.1;
+    opacity: 0.1;
+}  
+.panelGridSinBordes tr, .panelGridSinBordes td {
+    background: none !important;
+    border: none !important;
+}
+
+.button-metro-prime{
+    font-size: 450% !important;
+    height: 100px !important;
+    width: 100px !important;
+}
+body{
+    font-size: 10.5px !important;
+}
+
+
+
+/* Sobreescritura de metodos para primefaces*/
+/*
+.ui-menu{
+    background-color: #4390df !important;    
+}
+.ui-menuitem-text{
+    color: white;        
+}
+.ui-menu-child {    
+    background-color: #4390df !important;    
+}
+*/
+
+.ui-tabs a {
+    color: black !important;
+
+}
+
+.ui-selectonelistbox-item
+{
+    color: black !important;
+    font-weight: normal !important;
+
+}
+
+.ui-shadow, .ui-inputfield, .ui-widget-content .ui-inputfield, .ui-widget-header .ui-inputfield {
+    box-shadow: none !important;
+}
+
+.ui-tabs-panel{    
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.ui-fieldset{
+    margin-bottom: 5px !important;
+}
+
+.ui-fieldset-legend {        
+    margin: 0px !important;
+    width: auto;
+    height: 15px !important;
+    margin-top: 5px !important;
+    padding-top: 2px !important;
+    padding-bottom: 0px !important;
+    font-size: 12px; 
+}
+
+.ui-column-filter{/* FILTRO DE DATATABLE SE ALARGUE AL 90% DE LA COLUMNA*/
+    width: 90% !important;
+}
+
+.ui-slidemenu-wrapper {/* BOTON REGRESAR DEL MENU PRICIPAL SE COLOQUE ABAJO*/
+    height: 350px !important;
+}
+.ui-slidemenu-content {/* CONTENIDO DEL MENU PRINCIPAL TENGA LOS 350 PIXELS QUE SE NECESITA*/
+    height: 350px !important;
+}
+
+.ui-selectlistbox-listcontainer{/* listas toca ver si se lo usa o no*/
+    font-size: 12px !important;
+}
+.centrar-maximo{
+    width: 95%; 
+    margin-left: auto; 
+    margin-right: auto;
+}
+.centrar{ 
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.campoObligatorio{/* Nombres de campo de los formularios obligatorio*/
+    float: left; padding: 5px;  background-color: #eff5fa; margin: 0px; margin-right: 3px;   
+}
+.campoObligatorio:after{
+    color: red;    
+    content: "  *";    
+}
+.campoNoObligatorio{
+    float: left; padding: 5px; background-color: #eff5fa; margin: 0px;  margin-right: 3px; 
+}
+.labelFormulario{
+    float: left; padding: 5px; margin: 0px;  margin-right: 3px; 
+}
+.labelFormularioBold{
+    float: left; padding: 5px; margin: 0px;  margin-right: 3px; font-weight: bold !important; 
+}
+.campoFormulario{
+    float: left; margin-right: 3px;
+}
+.tablaFormulario{
+    margin: 10px;
+}
+
+*{
+    font-family: Lucida Grande, Lucida Sans, Arial, sans-serif !important;
+    font-weight: normal !important;
+}
+
+.botonSubMenu{
+    font-size: 20px; width: 20px; height: 20px; left: 20px;     
+}
+
+
+h2{
+    color:#0050ef;
+    font-weight: bold;
+}
+
+/*TEXT AREA USADO EN DIALOGOS (TIENE FONDO AZUL)*/
+.textAreaDialogo{
+    text-align: match-parent; 
+    background-color: #ebf4fb !important; 
+    font-size: 13px; 
+    font-weight: 900; 
+    height: 60px; 
+    width: 320px;
+}
+
+.width0{ /*DIMENSIONES USADAD EN CAMPOS DE FORMULARIOS DE HISTORIAS CLINICAS*/
+    width: 50px; 
+}
+.width200{ 
+    width: 200px; 
+}
+.width250{ 
+    width: 250px; 
+}
+.width300{ 
+    width: 300px; 
+}
+.width400{ 
+    width: 400px; 
+}
+
+//.ui-selectonemenu-panel{/*LOS POPUP DE SELECONEMENU SALGAN DISMINUIDOS*/
+//    width: 30% !important;
+//}
+.noneDisplay{
+    display: none;
+}
+
+/*DIMENSIONES USADAD EN CAMPOS DE FORMULARIOS DE HISTORIAS CLINICAS*/
+.width1{ width: 315px; }
+.width2{ width: 644px; }
+.width3{ width: 206px; }
+.width4{ width: 558px; }
+.width5{ width: 200px; }
+.btnSizeForm{ width: 22px; height: 22px;}/*boton del tamaño de los componentes del formulario*/
+
+/*COLORES PARA LAS AGENDAS crearAgendaPrestador.xhtml-------------------------*/
+.no_disponible .fc-event-inner {
+    background: #fabfb7;
+}
+.color_sin_asignar .fc-event-inner {
+    background: #b6cfd4;
+}
+.disponible .fc-event-inner {
+    background: white;
+    border: 1px !important;
+    color: black;
+}
+/*COLORES PARA LAS AGENDAS agenda.xhtml---------------------------------------*/
+.asignado .fc-event-inner{
+    background-color: #ffda9e;
+    color: #9a3427;
+}
+.no_atendido .fc-event-inner {
+    background: #9bd3ae;
+    color: black;
+}
+.libre .fc-event-inner {
+    background: white;
+    border: 1px !important;
+    color: black;
+}
+.atendido .fc-event-inner {
+    background: #b6cfd4;
+    color: #226a94;
+}
+/*COLORES PARA LAS AGENDAS recepcionCitas.xhtml---------------------------------------*/
+/*.no_atendido .fc-event-inner {
+    background: #5a9166;
+}
+.libre .fc-event-inner {
+    background: bisque;
+    color: black;
+}
+.atendido .fc-event-inner {
+    background: #4866ae;
+}*/
+.en_espera .fc-event-inner{
+    background-color: #ffda9e;
+    color: #d27232;
+}
+/*COLORES PARA LAS AGENDAS citaUnica.xhtml---------------------------------------*/
+/*.asignado .fc-event-inner {
+    background: peru;
+}*/
+.reservado .fc-event-inner {
+    background: #b6cfd4;
+}
+/*
+.disponible .fc-event-inner {
+    background: #ccffcc;
+}
+.no_disponible .fc-event-inner {
+    background: #b01919;
+}*/
+
+/* CONTENIDO DE UN ACORDEON NO TENGA PADDING ACORDE*/
+.ui-accordion-content{
+    padding: 0px !important;
+} 
+
+/* CUALQUIER TEXTO EN UNA SOLA LINEA, SI SUPERA LA LINEA COLOCA TRES PUNTOS*/
+.textoEnUnaLinea{
+    overflow: hidden; 
+    display: inline-block; 
+    text-overflow:ellipsis; 
+    white-space: nowrap;
+}

@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>
+        <title>Historias</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>  
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script> 
+    </h:head>
+    <h:body style="font-size: 11px;">  
+        #{historiasMB.inicializar()}
+        <h:form id="IdFormHistorias">  
+            <p:growl id="IdMensajeHistorias"  showDetail="true" sticky="false" autoUpdate="true" life="3000"  />             
+            <p:panel id="IdpanelDatosPaciente" style="position: relative; width: 100%; height: 100px; left: -5px;">
+                <!-- p:commandButton value="mostrar" actionListener="# {historiasMB.mostrarValorObjeto}"/ -->
+                <table style="margin-left: auto; margin-right: auto;">
+                    <tr>
+                        <td style="vertical-align: top; ">
+                            <p:outputLabel styleClass="labelFormularioBold" style="width: 12px;" value="#{historiasMB.tipoIdentificacion}" rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
+                            <p:inputText id="IdTxtIdentificacion" styleClass="campoFormulario"     size="30" value="#{historiasMB.identificacionPaciente}">                        
+                                <p:ajax event="blur" listener="#{historiasMB.validarIdentificacion}" update="IdTablaPacientes IdpanelDatosPaciente IdPanelRegistroClinico"/>
+                            </p:inputText>  
+                            <p:watermark for="IdTxtIdentificacion" value="Digite identificación paciente"/>
+                            <p:commandButton styleClass="campoFormulario"     style="width: 22px; height: 22px;" title="Buscar paciente"    icon="ui-icon-search" onclick="PF('dlgSeleccionarPaciente').show();"/>
+                            <p:commandButton styleClass="campoFormulario"     style="height: 22px;" title="Editiar Paciente"    icon="ui-icon-pencil" actionListener="#{historiasMB.editarPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                            <p:commandButton styleClass="campoFormulario"     style="height: 22px;" title="Historial Paciente" actionListener="#{historiasMB.cargarHistorialCompleto}" icon="ui-icon-calendar" rendered="#{historiasMB.hayPacienteSeleccionado}" oncomplete="PF('dlgHistorico').show();" update=":IdFormHistorias:IdPanelHistorico"/>                            
+                            <p:outputLabel   styleClass="labelFormularioBold" value="Nombre" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel   styleClass="labelFormulario"     value="#{historiasMB.nombrePaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
+                        </td>
+                        <td rowspan="3" style="vertical-align: top;">
+                            <p:graphicImage id="IdFoto" url="#{historiasMB.urlFoto}" cache="false" width="80" height="70" rendered="#{historiasMB.hayPacienteSeleccionado}"/>                              
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:outputLabel   styleClass="labelFormularioBold" style="font-weight: bold;" value="Género: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel   styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.generoPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" style="font-weight: bold;" value="Edad: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.edadPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
+                            <p:outputLabel styleClass="labelFormularioBold" value="Administradora: " style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.administradoraPaciente}" style="margin-left: 10px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:outputLabel styleClass="labelFormularioBold" value="Tipos de registro: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 270px;" value="#{historiasMB.tipoRegistroClinico}" rendered="#{historiasMB.hayPacienteSeleccionado}">
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{historiasMB.cambiaTipoRegistroClinico}"                                                
+                                    render="IdPanelRegistroClinico"/> 
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{aplicacionGeneralMB.listaTipoRegistroClinico}" var="tipoRegistro" itemValue="#{tipoRegistro.idTipoReg}" itemLabel="#{tipoRegistro.nombre}"/>
+                            </p:selectOneMenu>                
+                            <p:outputLabel styleClass="labelFormularioBold" value="Turno cita: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>                    
+                            <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.turnoCita}" style="margin-left: 10px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                        </td>
+                    </tr>
+                </table>
+            </p:panel>            
+            <p:panel id="IdPanelRegistroClinico" style="position: absolute; width: 99%; height: calc(100% - 120px); margin: 0px; padding: 0px; left: 2px;">
+                <iframe  src="#{historiasMB.urlPagina}"                          
+                         style="position: absolute; width: 100%; height: 100%; border: none; left: 0px; top: 0px;">
+                </iframe>
+            </p:panel>  
+            <p:dialog header="Seleccionar paciente" widgetVar="dlgSeleccionarPaciente" modal="true" resizable="false" closable="true">                
+                
+                <p:dataTable
+                    id="IdTablaPacientes"
+                    widgetVar="wvTablaPacientes"
+                    var="paciente"
+                    value="#{historiasMB.listaPacientes}" 
+                    selection="#{historiasMB.pacienteSeleccionadoTabla}"
+                    selectionMode="single"
+                    rowKey="#{paciente.idPaciente}"
+                    paginator="true"
+                    scrollWidth="600"
+                    scrollHeight="250"
+                    rows="10"
+                    lazy="true"
+                    resizableColumns="true"
+                    paginatorPosition="bottom"
+                    scrollable="true"
+                    emptyMessage="No se encontraron registros"       
+                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                    pageLinks="5">                    
+                    <p:column headerText="ID" width="0"> 
+                        #{paciente.idPaciente}  
+                    </p:column>  
+                    <p:column headerText="IDENTIFICACION" width="10" filterBy="#{paciente.identificacion}">
+                        #{paciente.identificacion}  
+                    </p:column>  
+                    <p:column headerText="NOMBRES" width="90" filterBy="#{paciente.primerNombre}">
+                        #{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton value="Cargar" actionListener="#{historiasMB.cargarPaciente}" update="IdpanelDatosPaciente IdPanelRegistroClinico"/>                
+                <br/>                
+            </p:dialog>
+            <p:dialog header="Histórico paciente" widgetVar="dlgHistorico" modal="true" resizable="false" closable="true">                
+                <p:panel id="IdPanelHistorico" style="border: none;"  >
+                    <h:panelGrid columns="8" cellpadding="2">                        
+                        <p:selectCheckboxMenu id="IdComboTipReg" value="#{historiasMB.regCliSelHistorial}" label="Tipos de registro"
+                                              filter="true" filterMatchMode="startsWith" panelStyle="width:350px">
+                            <f:selectItems value="#{aplicacionGeneralMB.listaTipoRegistroClinico}" var="tipoRegistro" itemValue="#{tipoRegistro.idTipoReg}" itemLabel="#{tipoRegistro.nombre}"/>
+                        </p:selectCheckboxMenu>
+                        <h:outputLabel for="IdComboTipReg" value="No. Autorización" />
+                        <p:inputText value="#{historiasMB.filtroAutorizacion}"/>
+                        <h:outputLabel for="IdComboTipReg" value="Fecha Inicio" />
+                        <p:calendar locale="es" navigator="true" value="#{historiasMB.filtroFechaInicial}" pattern="dd/MM/yyyy" size="11" mask="true"  />
+                        <h:outputLabel for="IdComboTipReg" value="Fecha Fin" />
+                        <p:calendar locale="es" navigator="true" value="#{historiasMB.filtroFechaFinal}" pattern="dd/MM/yyyy" size="11" mask="true"  />
+                        <p:commandButton icon="ui-icon-refresh" actionListener="#{historiasMB.cargarHistorial}" title="Aplicar filtros" />       
+                    </h:panelGrid>
+                    <p:tree  
+                        style="width: 700px; height: 370px; margin: 10px; overflow-x:hidden; overflow-y: scroll;"
+                        value="#{historiasMB.treeNodeRaiz}" 
+                        var="nodo" 
+                        propagateSelectionDown="true"
+                        propagateSelectionUp="false"
+                        id="IdArbolHistorial"  
+                        selectionMode="checkbox"                                              
+                        selection="#{historiasMB.treeNodesSeleccionados}">            
+                        <p:ajax event="select" update=":IdFormHistorias:IdBtnPdfHistorial :IdFormHistorias:IdBtnEditarHistorial :IdFormHistorias:IdBtnPdfAgrupado" listener="#{historiasMB.seleccionaNodoArbol}" />
+                        <p:ajax event="unselect" update=":IdFormHistorias:IdBtnPdfHistorial :IdFormHistorias:IdBtnEditarHistorial :IdFormHistorias:IdBtnPdfAgrupado" listener="#{historiasMB.seleccionaNodoArbol}" />
+                        <p:treeNode>                        
+                            <h:outputText value="#{nodo.nombre}" />
+                        </p:treeNode>                                                                                                                                            
+                    </p:tree>
+                    <p:commandButton icon="ui-icon-pencil" id="IdBtnEditarHistorial" value="Editar" actionListener="#{historiasMB.cargarRegistroClinico}" disabled="#{historiasMB.btnHistorialDisabled}" rendered="#{historiasMB.btnEditarRendered}"/>                                        
+                    <p:commandButton icon="ui-icon-document" id="IdBtnPdfHistorial" value="PDF" actionListener="#{historiasMB.generarPdf}" ajax="false" onclick="this.form.target = '_blank'" disabled="#{historiasMB.btnHistorialDisabled}"/>
+                    <p:commandButton icon="ui-icon-document" id="IdBtnPdfAgrupado" value="PDF Agrupado" actionListener="#{historiasMB.generarPdfAgrupado}" ajax="false" onclick="this.form.target = '_blank'" disabled="#{historiasMB.btnPdfAgrupadoDisabled}" rendered="false"/>                    
+                </p:panel>
+                <br/>                
+            </p:dialog>
+        </h:form>        
+    </h:body>
+</html>
+
+
+
+
+
+
+

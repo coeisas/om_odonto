@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="500" leftMargin="56" rightMargin="56" topMargin="28" bottomMargin="28" uuid="21422a23-c85a-4e5e-9643-90f3acd40c05">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="title" class="java.lang.String"/>
+	<parameter name="logoEmpresa" class="java.lang.String"/>
+	<parameter name="paciente" class="java.lang.String"/>
+	<parameter name="periodo" class="java.lang.String"/>
+	<field name="fecha" class="java.util.Date"/>
+	<field name="hora" class="java.util.Date"/>
+	<field name="prestadorPN" class="java.lang.String"/>
+	<field name="prestadorSN" class="java.lang.String"/>
+	<field name="prestadorPA" class="java.lang.String"/>
+	<field name="prestadorSA" class="java.lang.String"/>
+	<field name="servicio" class="java.lang.String"/>
+	<field name="cancelada" class="java.lang.Boolean"/>
+	<field name="fechaCancelacion" class="java.util.Date"/>
+	<field name="motivoCancelacion" class="java.lang.String"/>
+	<field name="atendida" class="java.lang.Boolean"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="40" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="500" height="40" uuid="9333fb1e-5d83-493b-a027-2c8169da26cf"/>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="0" width="500" height="40" uuid="2a4b6312-7858-4dfd-9908-bdedcdb2c891"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{title}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="8" y="1" width="100" height="38" uuid="60446d74-7be9-4154-8be7-2da8b589c8c5"/>
+				<imageExpression><![CDATA[$P{logoEmpresa}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="34" splitType="Stretch">
+			<textField>
+				<reportElement x="44" y="3" width="207" height="15" uuid="96299d68-ed17-4975-b030-4b834a767faf"/>
+				<textElement>
+					<font size="8" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{paciente}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="251" y="3" width="55" height="15" uuid="c54927aa-a5c3-4f22-ac90-fefbfe2a66fa"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PERIODO:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="306" y="3" width="194" height="15" uuid="5281a06f-2cf1-4cbc-8a24-c194d278a8cd"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{periodo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="18" width="85" height="15" uuid="ad59bf37-117e-4c70-b021-d8b1507ee63f"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="85" y="18" width="122" height="15" uuid="79a81ecc-6c91-4a4c-bc89-4547077e7f0b"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PRESTADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="207" y="18" width="111" height="15" uuid="7e651ff3-4457-493a-9bb0-e27fb4306c39"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[SERVICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="318" y="18" width="62" height="15" uuid="c1a5c332-2e0f-4e1d-be7e-ade2ea25d172"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CANCELADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="18" width="70" height="15" uuid="cf95f880-ea5d-4556-9c10-37ee83a0052d"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[F.CANCELACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="18" width="50" height="15" uuid="69c547eb-e3f0-40fa-8478-c43ef404d2a7"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ATENDIDA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="3" width="44" height="15" uuid="5209edc2-4fe5-45ae-8671-eb7e11a65d87"/>
+				<textElement>
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PACIENTE:]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="0" width="44" height="20" uuid="dfe611e8-0375-4a44-9fd6-c79767a5822e"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="h.mm a">
+				<reportElement x="44" y="0" width="41" height="20" uuid="51e31732-f319-4bed-acc5-f2718f762b14"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="85" y="0" width="122" height="20" uuid="90783463-d158-4f34-8741-ba5fc6bba1e8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prestadorPN} + " " + ($F{prestadorSN} == null ? "" : $F{prestadorSN} + " ") + $F{prestadorPA} + " " +($F{prestadorSA} == null ? "" : $F{prestadorSA})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="207" y="0" width="111" height="20" uuid="53f82a0b-e2d6-4d9c-9746-cb2ba423aa24"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="318" y="2" width="62" height="20" uuid="1aba2b77-4d84-4b9e-8ac0-82383258258b"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cancelada} ? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="380" y="2" width="70" height="20" uuid="4f973ad7-d8b7-4a36-845c-26d632df66b2"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaCancelacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="2" width="50" height="20" uuid="030c95e4-eeca-4ef9-a38b-1216dda3cff5"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{atendida} ? "SI" : "NO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="12" splitType="Stretch">
+			<textField>
+				<reportElement x="191" y="0" width="80" height="11" uuid="7840b445-a0dd-465f-8f87-3901a4caa3dc"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="271" y="0" width="40" height="11" uuid="5c402f42-9b7c-4a6f-98f8-2703c641a4a0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

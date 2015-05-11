@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>
+        <title>Usuarios</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>   
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script> 
+    </h:head>
+    <h:body>
+        <h:form id="IdFormRegistroClinico">  
+            <p:growl id="IdMensajeRecetario"  showDetail="true" sticky="false" autoUpdate="true" life="2000"/>
+            <table style="margin-left: auto; margin-right: auto;" >
+                <tr>
+                    <td colspan="2">
+                        <h2>RECETARIO GAFAS</h2>                        
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:outputLabel value="LUGAR"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato0}"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><h2>FORMULA OFTANMOLOGICA</h2></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    &nbsp;
+                                </td>
+                                <td>
+                                    <p:outputLabel value="OJO DERECHO"/>
+                                </td>
+                                <td>
+                                    <p:outputLabel value="OJO IZQUIERDO"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><p:outputLabel value="ESFERA"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato1}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato2}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="CILINDRO"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato3}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato4}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="EJE"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato5}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato6}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="ADICION"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato7}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato8}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="AVL"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato9}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato10}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="AVP"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato11}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato12}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="DP"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato13}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato14}"/>
+                                </td>
+                            </tr>                
+                            <tr>
+                                <td><p:outputLabel value="ALT"/></td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato15}"/>
+                                </td>
+                                <td>
+                                    <p:inputText styleClass="width250" value="#{historiasMB.datosFormulario.dato16}"/>
+                                </td>
+                            </tr>                
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:outputLabel value="ESPECIFICACIONES DEL LENTE"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:inputTextarea styleClass="width2" value="#{historiasMB.datosFormulario.dato17}"/></td>
+                </tr>
+                <tr>
+                    <td><p:outputLabel value="FILTRO"/></td>
+                    <td><p:outputLabel value="COLOR"/></td>
+                </tr>
+                <tr>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato18}"/></td>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato19}"/></td>
+                </tr>                
+                <tr>
+                    <td><p:outputLabel value="USO"/></td>
+                    <td><p:outputLabel value="NUMERO ITEMS"/></td>
+                </tr>
+                <tr>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato20}"/></td>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato21}"/></td>
+                </tr>                
+                <tr>
+                    <td><p:outputLabel value="CONTROL"/></td>
+                    <td><p:outputLabel value="RECOMENDACIONES"/></td>
+                </tr>
+                <tr>
+                    <td><p:inputTextarea styleClass="width1" value="#{historiasMB.datosFormulario.dato22}"/></td>
+                    <td><p:inputTextarea styleClass="width1" value="#{historiasMB.datosFormulario.dato23}"/></td>
+                </tr>                
+
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="FECHA-HORA REGISTRO"/>
+                        <p:calendar navigator="true" locale="es" value="#{historiasMB.fechaReg}" pattern="dd/MM/yyyy HH:mm:ss" size="23" mask="true"  />
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td><p:outputLabel value="MEDICO"/></td>
+                    <td><p:outputLabel value="ESPECIALIDAD"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:selectOneMenu style="width: 315px;" value="#{historiasMB.idPrestador}" filter="true" filterMatchMode="contains">                            
+                            <p:ajax event="change" listener="#{historiasMB.cambiaMedico}" update="IdEspecialidad"/>
+                            <f:selectItem itemLabel="" itemValue=""/>
+                            <f:selectItems value="#{historiasMB.listaPrestadores}" var="p" itemLabel="#{p.primerNombre} #{p.segundoNombre} #{p.primerApellido} #{p.segundoApellido}" itemValue="#{p.idUsuario}"/>
+                        </p:selectOneMenu>
+                    </td>
+                    <td><p:inputText id="IdEspecialidad" readonly="true" styleClass="width1" value="#{historiasMB.especialidadPrestador}"/></td>
+                </tr>                
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2">
+                        <p:commandButton icon="ui-icon-disk" value="Guardar Nuevo Registro" actionListener="#{historiasMB.guardarRegistro}" disabled="#{historiasMB.modificandoRegCli}"/>
+                        <p:commandButton icon="ui-icon-arrowthickstop-1-s" value="Actualizar Registro" actionListener="#{historiasMB.actualizarRegistro}" disabled="#{!historiasMB.modificandoRegCli}" rendered="#{loginMB.superUsuario}"/>
+                        <p:commandButton icon="ui-icon-document" value="Limpiar Formulario" actionListener="#{historiasMB.btnLimpiarFormulario}" update="IdFormRegistroClinico"/>
+                    </td>
+                </tr>
+            </table>            
+            <p:dialog id="IdTextosDlgPredefinidos" header="TEXTOS PREDEFINIDOS" width="645" widgetVar="dlgTextosPredefinidos" resizable="false" closable="true" modal="true">                                
+                <p:panelGrid styleClass="panelGridSinBordes" id="IdPanelTextosPredefinidos">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel   styleClass="labelFormulario" style="width: 60px;" value="Categoría: "/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 220px;" value="#{historiasMB.idMaestroTextoPredef}" >
+                                <f:ajax event="change" listener="#{historiasMB.cambiaMaestro}" render="IdComboTextosPredefinidos IdEditorTextoPredefinido IdNombrePredefinido"/> 
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{historiasMB.listaMaestrosTxtPredefinidos}" var="maestro" itemValue="#{maestro.idMaestro}" itemLabel="#{maestro.nombre}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel   styleClass="labelFormulario" style="width: 60px;" value="Predefinidos: "/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 220px;" id="IdComboTextosPredefinidos"  value="#{historiasMB.idTextoPredef}" >
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{historiasMB.cambiaTextoPredefinido}"                                                
+                                    render="IdEditorTextoPredefinido IdNombrePredefinido"/>                                 
+                                <f:selectItems value="#{historiasMB.listaTxtPredefinidos}" var="texto" itemValue="#{texto.idTxtPredefinido}" itemLabel="#{texto.nombre}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="labelFormulario" value="Nombre: " style="width: 60px;"/>
+                            <p:inputText   styleClass="campoFormulario" id="IdNombrePredefinido" size="39" value="#{historiasMB.nombreTextoPredefinido}"/>                                                    
+                            <p:commandButton icon="ui-icon-circle-arrow-s" title="Usar seleccionado"    actionListener="#{historiasMB.usarTextoPredefinido}"/>
+                            <p:commandButton icon="ui-icon-disk"           title="Guardar/Actualizar"   actionListener="#{historiasMB.guardarTextoPredefinido}" />            
+                            <p:commandButton icon="ui-icon-trash"          title="Eliminar predefinido" id="IdBtnEliminarPredefinido"/>                                        
+                            <p:overlayPanel for="IdBtnEliminarPredefinido" widgetVar="opEliminarPredefinido">
+                                <p:outputLabel   styleClass="labelFormulario" value="¿Confirma la eliminación?  "/>
+                                <p:commandButton value="Si" title="Crear nueva categoría" actionListener="#{historiasMB.eliminarPredefinido}" oncomplete="PF('opEliminarPredefinido').hide();"/>                        
+                            </p:overlayPanel> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:editor id="IdEditorTextoPredefinido" value="#{historiasMB.detalleTextoPredef}" width="600" controls="bold italic underline font size bullets numbering alignleft center alignright justify undo redo"/>
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>             
+            </p:dialog>
+
+            <br/>
+        </h:form>        
+    </h:body>
+</html>

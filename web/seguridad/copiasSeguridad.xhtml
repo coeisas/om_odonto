@@ -1,0 +1,298 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>
+        <title>Copias seguridad</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>     
+    </h:head>
+    <h:body style="font-size: 11px; overflow: hidden;">  
+
+        <h:form id="IdFormPrincipal">  
+            <p:growl id="IdMensajeUsuarios"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
+            <br/>
+            <div>
+                <p:commandButton 
+                    title="Nuevo" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{usuariosMB.limpiarFormulario}"                    
+                    update=":IdFormPrincipal"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoBuscarUsuario').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoEliminarUsuario').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    update=":IdFormPrincipal"
+                    actionListener="#{usuariosMB.guardarUsuario}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                            
+            </div>
+            <br/>
+
+            <p:tabView style=" width: 95%;  margin-left: 15px;" > 
+                <p:tab title="#{usuariosMB.tituloTabUsuarios}"> 
+                    <table style="margin-top: 20px; margin-left: auto; margin-right: auto;">
+                        <tr>
+                            <td rowspan="11" style="vertical-align: top;">
+                                <div style="width: 110px; ">
+
+                                    <p:graphicImage id="IdFoto" value="#{usuariosMB.urlFoto}"  cache="false" style="width: 90px; height: 80px;"/>                              
+
+                                    <p:commandButton id="cmdUpload" value="&nbsp;" icon="ui-icon-folder-open" onclick="PF('dlgUploadFoto').show()" type="button" title="Upload archivo foto" />
+                                    <p:commandButton id="cmdWebCam" value="&nbsp;" icon="ui-icon-video" onclick="PF('dlgWebCam').show()" type="button" title="Webcam"/>                                                            
+                                    <!-- Capturar imagem webcam -->
+                                    <p:dialog id="webcam" widgetVar="dlgWebCam" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                        <p:photoCam widgetVar="pcPhoto" listener="#{usuariosMB.tomarFoto}" update="IdFoto"/>
+                                        <br/>
+
+                                        <p:commandButton type="button" value="Tomar" onclick="PF('pcPhoto').capture()" update="IdFoto" onsuccess="PF('dlgWebCam').hide()"/>
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgWebCam').hide()"/>                            
+                                    </p:dialog>
+                                    <p:dialog id="upload1" widgetVar="dlgUploadFoto" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                        <p:fileUpload 
+                                            fileUploadListener="#{usuariosMB.uploadFoto}" sizeLimit="204800" auto="true"
+                                            update="IdFoto" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
+                                            mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar" />                            
+                                        <br/>
+                                        <br/>
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgUploadFoto').hide()"/>
+                                    </p:dialog>
+                                    <br/><br/>
+                                    <p:graphicImage id="IdFirma" url="#{usuariosMB.urlFirma}" cache="false" style="width: 90px; height: 40px;"/>
+                                    <p:commandButton id="cmdUploadFirma" value="&nbsp;" icon="ui-icon-folder-open" onclick="PF('dlgUploadFirma').show()" type="button" title="Upload Archivo firma" />
+                                    <p:dialog id="upload2" widgetVar="dlgUploadFirma" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                        <p:fileUpload 
+                                            fileUploadListener="#{usuariosMB.uploadFirma}" sizeLimit="204800" auto="true"
+                                            update="IdFirma" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
+                                            mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar"/>                            
+                                        <br/>
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgUploadFirma').hide()"/>
+                                    </p:dialog>
+                                </div>
+                            </td>         
+                            <td colspan="2">
+                                <p:outputLabel   styleClass="campoObligatorio" value="Tipo documento Identificación"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 70px;" value="#{usuariosMB.tipoIdentificacion}">                                    
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}" />
+                                </p:selectOneMenu>                                         
+                                <p:outputLabel   styleClass="campoObligatorio" value="Documento Identificación"/>
+                                <p:inputText     styleClass="campoFormulario" size="25" value="#{usuariosMB.identificacion}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">                                
+                                <p:outputLabel styleClass="campoObligatorio" value="Nombres"/>
+                                <p:inputText styleClass="campoFormulario" size="16" value="#{usuariosMB.primerNombre}"/>
+                                <p:inputText styleClass="campoFormulario" size="16" value="#{usuariosMB.segundoNombre}"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="Apellidos"/>                                            
+                                <p:inputText styleClass="campoFormulario" size="16" value="#{usuariosMB.primerApellido}"/>
+                                <p:inputText styleClass="campoFormulario" size="16" value="#{usuariosMB.segundoApellido}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoObligatorio" value="Género"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{usuariosMB.genero}">                                        
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaGenero}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Departamento"/>                            
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 144px;" value="#{usuariosMB.departamento}">
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{usuariosMB.cargarMunicipios}"                                                
+                                        render="IdMunicipios"/> 
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaDepartamentos}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Municipio"/>
+                                <p:selectOneMenu styleClass="campoFormulario" id="IdMunicipios" style="width: 110px;" value="#{usuariosMB.municipio}">
+                                    <f:selectItems value="#{usuariosMB.listaMunicipios}" />
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Dirección"/>                                            
+                                <p:inputText styleClass="campoFormulario" size="33" value="#{usuariosMB.direccion}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tel. residencia"/>                                            
+                                <p:inputText styleClass="campoFormulario" size="10" value="#{usuariosMB.telefonoResidencia}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tel. oficina"/>                                            
+                                <p:inputText styleClass="campoFormulario" size="10" value="#{usuariosMB.telefonoOficina}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Celular"/>                                            
+                                <p:inputText styleClass="campoFormulario" size="16" value="#{usuariosMB.celular}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Email"/>                                            
+                                <p:inputText styleClass="campoFormulario" size="29" value="#{usuariosMB.email}"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="Tipo usuario"/>
+                                <p:selectOneMenu styleClass="campoFormulario" id="IdTipoUsuario" style="width: 110px;" value="#{usuariosMB.tipoUsuario}">
+                                    <f:ajax 
+                                        event="change"                                        
+                                        listener="#{usuariosMB.cambiaTipoUsuario}"                                         
+                                        render="IdCampo1 IdCampo2 IdCampo3 IdCampo4 IdCampo5 IdCampo6 IdCampo7 IdCampo8"/> 
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoUsuario}" />
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoObligatorio" value="Reg profesional" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo1"/>                                
+                                <p:inputText styleClass="campoFormulario" size="20" value="#{usuariosMB.registroProfesional}" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo2"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="Especialidad" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo3"/>
+                                <p:selectOneMenu styleClass="campoFormulario" value="#{usuariosMB.especialidad}" style="width: 253px; display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo4" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEspecialidades}"/>
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoObligatorio" value="unidadFuncional" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo5"/>
+                                <p:inputText styleClass="campoFormulario" size="35" value="#{usuariosMB.unidadFuncional}" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo6"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="porcentaje honorario" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo7"/>                                
+                                <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," maxlength="5" maxValue="99" value="#{usuariosMB.porcentajeHonorario}" style="display: #{usuariosMB.mostrarSeccionPrestador};" id="IdCampo8"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoObligatorio" value="Login"/>
+                                <p:inputText styleClass="campoFormulario" maxlength="50" size="17" value="#{usuariosMB.login}"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="Clave"/>
+                                <p:password styleClass="campoFormulario" maxlength="50" size="18" value="#{usuariosMB.clave}"/>                
+                                <p:outputLabel styleClass="campoObligatorio" value="Confirmación clave"/>
+                                <p:password styleClass="campoFormulario" maxlength="50" size="18" value="#{usuariosMB.confirmacionClave}"/>                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">                                
+                                <p:outputLabel styleClass="campoObligatorio" value="Perfil de acceso"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 126px;" value="#{usuariosMB.perfilAcceso}">                                        
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaPerfilesUsuario}" var="perfil" itemLabel="#{perfil.nombrePerfil}" itemValue="#{perfil.idPerfil}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Cuenta activa"/>
+                                <p:selectBooleanButton styleClass="campoFormulario" value="#{usuariosMB.cuentaActiva}" onLabel="SI" offLabel="NO" style="width:40px" />
+
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Visible"/>
+                                <p:selectBooleanButton styleClass="campoFormulario" value="#{usuariosMB.usuarioVisible}" onLabel="SI" offLabel="NO" style="width:40px" />
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Cargo actual"/>
+                                <p:inputText styleClass="campoFormulario" size="23" value="#{usuariosMB.cargoActual}"/>                                                                
+                            </td>
+                            <td rowspan="2">                                
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Observacion"/>
+                                <p:inputTextarea styleClass="campoFormulario" value="#{usuariosMB.observacion}"  style="width: 260px; height: 40px;" />
+                            </td>    
+                        </tr>
+                        <tr>
+                            <td colspan="2">                                
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Fecha creación"/>
+                                <p:calendar navigator="true" styleClass="campoFormulario" disabled="true" value="#{usuariosMB.fechaCreacion}" mask="dd/MM/yyyy"/>
+                            </td>
+                        </tr>
+
+
+                    </table>    
+                    <br/>
+                </p:tab>
+
+            </p:tabView>
+
+            <p:dialog id="IdDialogoBuscarUsuario" header="Buscar usuario" widgetVar="dialogoBuscarUsuario" resizable="false" modal="true">  
+                <p:ajax event="close" oncomplete="PF('wvTablaUduarios').clearFilters(); PF('wvTablaUduarios').getPaginator().setPage(0);" />                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaUsuarios" 
+                                var="usuario" 
+                                widgetVar="wvTablaUduarios"
+                                value="#{aplicacionGeneralMB.listaUsuarios}" 
+                                rowKey="#{usuario.idUsuario}"  
+                                selection="#{usuariosMB.usuarioSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay usuarios"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">  
+
+                                <p:column headerText="IDENTIFICACION" style=" width: 50px;" filterBy="#{usuario.identificacion}" filterMatchMode="contains">  
+                                    #{usuario.identificacion}  
+                                </p:column>                                
+                                <p:column headerText="NOMBRES" style=" width: 100px;" filterBy="#{usuario.primerNombre} #{usuario.segundoNombre}  #{usuario.primerApellido}  #{usuario.segundoApellido}" filterMatchMode="contains">  
+                                    #{usuario.primerNombre} #{usuario.segundoNombre}  #{usuario.primerApellido}  #{usuario.segundoApellido}  
+                                </p:column>                                                              
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar seleccionado"
+                                oncomplete="PF('dialogoBuscarUsuario').hide(); PF('wvTablaUduarios').clearFilters(); PF('wvTablaUduarios').getPaginator().setPage(0);"
+                                update=":IdFormPrincipal IdTablaUsuarios"
+                                actionListener="#{usuariosMB.cargarUsuario}"/>                            
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarUsuario" header="ELIMINAR USUARIO" widgetVar="dialogoEliminarUsuario" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarUsuario" styleClass="panelGridSinBordes" columns="1">
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="¿ Confirma La eliminacion de este usuario?"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Eliminar" 
+                                oncomplete="PF('dialogoEliminarUsuario').hide();"
+                                actionListener="#{usuariosMB.eliminarUsuario}"                        
+                                update=":IdFormPrincipal"/>
+                            <p:commandButton 
+                                value="Cancelar" 
+                                oncomplete="PF('dialogoEliminarUsuario').hide();"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog> 
+        </h:form>        
+    </h:body>
+</html>
+
+
+
+
+
+
+

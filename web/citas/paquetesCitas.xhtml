@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+        <style>
+            .ui-panelgrid td, .ui-panelgrid tr
+            {
+                border-style: none !important
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <p:growl autoUpdate="true" showDetail="true"/>
+        <h:form id="idFormPaquetesCitas">
+            <p:panelGrid id="idTablePaqCitas" style="border: none">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="5">Detalle del Paquete</p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:outputLabel styleClass="labelFormularioBold" value="Codigo paquete:"/>
+                        <p:inputText styleClass="campoFormulario" id="idTextCodigo" size="7" maxlength="5" value="#{paqCitasMB.codPaquete}">
+                            <p:ajax event="blur" listener="#{paqCitasMB.eventoTabcodigoPaquete()}" update="@form"/>
+                        </p:inputText>
+                        <p:commandButton styleClass="campoFormulario" icon="ui-icon-search" onclick="PF('dlgPaqueteMaestro').show();"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Nombre Paquete:"/>
+                        <p:inputText styleClass="campoFormulario" id="idTextNombre" size="80" maxlength="200" value="#{paqCitasMB.nomPaquete}"></p:inputText>                        
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:outputLabel styleClass="labelFormularioBold" value="Dias de la Samana:"/>
+                        <p:selectManyCheckbox id="idSelectDias" styleClass="campoFormulario" value="#{paqCitasMB.diasSemana}">
+                            <f:selectItems value="#{paqCitasMB.itemsDias}" />
+                        </p:selectManyCheckbox>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5" styleClass="ui-widget-header" style="text-align: center">Items del Paquete</p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:outputLabel styleClass="labelFormularioBold" value="Prestador:"/>
+                        <p:selectOneMenu value="#{paqCitasMB.idPrestador}">
+                            <f:selectItem itemValue="#{null}" itemLabel="..."/>
+                            <f:selectItems value="#{paqCitasMB.listaPrestadores}"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column rowspan="2" style="text-align: center">
+                        <p:commandButton id="idButtonInsertarDetalle" icon="ui-icon-plus" value="Insertar Item al Paquete" action="#{paqCitasMB.insertarDetallePaquete()}"  rendered="#{paqCitasMB.rendBotones}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="3">
+                        <p:outputLabel styleClass="labelFormularioBold" value="Servicio:"/>
+                        <p:selectOneMenu value="#{paqCitasMB.idServicio}">
+                            <f:selectItem itemValue="#{null}" itemLabel="..."/>
+                            <f:selectItems value="#{paqCitasMB.listaServicios}" />
+                        </p:selectOneMenu>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="5">
+                        <p:dataTable id="idTableDetalle" value="#{paqCitasMB.listaDetallePaquete}" disabledSelection="true" var="detallePaquete">
+                            <!--<f:facet name="header">DETALLE DEL PAQUETE</f:facet>-->
+                            <p:column width="6%"><p:commandButton icon="ui-icon-trash" title="Eliminar Detalle" actionListener="#{paqCitasMB.eliminarDetallePaquete}" update="@none"><f:attribute name="detalle" value="#{detallePaquete}"/></p:commandButton></p:column>
+                            <p:column headerText="Prestador">
+                                <h:outputLabel value="#{detallePaquete.idPrestador.nombreCompleto()}" />
+                            </p:column>
+                            <p:column headerText="Servicio">
+                                <h:outputText value="#{detallePaquete.idServicio.nombreServicio}"/>
+                            </p:column>
+                        </p:dataTable>     
+                    </p:column>
+                </p:row>
+                <p:row> 
+                    <p:column colspan="5" style="text-align: center">
+                        <p:commandButton id="idButtonGuardar" value="Guardar Paquete" icon="ui-icon-disk" actionListener="#{paqCitasMB.controladorMetodoAccion()}" rendered="#{paqCitasMB.rendBotones}" update=":idFormPaquetesCitas :idFormCargarPaqMaestro"/>
+                        <p:commandButton id="idButtonEliminar" value="Eliminar Paquete" icon="ui-icon-trash" rendered="#{paqCitasMB.rendBotonEliminarPaquete}"   actionListener="#{paqCitasMB.eliminarPaquete}" update=":idFormPaquetesCitas :idFormCargarPaqMaestro">
+                            <p:confirm header="Confirmacion" message="Esta seguro de eliminar este paquete?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <p:confirmDialog global="true">
+                <div style="text-align: center">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </div>
+            </p:confirmDialog>
+        </h:form>
+        <p:dialog modal="true" resizable="false" widgetVar="dlgPaqueteMaestro" header="Tabla Paquetes">
+            <h:form id="idFormCargarPaqMaestro">
+                <p:dataTable 
+                    id="idTablePaqueteMaestro"
+                    value="#{paqCitasMB.listaPaquetesMaestro}"
+                    selection="#{paqCitasMB.paqMaestroSeleccionado}"
+                    rows="5"
+                    paginator="true"
+                    paginatorPosition="bottom"
+                    var="paqMaestro"
+                    rowKey="#{paqMaestro.idPaqMaestro}"
+                    emptyMessage="No se encontraron paquetes"
+                    selectionMode="single" 
+                    style="width: 50em">
+
+                    <p:column headerText="Codigo" width="25%">#{paqMaestro.codPaquete}</p:column>
+                    <p:column headerText="Paquete">#{paqMaestro.nomPaquete}</p:column>
+                </p:dataTable>
+                <br/>
+                <p:commandButton value="Cargar Paquete" onclick="PF('dlgPaqueteMaestro').hide()" action="#{paqCitasMB.cargarPaquete()}" update=":idFormPaquetesCitas"/>
+            </h:form>
+
+        </p:dialog>
+    </h:body>
+</html>
+

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>OPENMEDICAL- BIENVENIDO</title>
+        <link href="recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="recursos/img/favicon.png" type="image/png" rel="icon"/>
+        <link href="recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="recursos/css/iconFont.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="recursos/css/coin-slider-styles.css" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="recursos/css/style_common.css" />
+        <link rel="stylesheet" type="text/css" href="recursos/css/style10.css" />                                    
+        <script type="text/javascript" src="recursos/js/jquery-1.4.2.min.js"></script>        
+        <script type="text/javascript" src="recursos/js/coin-slider.min.js"></script>          
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#games').coinslider({hoverPause: false});
+            });
+            function leerGET() {
+                var cadGET = location.search.substr(1, location.search.length);
+                document.getElementById('IdEndSession').style.display = 'none';
+                document.getElementById('IdCloseSession').style.display = 'none';
+                document.getElementById('IdNoSession').style.display = 'none';
+                if (cadGET.indexOf("timeout") !== -1) {
+                    document.getElementById('IdEndSession').style.display = 'block';
+                }
+                if (cadGET.indexOf("close") !== -1) {
+                    document.getElementById('IdCloseSession').style.display = 'block';
+                }
+                if (cadGET.indexOf("nosession") !== -1) {
+                    document.getElementById('IdNoSession').style.display = 'block';
+                }
+            }
+            ;
+        </script>                
+    </head>
+    <body  onload="leerGET();">
+        <div style="
+             display: none;
+             position: absolute;
+             top: 10px;
+             right: 10px;"
+             id="IdEndSession">
+            <img src="recursos/img/timeout_sesion.png" />                
+        </div>
+        <div style="
+             display: none;
+             position: absolute;
+             top: 10px;
+             right: 10px;"
+             id="IdCloseSession">
+            <img src="recursos/img/close_sesion.png" />                
+        </div>
+        <div style="
+             display: none;
+             position: absolute;
+             top: 10px;
+             right: 10px;"
+             id="IdNoSession">
+            <img src="recursos/img/no_sesion.png" />                
+        </div>        
+        <table style="margin: 0 auto;">
+            <tr>
+                <td>
+                    <div id="gamesHolder" style="margin-top: 50px;">
+                        <div id="games">
+                            <a href="#">
+                                <img src="recursos/img/fotoInicio5.jpg" alt="Logo Uno" />
+                                <span>
+                                    <b>Central</b><br />
+                                    Permite la gesti&oacute;n de Toda actividad asistencial y financiera producida sobre el paciente.
+                                </span>
+                            </a>
+                            <a href="#">
+                                <img src="recursos/img/fotoInicio6.jpg" alt="Logo Uno" />
+                                <span>
+                                    <b>Modular</b><br />
+                                    Permite la interacci&oacute;n con los diferentes m&oacute;dulos que lo conforman.
+                                </span>
+                            </a>
+                            <a href="#">
+                                <img src="recursos/img/fotoInicio7.jpg" alt="Logo Uno" />
+                                <span>
+                                    <b>Adaptaci&oacute;n</b><br />
+                                    Se brinda una alta adaptaci&oacute;n a los diferentes procesos de las entidades de salud.
+                                </span>
+                            </a>
+                            <a href="#">
+                                <img src="recursos/img/fotoInicio8.jpg" alt="Logo Uno" />
+                                <span>
+                                    <b>Tecnolog&iacute;a</b><br />
+                                    Desarrollo realizado con nuevas tecnologias en seguridad y agilidad de procesos.
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </td>
+                <td style="vertical-align: central; text-align: center;">
+                    <div style="width: 300px; height:100px;">
+                        <img src="recursos/img/logo.png"/>
+                        <br/>
+                        <a href="faces/login.xhtml">                        
+                            <img src="recursos/img/btnIniciarSesion.png"/>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="main"> 
+                        <!-- TENTH EXAMPLE -->
+                        <div class="view view-tenth">
+                            <img src="recursos/img/fotoInicio5.jpg" />
+                            <div class="mask">
+                                <h2>Central</h2>
+                                <p>Permite la gesti&oacute;n de Toda actividad asistencial y financiera producida sobre el paciente.</p>                        
+                            </div>
+
+                        </div>
+                        <div class="view view-tenth">
+                            <img src="recursos/img/fotoInicio6.jpg" />
+                            <div class="mask">
+                                <h2>Modular</h2>
+                                <p>Permite la interacci&oacute;n con los diferentes m&oacute;dulos que lo conforman.</p>
+
+                            </div>
+
+                        </div>
+                        <div class="view view-tenth">
+                            <img src="recursos/img/fotoInicio7.jpg" />
+                            <div class="mask">
+                                <h2>Adaptaci&oacute;n</h2>
+                                <p>Se brinda una alta adaptaci&oacute;n a los diferentes procesos de las entidades de salud.</p>
+
+                            </div>
+
+                        </div>
+                        <div class="view view-tenth">
+                            <img src="recursos/img/fotoInicio8.jpg" />
+                            <div class="mask">
+                                <h2>Tecnolog&iacute;a</h2>
+                                <p>Desarrollo realizado con nuevas tecnologias en seguridad y agilidad de procesos.</p>
+
+                            </div>                    
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

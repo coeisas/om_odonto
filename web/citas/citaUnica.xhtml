@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+        <script type="text/javascript">
+            function tab() {
+                document.getElementById('formDatosPaciente:iddocumento').focus();
+            }
+        </script>
+    </h:head>
+    <h:body>
+        <p:growl autoUpdate="true" showDetail="true"/> 
+        <br/>        
+        #{citasMB.findprestador()}
+
+
+        <!-- SELECCION DEL PACIENTE -->                    
+        <p:fieldset legend="Paciente">
+            <h:form id="formDatosPaciente">
+                <table>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="labelFormularioBold" id="idtipodocumento" value="#{citasMB.pacienteSeleccionado.tipoIdentificacion.descripcion}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:inputText  styleClass="campoFormulario"  id="iddocumento" size="25" value="#{citasMB.identificacion}" >
+                                <p:ajax event="blur" listener="#{citasMB.findPaciente}" update=":formDatosPaciente :formCita"/>
+                            </p:inputText>
+                            <p:watermark for="iddocumento" value="Identificación paciente"/>
+                            <p:commandButton
+                                id="cbtnPaciente"
+                                styleClass="campoFormulario"
+                                title="Paciente"
+                                onclick="PF('dlgPaciente').show();"
+                                icon="ui-icon-search"
+                                style="width: 23px; height: 23px;"/>                                
+                            <p:outputLabel styleClass="labelFormularioBold" value="Paciente:" rendered="#{citasMB.hayPacienteSeleccionado}" />
+                            <p:outputLabel styleClass="labelFormulario" id="idpaciente" value="#{citasMB.pacienteSeleccionado.primerNombre} #{citasMB.pacienteSeleccionado.segundoNombre} #{citasMB.pacienteSeleccionado.primerApellido} #{citasMB.pacienteSeleccionado.segundoApellido}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Género:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" id="idsexo" value="#{citasMB.pacienteSeleccionado.genero.observacion}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Fecha Nacimiento:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario"  id="idfecnac" value="#{citasMB.pacienteSeleccionado.fechaNacimiento}" rendered="#{citasMB.hayPacienteSeleccionado}">
+                                <f:convertDateTime locale="es_CO" pattern="MM/dd/yyyy"/>   
+                            </p:outputLabel>                                       
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Edad:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" id="idedad" value="#{citasMB.pacienteSeleccionado.edad}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="G.S. RH:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel  styleClass="labelFormulario" id="idrh" value="#{citasMB.pacienteSeleccionado.grupoSanguineo.descripcion}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Estado Civil:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel  styleClass="labelFormulario" id="idecivil" value="#{citasMB.pacienteSeleccionado.estadoCivil.descripcion}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Lugar Nacimiento:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" id="idlugnac"  value="#{citasMB.pacienteSeleccionado.municipio.descripcion} #{citasMB.pacienteSeleccionado.departamento.descripcion}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Teléfono:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" id="idtel" value="#{citasMB.pacienteSeleccionado.telefonoResidencia}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Dirección:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel  styleClass="labelFormulario" id="iddir" value="#{citasMB.pacienteSeleccionado.direccion}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Administradora:" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" id="idadministradora" value="#{citasMB.pacienteSeleccionado.idAdministradora.razonSocial}" rendered="#{citasMB.hayPacienteSeleccionado}"/>
+                        </td>
+                    </tr>
+                </table>   
+            </h:form>
+        </p:fieldset>
+        <!-- DETALLES DE LA CITA -->
+        <p:fieldset legend="Detalles de la Cita">
+            <h:form id="formCita" style="display: #{citasMB.displayPaciente}">                
+                <table>  
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Servicio:"/>
+
+                            <p:selectOneMenu styleClass="campoFormulario" id="selectipocita" value="#{citasMB.idServicio}" style="width: 250px;">
+                                <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems  value="#{citasMB.listaServicios}" /> 
+                                <p:ajax event="change" update=":pdautorizacion campoautorizacion selectipocita" listener="#{citasMB.validarAutorizacion(1)}"/>
+                            </p:selectOneMenu>
+
+
+                            <p:outputLabel styleClass="labelFormularioBold" value="Motivo Consulta:"/>
+
+                            <p:selectOneMenu styleClass="campoFormulario" id="selecmotitconsultas" value="#{citasMB.motivoConsulta}" style="width: 250px;">
+                                <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems  value="#{aplicacionGeneralMB.listaMotivoConsulta}" /> 
+                                <p:ajax event="change" update="@form"/>
+                            </p:selectOneMenu>                                
+                            <p:outputLabel styleClass="labelFormularioBold" value="No Autorizacion:"/>
+                            <p:outputLabel styleClass="labelFormulario" id="campoautorizacion" value="#{citasMB.autorizacionSeleccionada.numAutorizacion}"/>
+
+                            <p:commandButton 
+                                title="Autorizaciones"                                        
+                                styleClass="icon-clipboard-2 fg-lightBlue bg-white no-border campoFormulario"
+                                actionListener="#{citasMB.abrirTabAutorizaciones()}"
+                                value="&nbsp;"
+                                style="font-size: 20px; width: 20px; height: 20px;"/>                                      
+                        </td>
+                    </tr>
+                </table>
+            </h:form>                
+        </p:fieldset>
+        <!-- SELECCION DEL PRESTADOR -->                
+        <p:fieldset legend="Detalles Prestador">
+            <h:form id="formprestador">
+                <table>
+                    <tr>
+                        <td>
+                            <p:inputText id="idcodprestador" styleClass="campoFormulario" value="#{citasMB.id_prestador}" size="25">
+                                <p:ajax event="blur" listener="#{citasMB.findprestador}" update="@form :fstsch"/>
+                            </p:inputText>
+                            <p:watermark for="idcodprestador" value="Identificación Prestador"/>
+                            <p:commandButton 
+                                title="Prestador"    
+                                styleClass="campoFormulario"
+                                onclick="PF('dlgfindPrestador').show();" 
+                                icon="ui-icon-search"
+                                style="width: 23px; height: 23px;"/>                
+                            <p:outputLabel styleClass="labelFormularioBold" value="Dr(a):" rendered="#{citasMB.hayPrestadorSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" value="#{citasMB.prestadorSeleccionado.primerNombre} #{citasMB.prestadorSeleccionado.segundoNombre} #{citasMB.prestadorSeleccionado.primerApellido} #{citasMB.prestadorSeleccionado.segundoApellido}" rendered="#{citasMB.hayPrestadorSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="Especialidad:" rendered="#{citasMB.hayPrestadorSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" value="#{citasMB.prestadorSeleccionado.especialidad.descripcion}" rendered="#{citasMB.hayPrestadorSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="No Registro:" rendered="#{citasMB.hayPrestadorSeleccionado}"/>
+                            <p:outputLabel styleClass="labelFormulario" value="#{citasMB.prestadorSeleccionado.registroProfesional}" rendered="#{citasMB.hayPrestadorSeleccionado}"/>
+                        </td>
+                    </tr>
+                </table>
+            </h:form>        
+            <br/>
+            <h:form id="fstsch">
+                <p:growl id="messages" showDetail="true" />
+                <!-- h2 align="center"># {citasMB.prestadorSeleccionado eq null ? null : citasMB.nombreCompleto}</h2 -->
+                <p:panel style="border: none" rendered="#{citasMB.hayPrestadorSeleccionado}">
+                    <table>
+                        <tr>
+                            <td><p:outputLabel value="Asignado"/></td>
+                            <td><div class="asignado" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                            <td><p:outputLabel value="Reservado" /></td>
+                            <td><div class="reservado" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                            <td><p:outputLabel value="Disponible"/></td>
+                            <td><div class="disponible" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                            <td><p:outputLabel value="No Disponible"/></td>
+                            <td><div class="no_disponible" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        </tr>
+                    </table>
+                </p:panel>
+                <br/>
+                <p:schedule id="schTurnos" draggable="false" resizable="false" value="#{citasMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" timeFormat="hh:mm" allDaySlot="false" rendered="#{citasMB.hayPrestadorSeleccionado}">
+                    <p:ajax event="eventSelect" listener="#{citasMB.onEventSelect}" update="fstsch:eventDetails" oncomplete="PF('eventDialog').show();"/>
+                </p:schedule>
+                <p:dialog id="pdialog" widgetVar="eventDialog" header="Detalles de la cita" modal="true" resizable="false">
+                    <h:panelGrid id="eventDetails" columns="2">
+                        <p:outputLabel for="title" value="No turno:" />
+                        <p:inputText id="title" value="#{citasMB.idTurno}" required="true" readonly="true"/>
+                        <p:outputLabel for="paciente" value="Paciente:" rendered="#{citasMB.rend}"/>
+                        <p:inputText rendered="#{citasMB.rend}" readonly="true" id="paciente" value="#{citasMB.citaSeleccionada.idPaciente.nombreCompleto()}" size="60"/>
+                        <p:outputLabel  rendered="#{citasMB.rend}" for="administradora" value="Administradora:"/>
+                        <p:inputText rendered="#{citasMB.rend}" id="administradora" readonly="true" value="#{citasMB.citaSeleccionada.idPaciente.idAdministradora.razonSocial}" size="60"/>
+                        <p:commandButton 
+                            id="btnCrearCita"
+                            value = "Crear Cita"
+                            rendered="#{citasMB.rendBtnElegir}"
+                            oncomplete = "PF('eventDialog').hide();"
+                            actionListener="#{citasMB.guardarCita}"
+                            update = ":formDatosPaciente :formprestador :formCita :fstsch :cancelar"
+                            />
+                        <p:commandButton 
+                            id="btnReservar"
+                            rendered="#{citasMB.rendBtnReservar}"
+                            value = "Reservar Turno"
+                            oncomplete = "PF('eventDialog').hide();"
+                            actionListener="#{citasMB.reservarCita}"
+                            update = ":formDatosPaciente :formprestador :fstsch"
+                            />
+                        <h:panelGroup rendered="#{citasMB.renderizarbotones}">
+                            <p:commandButton rendered="#{!citasMB.citaSeleccionada.cancelada}" style="font-size: 15px; width: 15px; height: 15px;left: 15px;" styleClass="icon-cancel fg-lightBlue bg-white no-border" title="Cancelar cita" value="&nbsp;" onclick="PF('dlgcancelar').show();" actionListener="#{citasMB.seleccionarCita}" update=":cancelar">
+                                <f:attribute name="id_cita" value="#{citasMB.citaSeleccionada.idCita}"/>
+                            </p:commandButton>
+                            <p:commandButton style="font-size: 15px; width: 15px; height: 15px;left: 30px;" styleClass="icon-file-pdf fg-lightBlue bg-white no-border" title="Recordatorio" value="&nbsp;" actionListener="#{reporteCitasMB.generarRecordatorio}" ajax="false" onclick="this.form.target = '_blank'">
+                                <f:attribute name="id_cita" value="#{citasMB.citaSeleccionada.idCita}"/>
+                                <f:attribute name="user" value="#{loginMB.usuarioActual.primerNombre} #{loginMB.usuarioActual.segundoNombre} #{loginMB.usuarioActual.primerApellido} #{loginMB.usuarioActual.segundoApellido}" />
+                                <f:attribute name="logo_empresa" value="#{loginMB.rutaCarpetaImagenes}#{loginMB.empresaActual.logo.urlImagen}" />
+                            </p:commandButton>                            
+                            <!-- p:commandButton style="font-size: 15px; width: 15px; height: 15px;left: 45px;" styleClass="icon-dollar-2 fg-lightBlue bg-white no-border" title="Facturar" value="&nbsp;">
+                                <f:attribute name="id_cita" value="# {citasMB.citaSeleccionada.idCita}"/>
+                            </p:commandButton -->
+                        </h:panelGroup>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+        </p:fieldset>
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+            <h:form id="formFindPaciente">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable
+                                id="tableElegirPaciente"
+                                var="paciente" 
+                                value="#{citasMB.listaPacientes}"
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{citasMB.pacienteSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                lazy="true"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No se encontraron pacientes"
+                                scrollable="true" 
+                                pageLinks="5"
+                                widgetVar="pacientesTable"
+                                selectionMode="single"
+                                resizableColumns="true"
+                                >
+                                <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                                    <h:outputText value="#{paciente.identificacion}"/>                                  
+                                </p:column>
+                                <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                                    <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <!--
+                            agregar el actionListener citasMB.loadServicios cuando los servicios dependan del contrato de la administradora, el genero, la edad y la zona del paciente
+                            -->
+                            <p:commandButton
+                                id="cbtnPaciente"
+                                value="Cargar Paciente"
+                                update = ":formDatosPaciente :formCita :autorizar"
+                                actionListener="#{citasMB.actualizarPaciente()}"
+                                oncomplete = "PF('dlgPaciente').hide();"                                
+                                />
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgfindPrestador" resizable="false" modal="true">
+
+            <br/>
+            <h:form id="formFindPrestador">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorEsp"
+                                var="prestador" 
+                                value="#{citasMB.listaPrestadores}"
+                                rowKey="#{prestador.idUsuario}"  
+                                selection="#{citasMB.prestadorSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                widgetVar="prestadoresTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay prestadores"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">
+                                <p:column headerText="Nombre" filterBy="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}"  filterMatchMode="contains" filterStyle="width: 250px;">
+                                    <h:outputText value="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" />
+                                </p:column>
+                                <p:column headerText="Especialidad" filterBy="#{prestador.especialidad.id}" filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('prestadoresTable').filter()" style="width: 250px;" >
+                                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems  value="#{citasMB.listaEspecialidades}" />
+                                        </p:selectOneMenu>
+                                    </f:facet>        
+                                    <h:outputText value="#{prestador.especialidad.descripcion}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnprestador'
+                                value = "Cargar Prestador"
+                                action="#{citasMB.actualizarPrestador()}"
+                                update=":fstsch :formprestador"
+                                oncomplete = "PF('dlgfindPrestador').hide();">
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog>
+
+
+        <p:dialog  widgetVar="dlgcancelar" header="Cancelar Cita" modal="true" width="60%" resizable="false">
+            <h:form id="cancelar">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Cita No:"/>
+                    <p:inputText value="#{citasMB.citaSelecionada.idCita}" readonly="true" />
+                    <p:outputLabel value="Motivo Cancelacion:" />
+                    <p:selectOneMenu id="selectMotCanc" value="#{citasMB.motivoCancelacion}" style="width: 300px;">
+                        <f:selectItems  value="#{aplicacionGeneralMB.listaMotivoCancelacionCitas}" /> 
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Descripcion:" />
+                    <p:inputTextarea rows="6" cols="33" value="#{citasMB.descripcionCancelacion}" />
+                </h:panelGrid>
+                <br/>
+                <p:commandButton value="Cancelar Cita" actionListener="#{citasMB.cancelarCita}" action="#{citasMB.loadEvents()}" oncomplete = "PF('dlgcancelar').hide();" update=":fstsch"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog  widgetVar="dlgautorizacion" header="Registrar Autorizacion" modal="true" resizable="false">
+            <h:form id="autorizar">
+                <p:panelGrid style="margin: 0 auto" columns="2" styleClass="panelGridSinBordes">
+                    <p:outputLabel value="Identificacion:"/>
+                    <p:outputLabel value="#{citasMB.pacienteSeleccionado.identificacion}" />
+                    <p:outputLabel value="Paciente:"/>
+                    <p:outputLabel value="#{citasMB.pacienteSeleccionado.primerNombre} #{citasMB.pacienteSeleccionado.segundoNombre} #{citasMB.pacienteSeleccionado.primerApellido} #{citasMB.pacienteSeleccionado.segundoApellido}" />
+                    <p:outputLabel value="Administradora:"/>
+                    <p:outputLabel value="#{citasMB.pacienteSeleccionado.idAdministradora.razonSocial}"/>
+                    <p:outputLabel value="Servicio:"/>
+                    <p:outputLabel value="#{citasMB.nombreServicio}"/>
+                    <p:outputLabel value="Sesiones:"/>
+                    <p:spinner id="cantidad" value="#{citasMB.sesionesAutorizadas}" min="1" max="300"  size="3"/>
+                    <p:outputLabel value="No Autorizacion:"/>
+                    <p:inputText id="numauto" value="#{citasMB.numAutorizacion}" maxlength="10" size="11"/>
+                </p:panelGrid>
+                <br/>
+                <div align="center">
+                    <p:commandButton value="Crear Autorizacion" actionListener="#{citasMB.crearAutorizacion()}" oncomplete="PF('dlgautorizacion').hide();" update=":formCita:campoautorizacion :pdautorizacion" />
+                </div>
+            </h:form>
+        </p:dialog>        
+
+        <p:dialog id="pdautorizacion" header="Información de la Autorizacion" widgetVar="dlgresautorizacion" modal="true" resizable="false">
+            <p:panelGrid  id="pgautorizacion">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column rowspan="2">No. Autorizacion</p:column>
+                        <p:column rowspan="2">Servicio</p:column>
+                        <p:column colspan="3">Sesiones</p:column>
+                    </p:row>                                        
+                    <p:row>
+
+                        <p:column>Autorizadas</p:column>
+                        <p:column>Realizadas</p:column>
+                        <p:column>Pendientes</p:column>
+                    </p:row>
+
+                </f:facet>
+                <p:row>
+                    <p:column >#{citasMB.autorizacionSeleccionada.numAutorizacion}</p:column>
+                    <p:column >#{citasMB.autorizacionServicioSeleccionado.facServicio.nombreServicio}</p:column>
+                    <p:column >#{citasMB.autorizacionServicioSeleccionado.sesionesAutorizadas}</p:column>
+                    <p:column >#{citasMB.autorizacionServicioSeleccionado.sesionesRealizadas}</p:column>
+                    <p:column >#{citasMB.autorizacionServicioSeleccionado.sesionesPendientes}</p:column>
+                </p:row>
+            </p:panelGrid>            
+        </p:dialog>
+    </h:body>
+</html>
+

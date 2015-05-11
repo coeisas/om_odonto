@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"      
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>OPENMEDICAL- INGRESO</title>
+        <link href="recursos/img/favicon.png" type="image/png" rel="icon"/>
+        <link href="recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="recursos/css/iconFont.css" rel="stylesheet"/>
+        <link href="recursos/css/estilos.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="recursos/css/coin-slider-styles.css" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="recursos/css/style_common.css" />
+        <link rel="stylesheet" type="text/css" href="recursos/css/style10.css" />
+        <script type="text/javascript" src="recursos/js/coin-slider.min.js"></script>          
+        <script type="text/javascript">            
+            //<![CDATA[
+            //la anterior linea va obligatoriamente            
+            $(document).ready(function () {//activa las animaciones de las imagenes
+                $('#games').coinslider({hoverPause: false});
+            });
+            function capLock(e) {//identifica activo o no de 'Bloq Mayus'
+                kc = e.keyCode ? e.keyCode : e.which;
+                sk = e.shiftKey ? e.shiftKey : ((kc === 16) ? true : false);
+                if (((kc >= 65 && kc <= 90) && !sk) || ((kc >= 97 && kc <= 122) && sk))
+                    document.getElementById('caplock').style.visibility = 'visible';
+                else
+                    document.getElementById('caplock').style.visibility = 'hidden';
+            }
+            //]]>
+        </script>
+    </h:head>
+    <h:body style="font-size: 13px;">
+        <h:form>
+            #{loginMB.inicializar()}
+            #{loginMB.cargarSedes()}
+            #{pacientesMB.inicializar()}
+            #{aplicacionGeneralMB.inicializar()}            
+            
+            <p:commandButton value="migracion" title="no tocar"  actionListener="#{migracionMB.realizarMigracion}" rendered="false"/>
+            <table style="margin: 0 auto;">
+                <tr>
+                    <td>
+                        <div id="gamesHolder" style="margin-top: 50px;">
+                            <div id="games">
+                                <a href="#">
+                                    <img src="recursos/img/fotoInicio5.jpg" alt="Logo Uno" />
+                                    <span>
+                                        <b>Central</b><br />
+                                        Permite la gesti&oacute;n de Toda actividad asistencial y financiera producida sobre el paciente.
+                                    </span>
+                                </a>
+                                <a href="#">
+                                    <img src="recursos/img/fotoInicio6.jpg" alt="Logo Uno" />
+                                    <span>
+                                        <b>Modular</b><br />
+                                        Permite la interacci&oacute;n con los diferentes m&oacute;dulos que lo conforman.
+                                    </span>
+                                </a>
+                                <a href="#">
+                                    <img src="recursos/img/fotoInicio7.jpg" alt="Logo Uno" />
+                                    <span>
+                                        <b>Adaptaci&oacute;n</b><br />
+                                        Se brinda una alta adaptaci&oacute;n a los diferentes procesos de las entidades de salud.
+                                    </span>
+                                </a>
+                                <a href="#">
+                                    <img src="recursos/img/fotoInicio8.jpg" alt="Logo Uno" />
+                                    <span>
+                                        <b>Tecnolog&iacute;a</b><br />
+                                        Desarrollo realizado con nuevas tecnologias en seguridad y agilidad de procesos.
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div>                   
+                            <table style="width: 300px; height: 290px; ">                    
+                                <tr>
+                                    <td colspan="3" class="text-center padding10">
+                                        <img src="recursos/img/logo.png" />
+                                        <p:growl id="IdMensajes"  showDetail="true" sticky="false" autoUpdate="true" life="2000"/>
+                                    </td>
+                                </tr>
+
+                                <tr style="text-align: left;">
+                                    <td >
+                                        <h:outputText value="Base de datos: " />
+                                    </td>
+                                    <td >
+                                        <p:selectOneMenu  value="#{loginMB.baseDeDatosActual}" style="width: 150px;">
+                                            <f:ajax 
+                                                event="change"
+                                                listener="#{loginMB.cargarSedes}"                                                
+                                                render="IdSedes"/>                                                                                          
+                                            <!-- f:selectItem itemLabel="Pruebas" itemValue="Pruebas"  / -->
+                                            <f:selectItem itemLabel="Produccion" itemValue="Produccion"/>
+                                        </p:selectOneMenu>                                        
+                                    </td>                   
+                                </tr>
+                                <tr style="text-align: left;">
+                                    <td >
+                                        <h:outputText value="Centro de atención: " />
+                                    </td>
+                                    <td >
+                                        <p:selectOneMenu  value="#{loginMB.centroDeAtencion}" id="IdSedes" style="width: 150px;" >
+                                            <f:selectItems value="#{loginMB.listaCentrosDeAtencion}" />
+                                        </p:selectOneMenu>
+                                    </td>                   
+                                </tr>
+                                <tr style="text-align: left;">
+                                    <td >
+                                        <h:outputText value="Usuario: " />
+                                    </td>
+                                    <td >
+                                        <p:inputText id="loginname" size="25" value="#{loginMB.login}" onkeypress="capLock(event);" />
+                                    </td>
+                                </tr>
+                                <tr style="text-align: left;">
+                                    <td >
+                                        <h:outputText value="Clave: " />
+                                    </td>
+                                    <td >
+                                        <p:password id="password" size="25" value="#{loginMB.clave}" onkeypress="capLock(event);" />
+                                    </td>
+                                </tr>
+                                <tr style="text-align: left;">
+                                    <td>
+                                        &nbsp;
+                                    </td>
+                                    <td>
+                                        <div id="caplock" style="visibility:hidden; color: #c7cef4">El bloqueo de mayúsculas está activado</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-center bordered">
+                                        <p:commandButton                 
+                                            value="Iniciar Sesión"                                
+                                            action="#{loginMB.verificarUsuario}"
+                                            update="IdMensajes password"/>                                                                                                    
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+
+                        <div class="main"> 
+                            <!-- TENTH EXAMPLE -->
+                            <div class="view view-tenth">
+                                <img src="recursos/img/fotoInicio5.jpg" />
+                                <div class="mask">
+                                    <h2>Eficiencia</h2>
+                                    <p>A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.</p>                        
+                                </div>
+
+                            </div>
+                            <div class="view view-tenth">
+                                <img src="recursos/img/fotoInicio6.jpg" />
+                                <div class="mask">
+                                    <h2>Ultima Tecnologia</h2>
+                                    <p>A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.</p>
+                                </div>
+                            </div>
+                            <div class="view view-tenth">
+                                <img src="recursos/img/fotoInicio7.jpg" />
+                                <div class="mask">
+                                    <h2>Info Uno</h2>
+                                    <p>A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.</p>
+                                </div>
+                            </div>
+                            <div class="view view-tenth">
+                                <img src="recursos/img/fotoInicio8.jpg" />
+                                <div class="mask">
+                                    <h2>Info 2</h2>
+                                    <p>A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.</p>
+                                </div>                    
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+            </table>
+            <!--p:commandButton value="Basic" type="button" onclick="PF('closeSessionDialog').show();" /-->            
+            <p:dialog 
+                id="IdCloseSessionDialog"  
+                modal="true"
+                header="Otra Sesión Iniciada"         
+                resizable="false"                    
+                widgetVar="closeSessionDialog">  
+                <br/>
+                <p:inputTextarea 
+                    value="Este usuario tiene una sesión abierta actualmente, ¿ desea cerrar la otra sesión e iniciar una nueva en este momento?" 
+                    readonly="true" 
+                    style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 60px; width: 320px;"/>
+                <br/>                    
+                <br/>
+                <p:commandButton                        
+                    value="Continuar"
+                    style="margin:0;"
+                    action="#{loginMB.cerrarSesionAbrirNueva}"
+                    oncomplete="closeSessionDialog.hide()"
+                    update="@form"/>                      
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,240 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>       
+    </h:head>
+    <h:body>
+        #{agendaRecepcionMB.loadEvents()}
+        <h:form id="formRecepcion">
+            <p:growl id="message" showDetail="true" autoUpdate="true"/>
+            <table>
+                <tr>
+                    <td>
+                        <p:inputText id="identificacionPrestador" styleClass="campoFormulario" value="#{agendaRecepcionMB.identificacion}" size="32">
+                            <p:ajax event="blur" listener="#{agendaRecepcionMB.validarIdentificacion()}" update="@form"/>
+                        </p:inputText>
+                        <p:watermark for="identificacionPrestador" value="Digite identificación prestador"/>
+                        <p:commandButton 
+                            title="Buscar Prestador"                                        
+                            styleClass="campoFormulario"
+                            onclick="PF('dlgfindPrestador').show();" 
+                            icon="ui-icon-search"/>                    
+                        <p:outputLabel styleClass="labelFormularioBold" value="Dr(a):" rendered="#{agendaRecepcionMB.hayPrestadorSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" value="#{agendaRecepcionMB.prestadorActual.primerNombre} #{agendaRecepcionMB.prestadorActual.segundoNombre} #{agendaRecepcionMB.prestadorActual.primerApellido} #{agendaRecepcionMB.prestadorActual.segundoApellido}" rendered="#{agendaRecepcionMB.hayPrestadorSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Especialidad:" rendered="#{agendaRecepcionMB.hayPrestadorSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" value="#{agendaRecepcionMB.prestadorActual.especialidad.descripcion}" rendered="#{agendaRecepcionMB.hayPrestadorSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="No Registro:" rendered="#{agendaRecepcionMB.hayPrestadorSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" value="#{agendaRecepcionMB.prestadorActual.registroProfesional}" rendered="#{agendaRecepcionMB.hayPrestadorSeleccionado}"/>
+                    </td>
+                </tr>
+            </table> 
+            <br/>
+            <p:panel rendered="#{agendaRecepcionMB.renderAgenda}">
+                <table>
+                    <tr>
+                        <td><p:outputLabel value="No Atendido"/></td>
+                        <td><div class="no_atendido" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="Libre" /></td>
+                        <td><div class="libre" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="Atendido"/></td>
+                        <td><div class="atendido" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="En Espera"/></td>
+                        <td><div class="en_espera" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                    </tr>
+                </table>
+            </p:panel>
+            <br/>
+            <p:schedule id="agenda" rendered="#{agendaRecepcionMB.renderAgenda}" draggable="false" resizable="false" value="#{agendaRecepcionMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" view="agendaDay" rightHeaderTemplate="agendaDay" leftHeaderTemplate="today" minTime="#{agendaRecepcionMB.minTime}" maxTime="#{agendaRecepcionMB.maxTime}" timeFormat="hh:mm" allDaySlot="false">
+                <p:ajax event="eventSelect" listener="#{agendaRecepcionMB.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();"/>
+            </p:schedule> 
+            <p:dialog id="pdialog" widgetVar="eventDialog" header="Detalles de la cita" modal="true" resizable="false">                
+                <p:panel id="eventDetails" style="border: none;">  
+                    <table>
+                        <tr>
+                            <td><p:outputLabel for="title" value="Turno No:" /></td>    
+                            <td><p:inputText id="title" value="#{agendaRecepcionMB.idTurno}" required="true" readonly="true"/></td>    
+                        </tr>
+                        <tr>
+                            <td><p:outputLabel for="paciente" value="Paciente:" rendered="#{agendaRecepcionMB.rend}"/></td>    
+                            <td><p:inputText rendered="#{agendaRecepcionMB.rend}" readonly="true" id="paciente" value="#{agendaRecepcionMB.citCita.idPaciente.nombreCompleto()}" size="60"/></td>    
+                        </tr>
+                        <tr>
+                            <td><p:outputLabel  rendered="#{agendaRecepcionMB.rend}" for="administradora" value="Administradora:"/></td>    
+                            <td><p:inputText rendered="#{agendaRecepcionMB.rend}" id="administradora" readonly="true" value="#{agendaRecepcionMB.citCita.idAdministradora.razonSocial}" size="60"/></td>    
+                        </tr>
+                        <tr>
+                            <td><p:outputLabel  rendered="#{agendaRecepcionMB.rend}" value="Servicio:"/></td>    
+                            <td><p:inputText rendered="#{agendaRecepcionMB.rend}" readonly="true" value="#{agendaRecepcionMB.citCita.idServicio.nombreServicio}" size="60"/></td>    
+                        </tr>
+                        <tr>
+                            <td>    
+                                &nbsp;
+                            </td>    
+                        </tr>
+                        <tr>
+                            <td colspan="2">                                
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <p:commandButton 
+                                                id="btnCrearAutorizacion"
+                                                title="Crear Autorizacion"
+                                                value="&nbsp;"
+                                                disabled="#{!agendaRecepcionMB.rendBtnAutorizar}"
+                                                actionListener="#{agendaRecepcionMB.abrirTabAutorizaciones()}"
+                                                styleClass="icon-clipboard-2 fg-lightBlue bg-white no-border"
+                                                style="font-size: 20px; width: 20px; height: 20px; "/>
+                                        </td>
+                                        <td>
+                                            <p:commandButton
+                                                id="btnparticular"
+                                                title = "Cambiar a Particular"
+                                                value="&nbsp;"
+                                                actionListener="#{agendaRecepcionMB.cambiarParticular()}"
+                                                disabled="#{!agendaRecepcionMB.rendBtnParticular}"
+                                                styleClass="icon-tab fg-lightBlue bg-white no-border"
+                                                style="font-size: 20px; width: 20px; height: 20px; "/>
+                                        </td>
+                                        <td>
+                                            <p:commandButton 
+                                                id="btnCancelarCita"
+                                                title = "Cancelar Cita"
+                                                value="&nbsp;"
+                                                disabled="#{!agendaRecepcionMB.rendBtnCancelar}"
+                                                onclick = "PF('dlgcancelar').show();"
+                                                update=":cancelar"
+                                                styleClass="icon-cancel fg-lightBlue bg-white no-border"
+                                                style="font-size: 20px; width: 20px; height: 20px; "/>
+                                        </td>
+                                        <td>
+                                            <p:commandButton 
+                                                id="btnEnEspera"
+                                                title = "Paciente en Espera"
+                                                value="&nbsp;"
+                                                disabled="#{!agendaRecepcionMB.rendBtnEnEspera}"
+                                                actionListener="#{agendaRecepcionMB.citaEnEspera()}" 
+                                                styleClass="icon-busy fg-lightBlue bg-white no-border"
+                                                style="font-size: 20px; width: 20px; height: 20px; "/>
+                                        </td>
+                                        <td>
+                                            <p:commandButton                                     
+                                                title="Facturar paciente" 
+                                                value="&nbsp;"
+                                                disabled="#{!agendaRecepcionMB.renderedBtnFacturar}"   
+                                                
+                                                actionListener="#{agendaRecepcionMB.facturarPaciente}"
+                                                styleClass="icon-dollar-2 fg-lightBlue bg-white no-border"
+                                                style="font-size: 20px; width: 20px; height: 20px;"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>    
+                        </tr>
+                    </table>
+                </p:panel>                
+            </p:dialog>             
+        </h:form>
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgfindPrestador" resizable="false" modal="true">
+            <br/>
+            <h:form id="formFindPrestador">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorEsp"
+                                var="prestador" 
+                                value="#{agendaRecepcionMB.listaPrestadores}"
+                                rowKey="#{prestador.idUsuario}"  
+                                selection="#{agendaRecepcionMB.prestadorActual}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                widgetVar="prestadoresTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay prestadores"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">
+                                <p:column headerText="Nombre" filterBy="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}"  filterMatchMode="contains" filterStyle="width: 250px;">
+                                    <h:outputText value="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" />
+                                </p:column>
+                                <p:column headerText="Especialidad" filterBy="#{prestador.especialidad.id}" filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('prestadoresTable').filter()" style="width: 250px;" >
+                                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems  value="#{agendaRecepcionMB.listaEspecialidades}" />
+                                        </p:selectOneMenu>
+                                    </f:facet>        
+                                    <h:outputText value="#{prestador.especialidad.descripcion}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnprestador'
+                                value = "Cargar Prestador"
+                                actionListener="#{agendaRecepcionMB.loadEvents}"
+                                action="#{agendaRecepcionMB.actualizarPrestador}"
+                                update=":formRecepcion"
+                                oncomplete = "PF('dlgfindPrestador').hide();">
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog  widgetVar="dlgcancelar" header="Cancelar Cita" modal="true" width="60%" resizable="false">
+            <h:form id="cancelar">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Cita No:"/>
+                    <p:inputText value="#{agendaRecepcionMB.citCita.idCita}" readonly="true" />
+                    <p:outputLabel value="Motivo Cancelacion:" />
+                    <p:selectOneMenu id="selectMotCanc" value="#{agendaRecepcionMB.motivoCancelacion}" style="width: 300px;">
+                        <f:selectItems  value="#{aplicacionGeneralMB.listaMotivoCancelacionCitas}" /> 
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Descripcion:" />
+                    <p:inputTextarea rows="6" cols="33" value="#{agendaRecepcionMB.descripcionCancelacion}" />
+                </h:panelGrid>
+                <br/>
+                <p:commandButton value="Cancelar Cita" actionListener="#{agendaRecepcionMB.cancelarCita}" update="@none" onclick = "PF('dlgcancelar').hide();"/>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog  widgetVar="dlgautorizacion" header="Registrar Autorizacion" modal="true" resizable="false">
+            <h:form id="autorizar">
+                <p:panelGrid style="margin: 0 auto" columns="2" styleClass="panelGridSinBordes">
+                    <p:outputLabel value="#{agendaRecepcionMB.citCita.idPaciente.tipoIdentificacion.descripcion} #{agendaRecepcionMB.citCita.idPaciente.identificacion}"/>
+                    <p:outputLabel value ="#{agendaRecepcionMB.citCita.idPaciente.primerNombre} #{agendaRecepcionMB.citCita.idPaciente.primerApellido}"/>
+                    <p:outputLabel value="Administradora:"/>
+                    <p:outputLabel value="#{agendaRecepcionMB.citCita.idPaciente.idAdministradora.razonSocial}"/>
+                    <p:outputLabel value="Servicio:"/>
+                    <p:outputLabel value="#{agendaRecepcionMB.citCita.idServicio.nombreServicio}"/>
+                    <p:outputLabel value="Sesiones:"/>
+                    <p:spinner id="cantidad" value="#{agendaRecepcionMB.sesionesAutorizadas}" min="1" max="300"  size="3"/>
+                    <p:outputLabel value="No Autorizacion:"/>
+                    <p:inputText id="numauto" value="#{agendaRecepcionMB.numAutorizacion}" size="11" maxlength="10"/>
+                </p:panelGrid>
+                <br/>
+                <div align="center">
+                    <p:commandButton value="Crear Autorizacion" actionListener="#{agendaRecepcionMB.crearAutorizacion()}" oncomplete="PF('dlgautorizacion').hide();"/>
+                </div>
+            </h:form>
+        </p:dialog>        
+    </h:body>
+</html>
+

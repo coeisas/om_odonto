@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Informaci&oacute;n</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+
+        <h:form id="IdInformacion">
+            <p:growl id="IdMensajeInformacion" showDetail="true" />            
+            #{paginaInformativaMB.recargarControles()}
+            <br/>
+            <p:tabView>
+                <p:tab title="COBRO A ADMINISTRADORAS" rendered="#{paginaInformativaMB.mostrarTabFacturacion}">
+                    <br/><br/>
+                    <h2>
+                        <h:outputText style="margin-left: 20px;" value="No hay datos a mostrar" rendered="#{paginaInformativaMB.pastelFacturacion==null}"/>
+                    </h2>
+                    <br/>
+                    <h:panelGrid columns="1" cellpadding="5" class="centrar">
+                        <p:chart type="pie" model="#{paginaInformativaMB.pastelFacturacion}" style="width:700px;height:400px" rendered="#{paginaInformativaMB.pastelFacturacion!=null}"/>
+                    </h:panelGrid>
+                    <br/>
+                </p:tab>
+
+
+
+
+                <p:tab title="REGISTROS PENDIENTES" rendered="#{paginaInformativaMB.mostrarTabRegistrosPendientes}">
+                    <br/>                    
+                    <table class="centrar">
+                        <tr>
+                            <td>
+                                <h:panelGrid columns="1" cellpadding="5" class="centrar">
+                                    <p:chart type="pie" model="#{paginaInformativaMB.pastelRegistros}" style="width:400px;height:400px" rendered="#{paginaInformativaMB.pastelRegistros!=null}" />                        
+                                </h:panelGrid>  
+                            </td>
+                            <td>
+                                <p:dataTable 
+
+                                    id="IdTablaCitas" 
+                                    var="cita" 
+                                    widgetVar="wvTablaCitas"
+                                    value="#{paginaInformativaMB.listaCitasSinRegistro}" 
+                                    rowKey="#{cita.idCita}"  
+                                    selection="#{paginaInformativaMB.citaSeleccionadaTabla}" 
+                                    paginator="true"
+                                    rendered="#{paginaInformativaMB.pastelRegistros!=null}"
+                                    scrollWidth="100%"
+                                    scrollHeight="250"
+                                    rows="10"                                    
+                                    paginatorPosition="bottom"                                
+                                    emptyMessage="No hay citas con registros pendientes"
+                                    scrollable="true" 
+                                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                    pageLinks="5"
+                                    selectionMode="single"
+                                    resizableColumns="true">                                                                                               
+                                    <f:facet name="header">
+                                        TURNOS SIN REGISTRO CLINICO ASOCIADO                                        
+                                    </f:facet>                                    
+                                    <p:column headerText="TURNO" width="50" filterBy="#{cita.idTurno.idTurno}" filterMatchMode="contains">
+                                        #{cita.idTurno.idTurno}
+                                    </p:column>                                
+                                    <p:column headerText="PACIENTE" width="100" filterBy="#{cita.idPaciente.primerNombre}" filterMatchMode="contains">
+                                        #{cita.idPaciente.primerNombre} #{cita.idPaciente.primerApellido}
+                                    </p:column>                                
+                                    <p:column headerText="ADMINISTRADORA" width="100" filterBy="#{cita.idAdministradora.razonSocial}" filterMatchMode="contains">
+                                        #{cita.idAdministradora.razonSocial}
+                                    </p:column>
+                                    <p:column headerText="PRESTADOR" width="100" filterBy="#{cita.idPrestador.primerNombre}" filterMatchMode="contains">
+                                        #{cita.idPrestador.primerNombre} #{cita.idPrestador.primerApellido}
+                                    </p:column>
+                                </p:dataTable>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <p:commandButton value="Diligenciar Registro Clinico" actionListener="#{paginaInformativaMB.openHistoriaClinica}" update=":IdInformacion:IdMensajeInformacion" rendered="#{paginaInformativaMB.pastelRegistros!=null}"/>                                
+                            </td>
+                        </tr>
+                    </table>
+                    <h2>
+                        <h:outputText style="margin-left: 20px;" value="No hay registros pendientes" rendered="#{paginaInformativaMB.pastelRegistros==null}"/>
+                    </h2>
+                    <br/>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+    </h:body>
+</html>

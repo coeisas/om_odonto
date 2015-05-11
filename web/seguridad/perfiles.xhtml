@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Perfiles</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>     
+    </h:head>
+    <h:body >     
+        <h:form>  
+            <p:growl id="IdMensajePerfiles"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>
+            <div>
+                <p:commandButton 
+                    title="Nuevo" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"                     
+                    oncomplete="PF('dialogoNuevoPerfil').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoBuscarPerfil').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoEliminarPerfil').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    actionListener="#{perfilesMB.guardarPermisos}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                            
+            </div>
+            <br/>
+            <p:tabView id="IdTabPerfil" rendered="#{perfilesMB.perfilCargado}"  style=" width: 95%;  margin-left: 15px;" > 
+                <p:tab title="Permisos para el perfil: #{perfilesMB.nombrePerfilSeleccionado}">                      
+                    <p:tree  
+                        style="width: 98%; height: 385px; margin: 10px; overflow-x:hidden; overflow-y: scroll;"
+                        value="#{perfilesMB.nodoRaiz}" 
+                        var="nodoPerfil" 
+                        propagateSelectionDown="false"
+                        propagateSelectionUp="false"
+                        id="IdArbolPermisosPerfil"                        
+                        selectionMode="checkbox"
+                        selection="#{perfilesMB.nodosSeleccionadosArbol}">            
+                        <p:treeNode>                        
+                            <h:outputText value="#{nodoPerfil.nombreOpcion}" />
+                        </p:treeNode>                                                                                                                                            
+                    </p:tree>
+
+                </p:tab>
+            </p:tabView>
+            <br/>
+            <p:dialog styleClass="panelGridSinBordes" id="IdDialogoEditarPerfil" header="EDICION DE PERFIL" widgetVar="dialogoEditarPerfil" resizable="false" modal="true">  
+                <p:panelGrid id="panelEditarPerfil" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Id"/>  
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="# {perfilesMB.perfilSeleccionado.idPerfil}" /> 
+                        </p:column>
+                    </p:row>                        
+                    <p:row>
+                        <p:column>
+                            <h:outputText value="Nombre" />  
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="# {perfilesMB.perfilSeleccionado.nombrePerfil}" /> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2" styleClass="ui-widget-header">
+                            <p:commandButton 
+                                value="Actualizar" 
+                                icon="ui-icon-disk"/>                                
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>  
+            </p:dialog> 
+
+            <p:dialog id="IdDialogoBuscarPerfil" header="Buscar Perfil" widgetVar="dialogoBuscarPerfil" resizable="false" modal="true">                                  
+                <p:panel id="IdPanelBuscarPerfil">
+                    <p:dataTable                          
+                        id="IdTablaPerfiles" var="perfil" value="#{perfilesMB.listaPerfilesEntidad}" 
+                        rowKey="#{perfil.idPerfil}" selection="#{perfilesMB.perfilEntidadSeleccionado}" 
+                        paginator="true" rows="10" paginatorPosition="bottom" emptyMessage="No hay perfiles"
+                        scrollable="true" rowsPerPageTemplate="5,10,15" 
+                        pageLinks="5" selectionMode="single" resizableColumns="true"
+                        style="width: 500px;"
+                        styleClass=""
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">                        
+                        <p:column headerText="Id" >  
+                            #{perfil.idPerfil}  
+                        </p:column>                              
+                        <p:column headerText="Nombre Perfil" >  
+                            #{perfil.nombrePerfil}  
+                        </p:column>               
+                    </p:dataTable> 
+                    <br/>
+                    <p:commandButton 
+                        value="Cargar seleccionado"           
+                        oncomplete="PF('dialogoBuscarPerfil').hide();"
+                        update="@form"
+                        actionListener="#{perfilesMB.cargarPerfil}"/>
+                </p:panel>
+
+            </p:dialog> 
+
+            <p:dialog id="IdDialogoNuevoPerfil" header="Nuevo Perfil" widgetVar="dialogoNuevoPerfil" resizable="false" modal="true">  
+                <p:ajax event="close" update="@form"/>
+                <p:panelGrid id="IdPanelNuevoPerfil" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            Nombre
+                        </p:column>
+                        <p:column>
+                            <p:inputText value="#{perfilesMB.nombreNuevoPerfil}" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:commandButton 
+                                value="Crear" 
+                                actionListener="#{perfilesMB.crearPerfil}"
+                                update="@form"/>
+                            <p:commandButton 
+                                value="Cancelar" 
+                                oncomplete="PF('dialogoNuevoPerfil').hide();"
+                                update="@([id$=Perfil])"/>                            
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarPerfil" header="Eliminar Perfil" widgetVar="dialogoEliminarPerfil" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarPerfil" styleClass="panelGridSinBordes" columns="1">
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="¿ Confirma La eliminacion del Perfil: #{perfilesMB.nombrePerfilSeleccionado} ?"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Eliminar" 
+                                oncomplete="PF('dialogoEliminarPerfil').hide();"
+                                actionListener="#{perfilesMB.eliminarPerfil}"                        
+                                update="@form"/>
+                            <p:commandButton 
+                                value="Cancelar" 
+                                oncomplete="PF('dialogoEliminarPerfil').hide();"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog> 
+        </h:form>  
+    </h:body>
+</html>
+

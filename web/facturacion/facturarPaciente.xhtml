@@ -1,0 +1,956 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>
+        <title>Facturacion</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>  
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script> 
+    </h:head>
+    <h:body style="font-size: 11px; overflow: hidden;"> 
+        #{facturarPacienteMB.cargarDatosPaciente()}
+        <h:form id="IdFormFacturacion">            
+            <p:remoteCommand name="remoteCommand"  update=":IdFormFacturacion:IdTabView"/>            
+            <p:growl id="IdMensajeFacturacion"  showDetail="true" sticky="false" life="4000"/>
+            <p:panel id="IdpanelDatosPaciente" style=" margin-left: auto; margin-right: auto;">
+                <table class="centrar">
+                    <tr>
+                        <td colspan="2">                            
+                            <p:inputText id="IdTxtIdentificacion" styleClass="campoFormulario" size="22" value="#{facturarPacienteMB.identificacionPaciente}">                        
+                                <!-- p:ajax event="change" listener="# {facturarPacienteMB.validarIdentificacion}" oncomplete="remoteCooncommmand()"/ -->
+                                <p:ajax event="change" listener="#{facturarPacienteMB.validarIdentificacion}" update=":IdFormFacturacion" />
+                            </p:inputText>  
+                            <p:watermark for="IdTxtIdentificacion" value="Identificación paciente" />
+                            <p:commandButton styleClass="campoFormulario"     style="width: 22px; height: 22px;" title="Buscar paciente"    icon="ui-icon-search" onclick="PF('dlgSeleccionarPaciente').show();"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Nombre" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel styleClass="labelFormulario" value="#{facturarPacienteMB.nombrePaciente}" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel  styleClass="campoNoObligatorio" value="Género: " rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel  styleClass="labelFormulario"    value="#{facturarPacienteMB.generoPaciente}"  rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Edad: " rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarPacienteMB.edadPaciente}"  rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:outputLabel   styleClass="campoObligatorio" value="Caja" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:selectOneMenu id="IdComboCaja" styleClass="campoFormulario" style="width: 150px; #{facturarPacienteMB.estiloCaja}" value="#{facturarPacienteMB.caja}"  filter="true" filterMatchMode="contains" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}">
+                                <p:ajax event="change" update="IdpanelDatosPaciente" listener="#{facturarPacienteMB.cambiaCaja}"/>
+                                <f:selectItems value="#{facturarPacienteMB.listaCajas}" var="cajaItem" itemLabel="#{cajaItem.nombreCaja}" itemValue="#{cajaItem.idCaja}"/>
+                            </p:selectOneMenu>                       
+                            <p:tooltip for="IdComboCaja" value="#{facturarPacienteMB.msjHtmlCaja}" escape="false" /> 
+
+                            <p:outputLabel styleClass="campoNoObligatorio"  value="Administradora: "  rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel styleClass="labelFormulario"    style="width: 250px; overflow: hidden; display: inline-block; text-overflow:ellipsis; white-space: nowrap;" value="#{facturarPacienteMB.administradoraPaciente}" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+
+                            <p:outputLabel styleClass="campoNoObligatorio"  value="Turno: "  rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarPacienteMB.turnoCita}" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                        </td> 
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel   styleClass="campoObligatorio" value="Documento" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:selectOneMenu id="IdComboDocumento" styleClass="campoFormulario" style="width: 200px; #{facturarPacienteMB.estiloDocumento}" value="#{facturarPacienteMB.documento}"  filter="true" filterMatchMode="contains" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}">
+                                <p:ajax event="change" update="IdpanelDatosPaciente" listener="#{facturarPacienteMB.cambiaDocumento}"/>
+                                <f:selectItems value="#{facturarPacienteMB.listaDocumentos}" var="documentoItem" itemLabel="#{documentoItem.descripcion}" itemValue="#{documentoItem.id}"/>
+                            </p:selectOneMenu>                            
+                            <p:tooltip for="IdComboDocumento" value="#{facturarPacienteMB.msjHtmlDocumento}" escape="false" />                            
+
+
+                            <p:outputLabel   styleClass="campoObligatorio" value="Fecha" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            <p:calendar  id="IdFechaFactura"  styleClass="campoFormulario"  navigator="true" locale="es" style="#{facturarPacienteMB.estiloPeriodo}" value="#{facturarPacienteMB.fecha}" pattern="dd/MM/yyyy HH:mm" mask="true" size="18" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}">
+                                <p:ajax event="dateSelect" update="IdpanelDatosPaciente IdPanelResultados" listener="#{facturarPacienteMB.validaPeriodoImpuestos}"/>
+                            </p:calendar>
+                            <p:tooltip for="IdFechaFactura" value="#{facturarPacienteMB.msjHtmlPeriodo}" escape="false" />                            
+                            <p:commandButton 
+                                value="#{facturarPacienteMB.msjBtnFacturarParticular}" 
+                                title="Usar manual tarifario de administradora ó Particular"
+                                onclick="PF('dlgFacturarComoParticular').show();"
+                                rendered="#{facturarPacienteMB.pacienteSeleccionado != null}" 
+                                disabled="#{facturarPacienteMB.facturarComoParticularDisabled}"/> 
+                        </td>
+                        <td>
+                            <p:commandButton title="Buscar factura" value="Facturas existentes" onclick="PF('dlgSeleccionarFactura').show();" rendered="#{facturarPacienteMB.pacienteSeleccionado == null}"/> 
+                            <p:commandButton 
+                                title="Nueva factura" value="&nbsp;"                                        
+                                styleClass="icon-new fg-lightBlue bg-white no-border"                            
+                                oncomplete="remoteCommand()"
+                                actionListener="#{facturarPacienteMB.limpiarFormularioFacturacion}"
+                                update=":IdFormFacturacion"
+                                style="font-size: 20px; width: 20px; height: 20px;"
+                                rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/> 
+                            &nbsp;                            
+                            <p:commandButton 
+                                title="Buscar factura" value="&nbsp;"                                        
+                                styleClass="icon-search fg-lightBlue bg-white no-border" 
+                                onclick="PF('dlgSeleccionarFactura').show();"            
+                                style="font-size: 20px; width: 20px; height: 20px;"
+                                rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/> 
+                            &nbsp;                              
+                            <p:commandButton 
+                                title="Guardar Factura" value="&nbsp;"
+                                styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                                update="IdMensajeFacturacion"
+                                actionListener="#{facturarPacienteMB.guardarFactura}"
+                                style="font-size: 20px; width: 20px; height: 20px;"
+                                rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>                    
+                            &nbsp;
+                            <p:commandButton 
+                                title="Consumos" value="&nbsp;"
+                                styleClass="icon-cart-2 fg-lightBlue bg-white no-border"                                 
+                                actionListener="#{facturarPacienteMB.cargarDialogoConsumos}"
+                                style="font-size: 20px; width: 20px; height: 20px;"
+                                rendered="#{facturarPacienteMB.pacienteSeleccionado != null}"/>
+                            &nbsp;
+                        </td>
+                    </tr>                 
+                </table>
+            </p:panel>            
+            <p:panelGrid styleClass="panelGridSinBordes" style="margin-left: auto; margin-right: auto;" rendered="#{facturarPacienteMB.mensajeConfiguracion != null}" columns="2">
+                <p:outputLabel value=" "/>
+                <p:outputLabel value=" "/>
+                <p:outputLabel value=" "/>
+                <p:outputLabel value=" "/>
+                <h:graphicImage  value="../recursos/img/alert30x30.png" width="50" height="40" />   
+                <p:inputTextarea  value="#{facturarPacienteMB.mensajeConfiguracion}" rows="5" cols="50"/>                        
+            </p:panelGrid>
+            <p:tabView id="IdTabView" style=" margin-left: auto; margin-right: auto;" widgetVar="wvTabView" dynamic="true" rendered="#{facturarPacienteMB.pacienteSeleccionado != null}">                  
+                <p:tab title="#{facturarPacienteMB.tituloTabServiciosFactura}">
+                    <p:dataTable 
+                        id="IdTablaServiciosFactura" 
+                        var="servicioFactura" 
+                        widgetVar="wvTablaServiciosFactura"
+                        value="#{facturarPacienteMB.listaServiciosFactura}" 
+                        filteredValue="#{facturarPacienteMB.listaServiciosFacturaFiltro}"
+                        rowKey="#{servicioFactura.columna1}"  
+                        selection="#{facturarPacienteMB.servicioFacturaSeleccionado}"                                     
+                        paginator="true"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay servicios"
+                        scrollable="true" 
+                        scrollWidth="100%"
+                        scrollHeight="175"
+                        rows="7"
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            SERVICIOS
+                        </f:facet>
+                        <p:column headerText="#" width="30" filterBy="#{servicioFactura.columna1}" filterMatchMode="contains">
+                            #{servicioFactura.columna1}
+                        </p:column>
+                        <p:column headerText="FECHA" width="100" filterBy="#{servicioFactura.columna2}" filterMatchMode="contains">
+                            #{servicioFactura.columna2}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{servicioFactura.columna3}" filterMatchMode="contains">
+                            #{servicioFactura.columna3}
+                        </p:column>
+                        <p:column headerText="TARIFA" width="50" filterBy="#{servicioFactura.columna4}" filterMatchMode="contains">
+                            #{servicioFactura.columna4}
+                        </p:column>
+                        <p:column headerText="VLR UNITARIO" width="100" filterBy="#{servicioFactura.columna5}" filterMatchMode="contains">
+                            #{servicioFactura.columna5}
+                        </p:column>
+                        <p:column headerText="CANTIDAD" width="50" filterBy="#{servicioFactura.columna6}" filterMatchMode="contains">
+                            #{servicioFactura.columna6}
+                        </p:column>
+                        <p:column headerText="VLR FINAL" width="100" filterBy="#{servicioFactura.columna7}" filterMatchMode="contains">
+                            #{servicioFactura.columna7}
+                        </p:column>
+                        <p:column headerText="MEDICO" width="300" filterBy="#{servicioFactura.columna8}" filterMatchMode="contains">
+                            #{servicioFactura.columna8}
+                        </p:column>                                    
+                    </p:dataTable>                      
+                    <p:commandButton 
+                        title="Agregar Servicio" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{facturarPacienteMB.cargarDialogoAgregarServicio}"                        
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar servicio" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"
+                        update=":IdFormFacturacion :IdFormFacturacion:IdMensajeFacturacion"
+                        oncomplete="PF('wvTablaServiciosFactura').clearFilters(); PF('wvTablaServiciosFactura').getPaginator().setPage(0);"
+                        actionListener="#{facturarPacienteMB.quitarServicioFactura}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
+                </p:tab>
+                <p:tab title="#{facturarPacienteMB.tituloTabPaquetesFactura}">
+                    <p:dataTable 
+                        id="IdTablaPaqueteFactura" 
+                        var="paqueteFactura" 
+                        widgetVar="wvTablaPaquetesFactura"
+                        value="#{facturarPacienteMB.listaPaquetesFactura}" 
+                        filteredValue="#{facturarPacienteMB.listaPaquetesFacturaFiltro}"
+                        rowKey="#{paqueteFactura.columna1}"  
+                        selection="#{facturarPacienteMB.paqueteFacturaSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"
+                        scrollHeight="175"
+                        rows="7"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay paquetes"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            PAQUETES
+                        </f:facet>
+                        <p:column headerText="#" width="30" filterBy="#{paqueteFactura.columna1}" filterMatchMode="contains">
+                            #{paqueteFactura.columna1}
+                        </p:column>
+                        <p:column headerText="FECHA" width="100" filterBy="#{paqueteFactura.columna2}" filterMatchMode="contains">
+                            #{paqueteFactura.columna2}
+                        </p:column>                                    
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{paqueteFactura.columna3}" filterMatchMode="contains">
+                            #{paqueteFactura.columna3}
+                        </p:column>                                    
+                        <p:column headerText="VLR UNITARIO" width="100" filterBy="#{paqueteFactura.columna5}" filterMatchMode="contains">
+                            #{paqueteFactura.columna5}
+                        </p:column>                                    
+                        <p:column headerText="CANTIDAD" width="50" filterBy="#{paqueteFactura.columna6}" filterMatchMode="contains">
+                            #{paqueteFactura.columna6}
+                        </p:column>
+                        <p:column headerText="VLR FINAL" width="100" filterBy="#{paqueteFactura.columna7}" filterMatchMode="contains">
+                            #{paqueteFactura.columna7}
+                        </p:column>                                    
+                        <p:column headerText="MEDICO" width="300" filterBy="#{paqueteFactura.columna8}" filterMatchMode="contains">
+                            #{paqueteFactura.columna8}
+                        </p:column>                                                                        
+                    </p:dataTable>  
+                    <p:commandButton 
+                        title="Agregar paquete" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{facturarPacienteMB.cargarDialogoAgregarPaquete}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar paquete" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{facturarPacienteMB.quitarPaqueteFactura}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>
+                    &nbsp;
+                    <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
+                </p:tab>
+                <p:tab title="#{facturarPacienteMB.tituloTabMedicamentosFactura}"> 
+                    <p:dataTable 
+                        id="IdTablaMedicamentosFactura" 
+                        var="medicamentoFactura" 
+                        widgetVar="wvTablaMedicamentosFactura"
+                        value="#{facturarPacienteMB.listaMedicamentosFactura}" 
+                        filteredValue="#{facturarPacienteMB.listaMedicamentosFacturaFiltro}"
+                        rowKey="#{medicamentoFactura.columna1}"  
+                        selection="#{facturarPacienteMB.medicamentoFacturaSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"
+                        scrollHeight="175"
+                        rows="7"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay medicamentos"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            MEDICAMENTOS
+                        </f:facet>
+                        <p:column headerText="#" width="30" filterBy="#{medicamentoFactura.columna1}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna1}
+                        </p:column>
+                        <p:column headerText="FECHA" width="100" filterBy="#{medicamentoFactura.columna2}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna2}
+                        </p:column>                                    
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{medicamentoFactura.columna3}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna3}
+                        </p:column>                                   
+                        <p:column headerText="FORMA" width="200" filterBy="#{medicamentoFactura.columna4}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna4}
+                        </p:column>                                   
+                        <p:column headerText="VLR UNIARIO" width="100" filterBy="#{medicamentoFactura.columna5}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna5}
+                        </p:column>                                   
+                        <p:column headerText="CANTIDAD" width="50" filterBy="#{medicamentoFactura.columna6}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna6}
+                        </p:column>
+                        <p:column headerText="VLR FINAL" width="100" filterBy="#{medicamentoFactura.columna7}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna7}
+                        </p:column>                                    
+                        <p:column headerText="MEDICO" width="300" filterBy="#{medicamentoFactura.columna8}" filterMatchMode="contains">
+                            #{medicamentoFactura.columna8}
+                        </p:column>                    
+
+                    </p:dataTable>  
+                    <p:commandButton 
+                        title="Agregar medicamento" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{facturarPacienteMB.cargarDialogoAgregarMedicamento}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar medicamento" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{facturarPacienteMB.quitarMedicamentoFactura}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>
+                    &nbsp;
+                    <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
+                </p:tab>
+                <p:tab title="#{facturarPacienteMB.tituloTabInsumosFactura}">                    
+                    <p:dataTable 
+                        id="IdTablaInsumosFactura" 
+                        var="insumoFactura" 
+                        widgetVar="wvTablaInsumosFactura"
+                        value="#{facturarPacienteMB.listaInsumosFactura}" 
+                        filteredValue="#{facturarPacienteMB.listaInsumosFacturaFiltro}"
+                        rowKey="#{insumoFactura.columna1}"  
+                        selection="#{facturarPacienteMB.insumoFacturaSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"
+                        scrollHeight="175"
+                        rows="7"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay insumos"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            INSUMOS
+                        </f:facet>
+                        <p:column headerText="#" width="30" filterBy="#{insumoFactura.columna1}" filterMatchMode="contains">
+                            #{insumoFactura.columna1}
+                        </p:column>
+                        <p:column headerText="FECHA" width="100" filterBy="#{insumoFactura.columna2}" filterMatchMode="contains">
+                            #{insumoFactura.columna2}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{insumoFactura.columna3}" filterMatchMode="contains">
+                            #{insumoFactura.columna3}
+                        </p:column>
+                        <p:column headerText="VLR UNITARIO" width="100" filterBy="#{insumoFactura.columna4}" filterMatchMode="contains">
+                            #{insumoFactura.columna4}
+                        </p:column>
+                        <p:column headerText="CANTIDAD" width="50" filterBy="#{insumoFactura.columna5}" filterMatchMode="contains">
+                            #{insumoFactura.columna5}
+                        </p:column>
+                        <p:column headerText="VLR FINAL" width="100" filterBy="#{insumoFactura.columna6}" filterMatchMode="contains">
+                            #{insumoFactura.columna6}
+                        </p:column>
+                        <p:column headerText="MEDICO" width="300" filterBy="#{insumoFactura.columna7}" filterMatchMode="contains">
+                            #{insumoFactura.columna7}
+                        </p:column>
+                    </p:dataTable>  
+                    <p:commandButton 
+                        title="Agregar insumo" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{facturarPacienteMB.cargarDialogoAgregarInsumo}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar insumo" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{facturarPacienteMB.quitarInsumoFactura}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
+                </p:tab>
+            </p:tabView>            
+            <br/>
+            <p:panel id="IdPanelResultados" style="margin-top: -13px; padding-top: 0px; border: none;"  rendered="#{facturarPacienteMB.pacienteSeleccionado != null}">
+                <table class="centrar" >
+                    <tr>
+                        <td style="text-align: left;">
+                            <p:outputLabel styleClass="campoNoObligatorio" value="VLR PARCIAL " />
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarPacienteMB.valorParcial}"  />                                 
+                            <p:outputLabel styleClass="campoNoObligatorio" value="IVA " />
+                            <p:outputLabel id="IdIva" styleClass="labelFormulario"    value="#{facturarPacienteMB.valorIvaStr}" style="#{facturarPacienteMB.estiloIva}"/>                            
+                            <p:tooltip for="IdIva" value="#{facturarPacienteMB.msjHtmlIva}" escape="false"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="CREE" />
+                            <p:outputLabel id="IdCree" styleClass="labelFormulario"    value="#{facturarPacienteMB.valorCreeStr}"  style="#{facturarPacienteMB.estiloCree}"/>                            
+                            <p:tooltip for="IdCree" value="#{facturarPacienteMB.msjHtmlCree}" escape="false"/>                            
+                            <p:outputLabel  styleClass="campoNoObligatorio" value="COPAGO" />
+                            <p:outputLabel  styleClass="labelFormulario"    value="#{facturarPacienteMB.valorCopago}"/>                            
+                            <p:outputLabel  styleClass="campoNoObligatorio" value="CUOTA MOD." />
+                            <p:outputLabel  styleClass="labelFormulario"    value="#{facturarPacienteMB.valorCuotaModeradora}"/>
+
+                            <!-- p:commandButton actionListener="# {facturarPacienteMB.mostrarValoresPrueba}" value="mostrar valores prueba"/ -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">
+                            <p:outputLabel styleClass="campoNoObligatorio" value="VLR EMPRESA" />
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarPacienteMB.valorEmpresa}"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="VLR USUARIO" />
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarPacienteMB.valorUsuario}"/>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="VLR FACTURA" />
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarPacienteMB.valorTotal}"/>
+                        </td>
+                    </tr>
+                </table>
+            </p:panel>            
+            <p:dialog id="IdDialogoObservacionesFactura" header="Observaciones Factura" widgetVar="dialogoObservacionesFactura" resizable="false" modal="true">                  
+                <p:inputTextarea id="IdObservaciones" styleClass="campoFormulario" style="width: 300px; height: 150px;" value="#{facturarPacienteMB.observaciones}"/>
+                <p:watermark for="IdObservaciones" value="Observaciones Factura" />
+            </p:dialog>
+
+            <p:dialog header="SELECCION DE CONSUMOS" widgetVar="dlgSeleccionConsumos" id="IdDialogSeleccionConsumos" modal="true" resizable="false" closable="true">
+                <p:ajax event="close" update="IdTabView IdPanelResultados"/>
+
+                <p:tabView id="IdTabViewDialog" style="width: 99%; margin-left: auto; margin-right: auto;" dynamic="true">                  
+                    <p:tab title="#{facturarPacienteMB.tituloTabServiciosConsumo}">                    
+                        <br/>
+                        <p:commandButton 
+                            title="Agregar seleccionados a factura" value="&nbsp;"
+                            styleClass="icon-exit fg-lightBlue bg-white no-border"                            
+                            update="IdTabViewDialog :IdFormFacturacion:IdMensajeFacturacion"
+                            oncomplete="PF('wvTablaServiciosConsumo').clearFilters()"
+                            actionListener="#{facturarPacienteMB.agregarServiciosDesdeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        &nbsp;
+                        <p:commandButton 
+                            title="Seleccionar todos/ninguno" value="&nbsp;"                                        
+                            styleClass="icon-checkmark fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog"
+                            actionListener="#{facturarPacienteMB.seleccionarTodoNingunServicioDeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        <br/><br/>
+                        <table style="margin-left: auto; margin-right: auto;" >                         
+                            <tr>
+                                <td>                                
+                                    <p:dataTable 
+                                        id="IdTablaServiciosConsumo" 
+                                        var="servicioConsumo" 
+                                        widgetVar="wvTablaServiciosConsumo"
+                                        value="#{facturarPacienteMB.listaServiciosConsumo}" 
+                                        filteredValue="#{facturarPacienteMB.listaServiciosConsumoFiltro}"
+                                        rowKey="#{servicioConsumo.columna1}"  
+                                        selection="#{facturarPacienteMB.serviciosConsumoSeleccionados}"                                     
+                                        paginator="true"
+                                        rows="10"                                    
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="No hay consumos de tipo Servicio para este paciente"
+                                        scrollable="true" 
+                                        scrollWidth="730"  
+                                        scrollHeight="250"
+                                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        pageLinks="5"
+                                        selectionMode="multiple"
+                                        resizableColumns="true">                                                                                               
+                                        <f:facet name="header">
+                                            SERVICIOS DEL CONSUMO
+                                        </f:facet>
+                                        <p:column headerText="FECHA" width="100" filterBy="#{servicioConsumo.columna2}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna2}
+                                        </p:column>
+                                        <p:column headerText="NOMBRE" width="300" filterBy="#{servicioConsumo.columna3}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna3}
+                                        </p:column>
+                                        <p:column headerText="TARIFA" width="50" filterBy="#{servicioConsumo.columna4}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna4}
+                                        </p:column>
+                                        <p:column headerText="VLR UNITARIO" width="100" filterBy="#{servicioConsumo.columna5}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna5}
+                                        </p:column>
+                                        <p:column headerText="CANTIDAD" width="50" filterBy="#{servicioConsumo.columna6}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna6}
+                                        </p:column>
+                                        <p:column headerText="VLR FINAL" width="100" filterBy="#{servicioConsumo.columna7}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna7}
+                                        </p:column>
+                                        <p:column headerText="MEDICO" width="300" filterBy="#{servicioConsumo.columna8}" filterMatchMode="contains">
+                                            #{servicioConsumo.columna8}
+                                        </p:column>                                    
+                                    </p:dataTable>  
+                                </td>                            
+                            </tr>
+                        </table>
+                    </p:tab>
+                    <p:tab title="#{facturarPacienteMB.tituloTabPaquetesConsumo}">
+                        <br/>
+                        <p:commandButton 
+                            title="Agregar seleccionados a factura" value="&nbsp;"
+                            styleClass="icon-exit fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog :IdFormFacturacion:IdMensajeFacturacion"
+                            oncomplete="PF('wvTablaPaquetesConsumo').clearFilters()"
+                            actionListener="#{facturarPacienteMB.agregarPaquetesDesdeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        &nbsp;
+                        <p:commandButton 
+                            title="Seleccionar todos/ninguno" value="&nbsp;"                                        
+                            styleClass="icon-checkmark fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog"
+                            actionListener="#{facturarPacienteMB.seleccionarTodoNingunPaqueteDeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        <br/><br/>
+                        <table style="margin-left: auto; margin-right: auto;" >                         
+                            <tr>
+                                <td>
+                                    <p:dataTable 
+                                        id="IdTablaPaqueteConsumo" 
+                                        var="paqueteConsumo" 
+                                        widgetVar="wvTablaPaquetesConsumo"
+                                        value="#{facturarPacienteMB.listaPaquetesConsumo}" 
+                                        filteredValue="#{facturarPacienteMB.listaPaquetesConsumoFiltro}"
+                                        rowKey="#{paqueteConsumo.columna1}"  
+                                        selection="#{facturarPacienteMB.paquetesConsumoSeleccionados}" 
+                                        paginator="true"
+                                        scrollWidth="730"  
+                                        scrollHeight="250"
+                                        rows="10"                                    
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="No hay consumos de tipo Paquete para este paciente"
+                                        scrollable="true" 
+                                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        pageLinks="5"
+                                        selectionMode="multiple"
+                                        resizableColumns="true">                                                                                               
+                                        <f:facet name="header">
+                                            PAQUETES DEL CONSUMO
+                                        </f:facet>
+                                        <p:column headerText="FECHA" width="100" filterBy="#{paqueteConsumo.columna2}" filterMatchMode="contains">
+                                            #{paqueteConsumo.columna2}
+                                        </p:column>                                    
+                                        <p:column headerText="NOMBRE" width="300" filterBy="#{paqueteConsumo.columna3}" filterMatchMode="contains">
+                                            #{paqueteConsumo.columna3}
+                                        </p:column>                                    
+                                        <p:column headerText="VLR UNITARIO" width="100" filterBy="#{paqueteConsumo.columna4}" filterMatchMode="contains">
+                                            #{paqueteConsumo.columna4}
+                                        </p:column>                                    
+                                        <p:column headerText="CANTIDAD" width="50" filterBy="#{paqueteConsumo.columna5}" filterMatchMode="contains">
+                                            #{paqueteConsumo.columna5}
+                                        </p:column>
+                                        <p:column headerText="VLR FINAL" width="100" filterBy="#{paqueteConsumo.columna6}" filterMatchMode="contains">
+                                            #{paqueteConsumo.columna6}
+                                        </p:column>                                    
+                                        <p:column headerText="MEDICO" width="300" filterBy="#{paqueteConsumo.columna7}" filterMatchMode="contains">
+                                            #{paqueteConsumo.columna7}
+                                        </p:column>                                                                        
+                                    </p:dataTable>  
+                                </td>                            
+                            </tr>
+                        </table>
+                    </p:tab>
+                    <p:tab title="#{facturarPacienteMB.tituloTabMedicamentosConsumo}">                        
+                        <br/>
+                        <p:commandButton 
+                            title="Agregar seleccionados a factura" value="&nbsp;"
+                            styleClass="icon-exit fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog :IdFormFacturacion:IdMensajeFacturacion"
+                            oncomplete="PF('wvTablaMedicamentosConsumo').clearFilters()"
+                            actionListener="#{facturarPacienteMB.agregarMedicamentosDesdeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        &nbsp;
+                        <p:commandButton 
+                            title="Seleccionar todos/ninguno" value="&nbsp;"                                        
+                            styleClass="icon-checkmark fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog"
+                            actionListener="#{facturarPacienteMB.seleccionarTodoNingunMedicamentoDeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        <br/><br/>
+                        <table style="margin-left: auto; margin-right: auto;" >                         
+                            <tr>
+                                <td>
+                                    <p:dataTable 
+                                        id="IdTablaMedicamentosConsumo" 
+                                        var="medicamentoConsumo" 
+                                        widgetVar="wvTablaMedicamentosConsumo"
+                                        value="#{facturarPacienteMB.listaMedicamentosConsumo}" 
+                                        filteredValue="#{facturarPacienteMB.listaMedicamentosConsumoFiltro}"
+                                        rowKey="#{medicamentoConsumo.columna1}"  
+                                        selection="#{facturarPacienteMB.medicamentosConsumoSeleccionados}" 
+                                        paginator="true"
+                                        scrollWidth="730"  
+                                        scrollHeight="250"
+                                        rows="10"                                    
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="No hay consumos de tipo Medicamento para este paciente"
+                                        scrollable="true" 
+                                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        pageLinks="5"
+                                        selectionMode="multiple"
+                                        resizableColumns="true">                                                                                               
+                                        <f:facet name="header">
+                                            MEDICAMENTOS DEL CONSUMO
+                                        </f:facet>
+                                        <p:column headerText="FECHA" width="100" filterBy="#{medicamentoConsumo.columna2}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna2}
+                                        </p:column>                                    
+                                        <p:column headerText="NOMBRE" width="300" filterBy="#{medicamentoConsumo.columna3}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna3}
+                                        </p:column>                                   
+                                        <p:column headerText="FORMA" width="200" filterBy="#{medicamentoConsumo.columna4}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna4}
+                                        </p:column>                                   
+                                        <p:column headerText="VLR UNIARIO" width="100" filterBy="#{medicamentoConsumo.columna5}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna5}
+                                        </p:column>                                   
+                                        <p:column headerText="CANTIDAD" width="50" filterBy="#{medicamentoConsumo.columna6}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna6}
+                                        </p:column>
+                                        <p:column headerText="VLR FINAL" width="100" filterBy="#{medicamentoConsumo.columna7}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna7}
+                                        </p:column>                                    
+                                        <p:column headerText="MEDICO" width="300" filterBy="#{medicamentoConsumo.columna8}" filterMatchMode="contains">
+                                            #{medicamentoConsumo.columna8}
+                                        </p:column>
+                                    </p:dataTable>  
+                                </td>                            
+                            </tr>
+                        </table>
+                    </p:tab>
+                    <p:tab title="#{facturarPacienteMB.tituloTabInsumosConsumo}">
+                        <br/>
+                        <p:commandButton 
+                            title="Agregar seleccionados a factura" value="&nbsp;"
+                            styleClass="icon-exit fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog :IdFormFacturacion:IdMensajeFacturacion"
+                            oncomplete="PF('wvTablaInsumosConsumo').clearFilters()"
+                            actionListener="#{facturarPacienteMB.agregarInsumosDesdeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        &nbsp;
+                        <p:commandButton 
+                            title="Seleccionar todos/ninguno" value="&nbsp;"                                        
+                            styleClass="icon-checkmark fg-lightBlue bg-white no-border"
+                            update="IdTabViewDialog"
+                            actionListener="#{facturarPacienteMB.seleccionarTodoNingunInsumoDeConsumos}"
+                            style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                        <br/><br/>
+                        <table style="margin-left: auto; margin-right: auto;" >                         
+                            <tr>
+                                <td>
+                                    <p:dataTable 
+                                        id="IdTablaInsumosConsumo" 
+                                        var="insumoConsumo" 
+                                        widgetVar="wvTablaInsumosConsumo"
+                                        value="#{facturarPacienteMB.listaInsumosConsumo}" 
+                                        filteredValue="#{facturarPacienteMB.listaInsumosConsumoFiltro}"
+                                        rowKey="#{insumoConsumo.columna1}"  
+                                        selection="#{facturarPacienteMB.insumosConsumoSeleccionados}" 
+                                        paginator="true"
+                                        scrollWidth="730"  
+                                        scrollHeight="250"
+                                        rows="10"                                    
+                                        paginatorPosition="bottom"                                
+                                        emptyMessage="No hay consumos de tipo Insumo para este paciente"
+                                        scrollable="true" 
+                                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                        pageLinks="5"
+                                        selectionMode="multiple"
+                                        resizableColumns="true">                                                                                               
+                                        <f:facet name="header">
+                                            INSUMOS DEL CONSUMO
+                                        </f:facet>
+                                        <p:column headerText="FECHA" width="100" filterBy="#{insumoConsumo.columna2}" filterMatchMode="contains">
+                                            #{insumoConsumo.columna2}
+                                        </p:column>
+                                        <p:column headerText="NOMBRE" width="300" filterBy="#{insumoConsumo.columna3}" filterMatchMode="contains">
+                                            #{insumoConsumo.columna3}
+                                        </p:column>
+                                        <p:column headerText="VLR UNITARIO" width="100" filterBy="#{insumoConsumo.columna4}" filterMatchMode="contains">
+                                            #{insumoConsumo.columna4}
+                                        </p:column>
+                                        <p:column headerText="CANTIDAD" width="50" filterBy="#{insumoConsumo.columna5}" filterMatchMode="contains">
+                                            #{insumoConsumo.columna5}
+                                        </p:column>
+                                        <p:column headerText="VLR FINAL" width="100" filterBy="#{insumoConsumo.columna6}" filterMatchMode="contains">
+                                            #{insumoConsumo.columna6}
+                                        </p:column>
+                                        <p:column headerText="MEDICO" width="300" filterBy="#{insumoConsumo.columna7}" filterMatchMode="contains">
+                                            #{insumoConsumo.columna7}
+                                        </p:column>
+                                    </p:dataTable>  
+                                </td>                            
+                            </tr>
+                        </table>
+                    </p:tab>
+                </p:tabView>            
+            </p:dialog>
+            <p:dialog header="Seleccionar paciente" widgetVar="dlgSeleccionarPaciente" modal="true" resizable="false" closable="true">                
+                <p:ajax event="close" oncomplete="PF('wvTablaPacientes').clearFilters(); PF('wvTablaPacientes').getPaginator().setPage(0);"/>                                
+                <p:dataTable
+                    id="IdTablaPacientes"
+                    widgetVar="wvTablaPacientes"
+                    var="paciente"
+                    value="#{facturarPacienteMB.listaPacientes}"                                    
+                    selection="#{facturarPacienteMB.pacienteSeleccionadoTabla}"
+                    selectionMode="single"
+                    rowKey="#{paciente.idPaciente}"
+                    paginator="true"
+                    style="width: 600px; height: 300px;"
+                    rows="10"
+                    lazy="true"
+                    resizableColumns="true"
+                    paginatorPosition="bottom"
+                    scrollable="true"
+                    emptyMessage="No se encontraron registros"       
+                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                    pageLinks="5">                    
+                    <p:column headerText="ID" width="0"> 
+                        #{paciente.idPaciente}  
+                    </p:column>  
+                    <p:column headerText="IDENTIFICACION" width="10" filterBy="#{paciente.identificacion}">
+                        #{paciente.identificacion}  
+                    </p:column>  
+                    <p:column headerText="NOMBRES" width="90" filterBy="#{paciente.primerNombre}">
+                        #{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}
+                    </p:column>
+                </p:dataTable>
+                <br/>                
+                <p:commandButton 
+                    value="Cargar" 
+                    actionListener="#{facturarPacienteMB.cargarPaciente}"
+                    oncomplete="remoteCommand()"
+                    update="IdMensajeFacturacion"/>
+                <br/>                
+            </p:dialog>  
+            <p:dialog header="Seleccionar factura" widgetVar="dlgSeleccionarFactura" modal="true" resizable="false" closable="true">                
+                <p:ajax event="close" oncomplete="PF('wvTablaFacturas').clearFilters(); PF('wvTablaFacturas').getPaginator().setPage(0);"/>                                
+                <p:dataTable
+                    id="IdTablaFacturas"
+                    widgetVar="wvTablaFacturas"
+                    var="factura"
+                    value="#{facturarPacienteMB.listaFacturas}"                                    
+                    selection="#{facturarPacienteMB.facturaSeleccionadaTabla}"
+                    selectionMode="single"
+                    rowKey="#{factura.columna1}"
+                    paginator="true"
+                    style="width: 700px; height: 300px;"
+                    rows="10"
+                    lazy="true"
+                    resizableColumns="true"
+                    paginatorPosition="bottom"
+                    scrollable="true"
+                    emptyMessage="No se encontraron registros"       
+                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                    pageLinks="5">                    
+                    <p:ajax event="rowSelect" listener="#{facturarPacienteMB.seleccionFilaBuscarFactura}" update=":IdFormFacturacion:IdBtnPdfFactura :IdFormFacturacion:IdBtnAnularFactura" />
+                    <p:column headerText="FECHA" width="95"> 
+                        #{factura.columna2}
+                    </p:column>  
+                    <p:column headerText="NUMERO" width="40" filterBy="#{factura.columna3}">
+                        #{factura.columna3}
+                    </p:column>  
+                    <p:column headerText="DOCUMENTO" width="90" filterBy="#{factura.columna4}">
+                        #{factura.columna4}
+                    </p:column>
+                    <p:column headerText="ESTADO" width="50" filterBy="#{factura.columna5}">
+                        #{factura.columna5}
+                    </p:column>
+                    <p:column headerText="PACIENTE" width="200" filterBy="#{factura.columna6}">
+                        #{factura.columna6}
+                    </p:column>
+                    <p:column headerText="VALOR" width="90" filterBy="#{factura.columna7}">
+                        #{factura.columna7}
+                    </p:column>
+                </p:dataTable>
+                <br/>                
+                <p:commandButton id="IdBtnPdfFactura"    disabled="#{facturarPacienteMB.disableControlesBuscarFactura}" icon="ui-icon-document" value="PDF" actionListener="#{facturarPacienteMB.generarPdf}" ajax="false" onclick="this.form.target = '_blank'" widgetVar="wvBtnPdfFactura"/>
+                <p:commandButton id="IdBtnAnularFactura" disabled="#{facturarPacienteMB.disableControlesBuscarFactura}" icon="ui-icon-cancel"   value="Anular" actionListener="#{facturarPacienteMB.anularFactura}" update="IdMensajeFacturacion"/>
+                <br/>                
+            </p:dialog>              
+            <p:dialog id="IdDialogoCambiaManual" header="CAMBIO DE MANUAL TARIFARIO" widgetVar="dlgFacturarComoParticular" resizable="false" modal="true">  
+                <p:panelGrid id="panelCambiaManual" styleClass="panelGridSinBordes" columns="1">
+                    <p:inputTextarea                     
+                        value="Para realizar el cambio de manual tarifario se reiniciará completamente la factura, ¿ Desea continuar ?"
+                        readonly="true" 
+                        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 60px; width: 320px;"/>
+                    <p:commandButton 
+                        value="Continuar"    
+                        oncomplete="PF('dlgFacturarComoParticular').hide(); remoteCommand()"
+                        update=":IdFormFacturacion"
+                        actionListener="#{facturarPacienteMB.confirmarCambioManualTarifario}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoGuardarFactura" header="CONFIRMAR GUARDAR FACTURA" widgetVar="dialogoConfirmarGuardarFactura" resizable="false" modal="true">  
+                <p:panelGrid id="panelConfirmarGuardarFactura" styleClass="panelGridSinBordes" columns="1">
+                    <p:inputTextarea 
+                        value="Una ves almacenada una factura no puede ser modificada, simplemente anulada ¿ Confirma la creación de la nueva factura ?"
+                        readonly="true" 
+                        styleClass="textAreaDialogo"/>                    
+                    <p:commandButton 
+                        value="Guardar"    
+                        oncomplete="remoteCommand()"
+                        update=":IdFormFacturacion"
+                        actionListener="#{facturarPacienteMB.confirmarGuardarFactura}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAnularFactura" header="CONFIRMAR ANULACION DE FACTURA" widgetVar="dialogoAnularFactura" resizable="false" modal="true">  
+                <p:panelGrid id="panelAnularFactura" styleClass="panelGridSinBordes" columns="1">
+                    <p:inputTextarea 
+                        value="Cuando una factura es anulada no se puede volver a activar, ¿ Confirma la anulación de la factura seleccionada ?"
+                        readonly="true" 
+                        styleClass="textAreaDialogo"/>                    
+                    <p:inputTextarea id="IdMotivoAnulacion" style="width: 320px;" value="#{facturarPacienteMB.observacionAnulacion}"/>
+                    <p:watermark for="IdMotivoAnulacion" value="Motivo de anulación" />
+                    <p:commandButton 
+                        value="Anular"    
+                        oncomplete="PF('wvTablaFacturas').clearFilters(); PF('wvTablaFacturas').getPaginator().setPage(0); PF('dialogoAnularFactura').hide()"                    
+                        update=":IdFormFacturacion:IdTablaFacturas"
+                        actionListener="#{facturarPacienteMB.confirmarAnularFactura}"/>
+                </p:panelGrid>
+            </p:dialog>
+
+            <p:dialog id="IdDialogoAgregarServicio" header="AGREGAR SERVICIO A FACTURA" widgetVar="dialogoAgregarServicio" resizable="false" modal="true">                  
+                <p:panelGrid id="IdPanelAgregarServicio" styleClass="panelGridSinBordes" columns="2">
+                    <p:outputLabel styleClass="campoObligatorio" value="Prestador" />
+                    <p:selectOneMenu style="width: 380px;" value="#{facturarPacienteMB.idPrestadorServicio}"  filter="true" filterMatchMode="contains">
+                        <f:selectItems 
+                            value="#{aplicacionGeneralMB.listaPrestadores}" 
+                            var="prestador" 
+                            itemLabel="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" 
+                            itemValue="#{prestador.idUsuario}"/>
+                    </p:selectOneMenu>                  
+                    <p:outputLabel styleClass="campoObligatorio" value="Servicio" />
+                    <p:selectOneMenu id="IdListaServicio" style="width: 380px;" value="#{facturarPacienteMB.idServicioManual}"  filter="true" filterMatchMode="contains">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.cambiaServicio}"
+                                update="IdPanelAgregarServicio"/>
+                        <f:selectItems value="#{facturarPacienteMB.listaServiciosManual}" var="servicio" itemLabel="#{servicio.facServicio.idServicio} - #{servicio.facServicio.nombreServicio}" itemValue="#{servicio.facServicio.idServicio}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
+                    <p:calendar navigator="true" locale="es" value="#{facturarPacienteMB.fechaServicio}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />
+                    <h:outputText styleClass="campoObligatorio" value="Tipo tarifa"/>
+                    <p:outputLabel value="#{facturarPacienteMB.tipoTarifaServicio}" styleClass="campoFormulario"/>                    
+                    <p:outputLabel value="Cantidad" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{facturarPacienteMB.cantidadServicio}">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.calcularValoresServicio}"
+                                update="IdValorFinalServicio"/>
+                    </pe:inputNumber>                                                                                                        
+                    <p:outputLabel value="Valor Unitario" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorUnitarioServicio}" disabled="true"/>
+                    <p:outputLabel value="Valor Total" styleClass="campoObligatorio"/>
+                    <pe:inputNumber id="IdValorFinalServicio" decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorFinalServicio}"/>
+                    <p:commandButton value="Agregar" actionListener="#{facturarPacienteMB.agregarServicioAFactura}"/>
+                </p:panelGrid>
+            </p:dialog>            
+            <!-- p:outputLabel styleClass="campoNoObligatorio" value="Diagnóstico principal"/>
+                    <p:autoComplete size="70" value="# {facturarPacienteMB.diagnosticoPrincipal}" completeMethod="# {facturarPacienteMB.autocompletarDiagnostico}" forceSelection="true"/>
+
+                    <p:outputLabel styleClass="campoNoObligatorio" value="Diagnóstico relacionado"/>
+                    <p:autoComplete size="70" value="# {facturarPacienteMB.diagnosticoRelacionado}" completeMethod="# {facturarPacienteMB.autocompletarDiagnostico}" forceSelection="true"/ -->                    
+            <p:dialog id="IdDialogoAgregarPaquete" header="AGREGAR PAQUETE A FACTURA" widgetVar="dialogoAgregarPaquete" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarPaquete" styleClass="panelGridSinBordes" columns="2">
+                    <p:outputLabel styleClass="campoObligatorio" value="Prestador" />
+                    <p:selectOneMenu style="width: 380px;" value="#{facturarPacienteMB.idPrestadorPaquete}"  filter="true" filterMatchMode="contains">
+                        <f:selectItems 
+                            value="#{aplicacionGeneralMB.listaPrestadores}" 
+                            var="prestador" 
+                            itemLabel="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" 
+                            itemValue="#{prestador.idUsuario}"/>
+                    </p:selectOneMenu>                  
+                    <p:outputLabel styleClass="campoObligatorio" value="Paquete" />
+                    <p:selectOneMenu id="IdListaPaquete" style="width: 380px;" value="#{facturarPacienteMB.idPaqueteManual}"  filter="true" filterMatchMode="contains">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.cambiaPaquete}"
+                                update="IdPanelAgregarPaquete"/>
+                        <f:selectItems value="#{facturarPacienteMB.listaPaquetesManual}" var="paquete" itemLabel="#{paquete.facPaquete.idPaquete} - #{paquete.facPaquete.nombrePaquete}" itemValue="#{paquete.facPaquete.idPaquete}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
+                    <p:calendar navigator="true" locale="es" value="#{facturarPacienteMB.fechaPaquete}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />                    
+                    <p:outputLabel value="Cantidad" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{facturarPacienteMB.cantidadPaquete}">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.calcularValoresPaquete}"
+                                update="IdValorFinalPaquete"/>
+                    </pe:inputNumber>                                                                   
+                    <p:outputLabel value="Valor Unitario" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorUnitarioPaquete}" disabled="true"/>
+                    <p:outputLabel value="Valor Total" styleClass="campoObligatorio"/>
+                    <pe:inputNumber id="IdValorFinalPaquete" decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorFinalPaquete}"/>
+                    <p:commandButton 
+                        value="Agregar"                         
+                        actionListener="#{facturarPacienteMB.agregarPaqueteAFactura}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAgregarMedicamento" header="AGREGAR MEDICAMENTO A FACTURA" widgetVar="dialogoAgregarMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarMedicamento" styleClass="panelGridSinBordes" columns="2">
+                    <p:outputLabel styleClass="campoObligatorio" value="Prestador" />
+                    <p:selectOneMenu style="width: 380px;" value="#{facturarPacienteMB.idPrestadorMedicamento}"  filter="true" filterMatchMode="contains">
+                        <f:selectItems 
+                            value="#{aplicacionGeneralMB.listaPrestadores}" 
+                            var="prestador" 
+                            itemLabel="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" 
+                            itemValue="#{prestador.idUsuario}"/>
+                    </p:selectOneMenu>                  
+                    <p:outputLabel styleClass="campoObligatorio" value="Medicamento" />
+                    <p:selectOneMenu id="IdListaMedicamento" style="width: 380px;" value="#{facturarPacienteMB.idMedicamentoManual}"  filter="true" filterMatchMode="contains">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.cambiaMedicamento}"
+                                update="IdPanelAgregarMedicamento"/>
+                        <f:selectItems value="#{facturarPacienteMB.listaMedicamentosManual}" var="medicamento" itemLabel="#{medicamento.cfgMedicamento.idMedicamento} - #{medicamento.cfgMedicamento.nombreMedicamento}" itemValue="#{medicamento.cfgMedicamento.idMedicamento}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
+                    <p:calendar navigator="true" locale="es" value="#{facturarPacienteMB.fechaMedicamento}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />
+                    <p:outputLabel value="Cantidad" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{facturarPacienteMB.cantidadMedicamento}">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.calcularValoresMedicamento}"
+                                update="IdValorFinalMedicamento"/>
+                    </pe:inputNumber>                                     
+                    <p:outputLabel value="Valor Unitario" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorUnitarioMedicamento}" disabled="true"/>
+                    <p:outputLabel value="Valor Total" styleClass="campoObligatorio"/>
+                    <pe:inputNumber id="IdValorFinalMedicamento" decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorFinalMedicamento}"/>
+                    <p:commandButton 
+                        value="Agregar"                         
+                        actionListener="#{facturarPacienteMB.agregarMedicamentoAFactura}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAgregarInsumo" header="AGREGAR INSUMO A FACTURA" widgetVar="dialogoAgregarInsumo" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarInsumo" styleClass="panelGridSinBordes" columns="2">
+                    <p:outputLabel styleClass="campoObligatorio" value="Prestador" />
+                    <p:selectOneMenu style="width: 380px;" value="#{facturarPacienteMB.idPrestadorInsumo}"  filter="true" filterMatchMode="contains">
+                        <f:selectItems 
+                            value="#{aplicacionGeneralMB.listaPrestadores}" 
+                            var="prestador" 
+                            itemLabel="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" 
+                            itemValue="#{prestador.idUsuario}"/>
+                    </p:selectOneMenu>                  
+                    <p:outputLabel styleClass="campoObligatorio" value="Insumo" />
+                    <p:selectOneMenu id="IdListaInsumo" style="width: 380px;" value="#{facturarPacienteMB.idInsumoManual}"  filter="true" filterMatchMode="contains">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.cambiaInsumo}"
+                                update="IdPanelAgregarInsumo"/>
+                        <f:selectItems value="#{facturarPacienteMB.listaInsumosManual}" var="insumo" itemLabel="#{insumo.cfgInsumo.idInsumo} - #{insumo.cfgInsumo.nombreInsumo}" itemValue="#{insumo.cfgInsumo.idInsumo}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
+                    <p:calendar navigator="true" locale="es" value="#{facturarPacienteMB.fechaInsumo}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />
+                    <p:outputLabel value="Cantidad" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{facturarPacienteMB.cantidadInsumo}">
+                        <p:ajax event="change"
+                                listener="#{facturarPacienteMB.calcularValoresInsumo}"
+                                update="IdValorFinalInsumo"/>
+                    </pe:inputNumber>
+                    <p:outputLabel value="Valor Unitario" styleClass="campoObligatorio"/>
+                    <pe:inputNumber decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorUnitarioInsumo}" disabled="true"/>
+                    <p:outputLabel value="Valor Total" styleClass="campoObligatorio"/>
+                    <pe:inputNumber id="IdValorFinalInsumo" decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{facturarPacienteMB.valorFinalInsumo}"/>
+                    <p:commandButton 
+                        value="Agregar"                         
+                        actionListener="#{facturarPacienteMB.agregarInsumoAFactura}"/>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>        
+    </h:body>
+</html>

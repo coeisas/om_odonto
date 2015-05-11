@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+    </h:head>
+    <h:body>
+        <p:growl autoUpdate="true" showDetail="true"/> 
+        <h:form id="menuForm">
+            <div style="background-color: white; padding: .5em">
+                <br/>
+                <p:outputLabel styleClass="labelFormularioBold" value="Por paciente"/>                            
+                <p:inputText  readonly="true"  styleClass="campoFormulario" size="30" value="#{historiasMB.identificacionPaciente}">                        
+                    <!-- p:ajax event="blur" listener="# {historiasMB.validarIdentificacion}" / -->
+                </p:inputText>  
+                <p:commandButton 
+                    styleClass="campoFormulario"
+                    title="Paciente"
+                    onclick="PF('dlgPaciente').show();"
+                    icon="ui-icon-search"
+                    style="width: 22px; height: 22px;"/>
+                <p:outputLabel styleClass="labelFormularioBold" value="Por prestador"/>                            
+                <p:inputText  readonly="true" styleClass="campoFormulario" size="30" value="#{historiasMB.identificacionPaciente}">                        
+                    <!-- p:ajax event="blur" listener="# {historiasMB.validarIdentificacion}" / -->
+                </p:inputText>  
+                <p:commandButton 
+                    styleClass="campoFormulario"
+                    title="Prestador"                                                            
+                    icon="ui-icon-search"
+                    onclick="PF('dlgfindPrestador').show();" 
+                    style="width: 22px; height: 22px;"/>
+            </div>
+        </h:form>
+        <p:sticky target="menuForm" />
+        <br/><br/><br/>
+        <p:dataTable
+            id="tableCitasCancelar"
+            var="cita"
+            value="#{cancelarCitasMB.listaCitas}"
+            rowKey="#{cita.idCita}"
+            paginator="true"
+            rows="10"
+            paginatorPosition="bottom"                                
+            scrollable="true" 
+            pageLinks="5"
+            emptyMessage="No hay citas."
+            widgetVar="citasTable"
+            resizableColumns="false">
+            <f:facet name="header">
+                CITAS AGENDADAS
+            </f:facet>
+
+            <p:column style="width: 5%;">
+                <p:commandButton  disabled="#{cita.cancelada}" style="font-size: 15px; width: 15px; height: 15px;" styleClass="icon-cancel fg-lightBlue bg-white no-border" title="Cancelar cita" value="&nbsp;" actionListener="#{cancelarCitasMB.buscarCita}" update=":cancelar" onclick="PF('dlgcancelar').show();">
+                    <f:attribute name="id_cita" value="#{cita.idCita}"/>
+                </p:commandButton>
+            </p:column>
+            <p:column headerText="Fecha">
+                <h:outputText value="#{cita.idTurno.fecha}">
+                    <f:convertDateTime locale="es_CO" pattern="EEE, MMM d, yyyy"/>                       
+                </h:outputText>     
+            </p:column>
+            <p:column headerText="Hora">
+                <h:outputText value="#{cita.idTurno.horaIni}">
+                    <f:convertDateTime pattern="h:mm a" timeZone="America/Bogota"/>
+                </h:outputText>                    
+            </p:column>
+            <p:column headerText="Prestador">
+                <h:outputText value="#{cita.idPrestador.primerNombre} #{cita.idPrestador.primerApellido}"/>                    
+            </p:column>
+            <p:column headerText="Paciente">
+                <h:outputText value="#{cita.idPaciente.primerNombre} #{cita.idPaciente.primerApellido}"/>
+            </p:column>
+            <p:column headerText="Administradora">
+                <h:outputText value="#{cita.idAdministradora.razonSocial}"  />
+            </p:column>
+            <p:column headerText="Motivo Consulta">
+                <h:outputText value="#{cita.tipoCita.descripcion}"  />
+            </p:column>
+        </p:dataTable>
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+            <h:form id="formFindPaciente">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable
+                                id="tableElegirPaciente"
+                                var="paciente" 
+                                value="#{cancelarCitasMB.listaPacientes}"
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{cancelarCitasMB.pacienteSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                lazy="true"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No se encontraron pacientes"
+                                scrollable="true" 
+                                pageLinks="5"
+                                widgetVar="pacientesTable"
+                                selectionMode="single"
+                                resizableColumns="true"
+                                >
+                                <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                                    <h:outputText value="#{paciente.identificacion}"/>                                  
+                                </p:column>
+                                <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                                    <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <p:commandButton
+                                id="cbtnPaciente"
+                                value="Cargar Paciente"
+                                update = ":tableCitasCancelar"
+                                action="#{cancelarCitasMB.cargarListaCitas}"
+                                actionListener="#{cancelarCitasMB.opcionCancelacion}"
+                                oncomplete = "PF('dlgPaciente').hide();">
+                                <f:attribute name="opcion" value="paciente"/>
+                            </p:commandButton>
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgfindPrestador" resizable="false" modal="true">
+
+            <br/>
+            <h:form id="formFindPrestador">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorEsp"
+                                var="prestador" 
+                                value="#{cancelarCitasMB.listaPrestadores}"
+                                rowKey="#{prestador.idUsuario}"  
+                                selection="#{cancelarCitasMB.prestadorSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="7"
+                                widgetVar="prestadoresTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay prestadores"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">
+                                <!-- 
+                                # {prestador.primerNombre} # {prestador.segundoNombre} # {prestador.primerApellido} # {prestador.segundoApellido}
+                                -->
+                                <p:column headerText="Nombre" filterBy="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}"  filterMatchMode="contains" filterStyle="width: 250px;">
+                                    <h:outputText value="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" />
+                                </p:column>
+                                <p:column headerText="Especialidad" filterBy="#{prestador.especialidad.id}" filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('prestadoresTable').filter()" style="width: 250px;" >
+                                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems  value="#{cancelarCitasMB.listaEspecialidades}" />
+                                        </p:selectOneMenu>
+                                    </f:facet>        
+                                    <h:outputText value="#{prestador.especialidad.descripcion}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <!-- location.reload();-->
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnprestador'
+                                value = "Cargar Prestador"
+                                actionListener="#{cancelarCitasMB.opcionCancelacion}"
+                                action="#{cancelarCitasMB.cargarListaCitas}"
+                                update=":tableCitasCancelar"
+                                oncomplete = "PF('dlgfindPrestador').hide();">
+                                <f:attribute name="opcion" value="prestador"/>
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog>
+
+        <p:dialog  widgetVar="dlgcancelar" header="Cancelar Cita" modal="true" width="60%" resizable="false">
+            <h:form id="cancelar">
+                <h:panelGrid columns="2">
+                    <p:outputLabel value="Cita No:"/>
+                    <p:inputText value="#{cancelarCitasMB.citaSeleccionada.idCita}" readonly="true" />
+                    <p:outputLabel value="Motivo Cancelacion:" />
+                    <p:selectOneMenu id="selectMotCanc" value="#{cancelarCitasMB.motivoCancelacion}" style="width: 300px;">
+                        <f:selectItems  value="#{aplicacionGeneralMB.listaMotivoCancelacionCitas}" /> 
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Descripcion:" />
+                    <p:inputTextarea rows="6" cols="33" value="#{cancelarCitasMB.descripcionCancelacion}" />
+                </h:panelGrid>
+                <br/>
+                <p:commandButton value="Cancelar Cita" actionListener="#{cancelarCitasMB.cancelarCita}" action="#{cancelarCitasMB.cargarListaCitas}" oncomplete = "PF('dlgcancelar').hide();" update=":tableCitasCancelar"/>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>
+

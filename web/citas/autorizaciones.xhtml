@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>         
+    </h:head>
+    <h:body>
+        <p:growl id="msgs" showDetail="true" autoUpdate="true"/>
+        <h:form id="autorizar">
+            <p:panelGrid style="margin: 0 auto">
+                <f:facet name="header">
+                    <p:row>
+                        <p:column colspan="2" style="width: 25%">No Identificacion</p:column>
+                        <p:column>Paciente</p:column>
+                        <p:column style="width: 25%">Administradora</p:column>
+                    </p:row>
+                </f:facet>
+                <p:row>
+                    <p:column colspan="2">
+                        <p:inputText value="#{autorizacionMB.numDocumento}" size="15">
+                            <p:ajax event="blur" listener="#{autorizacionMB.buscarPaciente()}" update="nombrePaciente nombreAdministradora selectipocita cantidad"/>
+                        </p:inputText>
+                        <p:commandButton
+                            id="cbtnPaciente"
+                            title="Paciente"
+                            onclick="PF('dlgPaciente').show();"
+                            icon="ui-icon-search"
+                            style="width: 23px; height: 23px;"/>
+
+                    </p:column>
+                    <p:column>
+                        <h:outputText id="nombrePaciente" value="#{autorizacionMB.paciente.primerNombre} #{autorizacionMB.paciente.segundoNombre} #{autorizacionMB.paciente.primerApellido} #{autorizacionMB.paciente.segundoApellido}"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText id="nombreAdministradora" value="#{autorizacionMB.paciente.idAdministradora.razonSocial}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    
+                </p:row>
+                <p:row>
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Numero autorizacion</p:column>
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Cerrada</p:column>
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Servicio</p:column>
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Sesiones</p:column>                    
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:inputText id="numauto" value="#{autorizacionMB.numAutorizacion}" size="12" maxlength="10">
+                            <p:ajax event="blur" listener="#{autorizacionMB.buscarAutorizacion()}"/>
+                        </p:inputText>
+                    </p:column>
+                    <p:column>
+                        <p:selectBooleanCheckbox value="#{autorizacionMB.cerrada}" disabled="#{autorizacionMB.deshabilitarComboBox}"/>
+                    </p:column>
+                    <p:column>
+                        <p:selectOneMenu id="selectipocita" value="#{autorizacionMB.idServicio}" style="width: 430px;">
+                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems  value="#{autorizacionMB.listaServicios}" /> 
+                            <p:ajax event="change" update="@form"/>
+                        </p:selectOneMenu>
+                    </p:column>
+                    <p:column>
+                        <p:spinner id="cantidad" value="#{autorizacionMB.sesionesAutorizadas}" min="1" max="300" size="3" />
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4" style="text-align: center;padding: .5em 0"><p:commandButton value="Adicionar Servicio a la Autorizacion" icon="ui-icon-plus" actionListener="#{autorizacionMB.adicionarAutorizacionAlaLista()}" rendered="#{autorizacionMB.renderizarBtnAdicionarServicio}" /></p:column>
+                </p:row>
+                <p:row>
+                    <p:column colspan="4">
+                        <p:dataTable
+                            id="idTable"
+                            var="autorizacionServicio"
+                            value="#{autorizacionMB.listaAutorizacionesServicios}"
+                            resizableColumns="false"
+                            scrollHeight="true"
+                            emptyMessage="No hay autorizaciones para crear"
+                            paginator="true"
+                            paginatorPosition="bottom"
+                            disabledSelection="true"
+                            rows="5">
+                            <f:facet name="header">
+                                <h:outputText value="Autorizaciones"/>
+                            </f:facet>
+                            <p:column headerText="Servicio">
+                                <h:outputText value="#{autorizacionServicio.facServicio.nombreServicio}"/>
+                            </p:column>
+                            <p:column headerText="N° Autorizacion">
+                                <h:outputText value="#{autorizacionServicio.citAutorizaciones.numAutorizacion}"/>
+                            </p:column>
+                            <p:column headerText="Sesiones">
+                                <h:outputText value="#{autorizacionServicio.sesionesAutorizadas}"/>
+                            </p:column>
+                        </p:dataTable>
+                        <br/>
+                        <p:commandButton value="Limpiar Tabla Autorizaciones" icon="ui-icon-circlesmall-minus" actionListener="#{autorizacionMB.borrarListaAutorizaciones()}" rendered="#{autorizacionMB.renderizarBtnRemoverServicios}"/>
+                    </p:column>
+                </p:row>
+                
+                <p:row>
+                    <p:column colspan="4" style="text-align: center;padding: 1em 0" ><p:commandButton value="Guardar Autorizacion" icon="ui-icon-disk"  actionListener="#{autorizacionMB.controladorAccion()}" update="@form" /></p:column>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+        
+         <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+            <h:form id="formFindPaciente">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable
+                                id="tableElegirPaciente"
+                                var="paciente" 
+                                value="#{autorizacionMB.listaPacientes}"
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{autorizacionMB.paciente}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                lazy="true"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No se encontraron pacientes"
+                                scrollable="true" 
+                                pageLinks="5"
+                                widgetVar="pacientesTable"
+                                selectionMode="single"
+                                resizableColumns="true"
+                                >
+                                <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                                    <h:outputText value="#{paciente.identificacion}"/>                                  
+                                </p:column>
+                                <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                                    <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                                </p:column>
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <p:commandButton
+                                id="cbtnPaciente"
+                                value="Cargar Paciente"
+                                update = ":autorizar"
+                                actionListener="#{autorizacionMB.actualizarPaciente()}"
+                                oncomplete = "PF('dlgPaciente').hide();"                                
+                                />
+                        </td>
+                    </tr>
+                </table>
+            </h:form>
+        </p:dialog>       
+    </h:body>
+</html>
+

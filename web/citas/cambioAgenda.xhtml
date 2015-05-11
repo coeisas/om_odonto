@@ -1,0 +1,273 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>          
+    </h:head>
+    <h:body>
+        <br/>
+        <p:growl autoUpdate="true" showDetail="true" />
+        <p:tabView id="tabviewPrincipal" style="height: 492px">
+            <p:tab title="Prestadores" id="tabPrestador">
+                <br/>
+                <h:form id="formprestador" style="margin: 20px;">
+                    <p:panel>
+                        <table>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="labelFormularioBold" value="Prestador Origen" />
+                                    <p:inputText styleClass="campoFormulario" id="idprestador1" value="#{cambioAgendaMB.id_prestadorOrigen}" size="25">
+                                        <p:ajax event="blur" listener="#{cambioAgendaMB.findprestador(0)}" update="idnombre1 idespecialidad1 idregistro1 :tabviewPrincipal:formperiodo"/>
+                                    </p:inputText>
+                                    <p:watermark value="Identificación prestador" for="idprestador1"/>
+                                    <p:commandButton 
+                                        styleClass="campoFormulario"
+                                        title="Prestador"                                                                            
+                                        onclick="PF('dlgfindPrestadorOrigen').show();" 
+                                        icon="ui-icon-search"
+                                        style="width: 22px; height: 22px;"/>
+
+                                    <p:outputLabel styleClass="labelFormularioBold" value="Dr(a):" />
+                                    <p:outputLabel styleClass="labelFormulario"    id="idnombre1"  value="#{cambioAgendaMB.prestadorOrigenSeleccionado.primerNombre} #{cambioAgendaMB.prestadorOrigenSeleccionado.segundoNombre} #{cambioAgendaMB.prestadorOrigenSeleccionado.primerApellido} #{cambioAgendaMB.prestadorOrigenSeleccionado.segundoApellido}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="labelFormularioBold" value="Especialidad:"/>
+                                    <p:outputLabel styleClass="labelFormulario" id="idespecialidad1" value="#{cambioAgendaMB.prestadorOrigenSeleccionado.especialidad.descripcion}"/>
+                                    <p:outputLabel styleClass="labelFormularioBold" value="No. Registro:"/>
+                                    <p:outputLabel styleClass="labelFormulario" id="idregistro1" value="#{cambioAgendaMB.prestadorOrigenSeleccionado.registroProfesional}"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </p:panel>
+                    <br/>
+                    <p:panel>
+                        <table>
+                            <tr>
+                                <td>
+                                    <p:outputLabel   styleClass="labelFormularioBold" value="Prestador Destino" />                                
+                                    <p:inputText     styleClass="campoFormulario" id="idprestador2" value="#{cambioAgendaMB.id_prestadorDestino}" size="25">
+                                        <p:ajax event="blur" listener="#{cambioAgendaMB.findprestador(1)}" update="idnombre2 idespecialidad2 idregistro2"/>
+                                    </p:inputText>
+                                    <p:watermark value="Identificación prestador" for="idprestador2"/>
+                                    <p:commandButton styleClass="campoFormulario" title="Prestador" icon="ui-icon-search" onclick="PF('dlgfindPrestadorDestino').show();" style="width: 22px; height: 22px;"/>
+                                    <p:outputLabel   styleClass="labelFormularioBold" value="Dr(a):" />
+                                    <p:outputLabel   styleClass="labelFormulario" id="idnombre2" value="#{cambioAgendaMB.prestadorDestinoSeleccionado.primerNombre} #{cambioAgendaMB.prestadorDestinoSeleccionado.segundoNombre} #{cambioAgendaMB.prestadorDestinoSeleccionado.primerApellido} #{cambioAgendaMB.prestadorDestinoSeleccionado.segundoApellido}" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="labelFormularioBold" value="Especialidad:"/>
+                                    <p:outputLabel styleClass="labelFormulario" id="idespecialidad2" value="#{cambioAgendaMB.prestadorDestinoSeleccionado.especialidad.descripcion}"/>
+                                    <p:outputLabel styleClass="labelFormularioBold" value="No. Registro:"/>
+                                    <p:outputLabel styleClass="labelFormulario" id="idregistro2" value="#{cambioAgendaMB.prestadorDestinoSeleccionado.registroProfesional}"/>
+                                </td>
+                            </tr>                            
+                        </table> 
+                    </p:panel>
+                </h:form>
+            </p:tab>
+            <p:tab title="Periodo" id="tabPeriodo">
+                <br/>
+                <h:form id="formperiodo">
+                    <table style="margin-left: auto; margin-right: auto;">
+                        <tr>
+                            <td>
+                                <p:outputLabel  styleClass="campoObligatorio" value="Fecha Inicial:" />
+                                <p:calendar styleClass="campoFormulario" navigator="true" id="fechIni" widgetVar="calwidgetini" value="#{cambioAgendaMB.fechaInicial}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy"  mask="99/99/9999" size="12" requiredMessage="La fecha inicial es obligatoria"/>
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Hora Inicial:" />
+                                <p:calendar id="hinicial" styleClass="campoFormulario" mask="99:99" value="#{cambioAgendaMB.horaInicial}" pattern="HH:mm" timeZone="America/Bogota"  size="6"  timeOnly="true" locale="es"/>                                                                
+                                <p:outputLabel styleClass="campoObligatorio" value="Fecha Final:" />
+                                <p:calendar styleClass="campoFormulario" navigator="true" id="fechFin" widgetVar="calwidgetfin" value="#{cambioAgendaMB.fechaFinal}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999"  size="12" requiredMessage="La fecha final es obligatoria"/>
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Hora Final:" />
+                                <p:calendar id="hfinal" styleClass="campoFormulario" mask="99:99" value="#{cambioAgendaMB.horaFinal}" pattern="HH:mm" timeZone="America/Bogota"  size="6"  timeOnly="true" locale="es"/>                                
+                                <p:commandButton value="Cargar citas" actionListener="#{cambioAgendaMB.validar}" oncomplete="#{cambioAgendaMB.cargarCitas()}" update="@form" />
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="clear: none"></div>
+                    <br/>
+                    <p:dataTable
+                        id="tableTurnos"
+                        var="cita"
+                        rows="10"
+                        emptyMessage="No se encontro citas en este periodo"
+                        scrollable="true"
+                        value="#{cambioAgendaMB.listaCitasOrigen}"
+                        style="width: 49%;margin-right: 1em;float: left">
+                        <f:facet name="header">
+                            Agenda Origen
+                        </f:facet>                        
+                        <p:column headerText="Fecha">
+                            <h:outputText value="#{cita.idTurno.fecha}">
+                                <f:convertDateTime timeZone="America/Bogota" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Hora">
+                            <h:outputText value="#{cita.idTurno.horaIni}">
+                                <f:convertDateTime pattern="HH:mm" timeZone="America/Bogota"/>
+                            </h:outputText>
+                        </p:column>
+
+                    </p:dataTable>
+                    <p:dataTable
+                        id="tableTurnosDestino"
+                        var="citaD"
+                        rows="10"
+                        emptyMessage="No se encontro citas en este periodo"
+                        scrollable="true"
+                        value="#{cambioAgendaMB.listaCitasDestino}"
+                        style="width: 49%;float: right"
+
+                        >
+                        <f:facet name="header">
+                            Agenda Destino
+                        </f:facet>
+                        <p:column headerText="Fecha">
+                            <h:outputText value="#{citaD.idTurno.fecha}">
+                                <f:convertDateTime timeZone="America/Bogota" pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Hora">
+                            <h:outputText value="#{citaD.idTurno.horaIni}">
+                                <f:convertDateTime pattern="HH:mm" timeZone="America/Bogota"/>
+                            </h:outputText>
+                        </p:column>
+
+                    </p:dataTable>
+                    <br/>
+                    <div style="clear: right; text-align: center;">
+                        
+                    <br/>
+                    <p:commandButton value="Cambiar Agenda" action="#{cambioAgendaMB.cambiarAgenda}" update="@form"/>
+                    <br/>
+                    </div>
+                    <br/>
+
+                </h:form>
+            </p:tab>
+        </p:tabView>
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgfindPrestadorOrigen" resizable="false" modal="true">
+
+            <br/>
+            <h:form id="formFindPrestadorOrigen">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorEsp"
+                                var="prestador" 
+                                value="#{cambioAgendaMB.listaPrestadores}"
+                                rowKey="#{prestador.idUsuario}"  
+                                selection="#{cambioAgendaMB.prestadorOrigenSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                widgetVar="prestadoresTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay prestadores"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">
+                                <p:column headerText="Nombre" filterBy="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}"  filterMatchMode="contains" filterStyle="width: 250px;">
+                                    <h:outputText value="#{prestador.primerNombre} #{prestador.segundoNombre} #{prestador.primerApellido} #{prestador.segundoApellido}" />
+                                </p:column>
+                                <p:column headerText="Especialidad" filterBy="#{prestador.especialidad.id}" filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('prestadoresTable').filter()" style="width: 250px;" >
+                                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems  value="#{cambioAgendaMB.listaEspecialidades}" />
+                                        </p:selectOneMenu>
+                                    </f:facet>        
+                                    <h:outputText value="#{prestador.especialidad.descripcion}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnprestador'
+                                value = "Cargar Prestador"
+                                action="#{cambioAgendaMB.actualizarPrestador(0)}"
+                                update=":tabviewPrincipal:formprestador:idprestador1 :tabviewPrincipal:formprestador:idnombre1 :tabviewPrincipal:formprestador:idespecialidad1 :tabviewPrincipal:formprestador:idregistro1"
+                                oncomplete = "PF('dlgfindPrestadorOrigen').hide();">
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog> 
+
+        <p:dialog header="Buscar Prestador" widgetVar="dlgfindPrestadorDestino" resizable="false" modal="true">
+
+            <br/>
+            <h:form id="formFindPrestadorDestino">
+                <table>
+                    <tr>
+                        <td colspan="3">
+                            <p:dataTable 
+                                id="tablePrestadorDestino"
+                                var="prestadorDestino" 
+                                value="#{cambioAgendaMB.listaPrestadores}"
+                                rowKey="#{prestadorDestino.idUsuario}"  
+                                selection="#{cambioAgendaMB.prestadorDestinoSeleccionado}" 
+                                paginator="true"
+                                style="width: 600px;"
+                                rows="10"
+                                widgetVar="prestadoresDestinoTable"
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay prestadores"
+                                scrollable="true" 
+                                rowsPerPageTemplate="5,10,15"
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">
+                                <p:column headerText="Nombre" filterBy="#{prestadorDestino.primerNombre} #{prestadorDestino.segundoNombre} #{prestadorDestino.primerApellido} #{prestadorDestino.segundoApellido}"  filterMatchMode="contains" filterStyle="width: 250px;">
+                                    <h:outputText value="#{prestadorDestino.primerNombre} #{prestadorDestino.segundoNombre} #{prestadorDestino.primerApellido} #{prestadorDestino.segundoApellido}" />
+                                </p:column>
+                                <p:column headerText="Especialidad" filterBy="#{prestadorDestino.especialidad.id}" filterMatchMode="exact">
+                                    <f:facet name="filter">
+                                        <p:selectOneMenu onchange="PF('prestadoresDestinoTable').filter()" style="width: 250px;" >
+                                            <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems  value="#{cambioAgendaMB.listaEspecialidades}" />
+                                        </p:selectOneMenu>
+                                    </f:facet>        
+                                    <h:outputText value="#{prestadorDestino.especialidad.descripcion}" />
+                                </p:column>                          
+                            </p:dataTable>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan =" 3"><p:commandButton
+                                id='cbtnprestador'
+                                value = "Cargar Prestador"
+                                action="#{cambioAgendaMB.actualizarPrestador(1)}"
+                                update=":tabviewPrincipal:formprestador:idprestador2 :tabviewPrincipal:formprestador:idnombre2 :tabviewPrincipal:formprestador:idespecialidad2 :tabviewPrincipal:formprestador:idregistro2"
+                                oncomplete = "PF('dlgfindPrestadorDestino').hide();">
+                            </p:commandButton>
+                        </td>
+                    </tr>               
+                </table>
+
+            </h:form>
+        </p:dialog> 
+
+    </h:body>
+</html>
+

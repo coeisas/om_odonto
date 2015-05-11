@@ -1,0 +1,222 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>        
+        <title>Programas</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"/>
+    </h:head>
+
+    <h:body>     
+
+        <h:form id="IdFormProgramas">              
+            <p:growl id="IdMensajeProgramas"  showDetail="true" sticky="false" autoUpdate="true" life="2000"/>
+            <br/>
+            <div>
+                <p:commandButton 
+                    title="Nuevo Programa" value="&nbsp;"
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{programasMB.limpiarFormularioProgramas}"                    
+                    update=":IdFormProgramas"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar programa" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{programasMB.buscarProgramas}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar Programa" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    actionListener="#{programasMB.eliminarPrograma}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar Programa" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    update=":IdFormProgramas"
+                    actionListener="#{programasMB.guardarPrograma}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                                                    
+
+            </div>
+            <br/> 
+            <p:tabView style=" width: 95%;  margin-left: auto; margin-right: auto">                  
+                <p:tab title="#{programasMB.tituloTabPrograma}">  
+                    <br/> <br/> 
+                    <table style="margin-left: auto; margin-right: auto;">                         
+                        <tr style="vertical-align: top;">                            
+                            <td>
+                                <table style="margin-left: auto; margin-right: auto;" >                         
+                                    <tr>
+                                        <td>
+                                            <p:outputLabel styleClass="campoObligatorio" value="Código Programa"/>
+                                            <p:inputText styleClass="campoFormulario" size="16" value="#{programasMB.codigoPrograma}"/>
+                                            <p:outputLabel styleClass="campoObligatorio" value="Nombre Programa"/>
+                                            <p:inputText styleClass="campoFormulario" size="45" value="#{programasMB.nombrePrograma}"/> 
+                                            <p:outputLabel styleClass="campoObligatorio" value="Activo"/>
+                                            <p:selectBooleanCheckbox styleClass="campoFormulario" value="#{programasMB.activo}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:outputLabel styleClass="campoObligatorio" value="Administradora"/>                                            
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 250px;" value="#{programasMB.idAdministradora}"  filter="true" filterMatchMode="contains">
+                                                <f:ajax 
+                                                    event="change"
+                                                    listener="#{programasMB.cambiaAdministradora}"                                                
+                                                    render="IdListaContratos"/>
+                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel styleClass="campoObligatorio" value="Contrato"/>
+                                            <p:selectOneMenu id="IdListaContratos" styleClass="campoFormulario" style="width: 250px;" value="#{programasMB.idContrato}"  filter="true" filterMatchMode="contains">                                                
+                                                <f:selectItems value="#{programasMB.listaContratos}" var="contrato" itemLabel="#{contrato.descripcion}" itemValue="#{contrato.idContrato}" />
+                                            </p:selectOneMenu>                                            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:outputLabel styleClass="campoObligatorio" value="Manual Tarifario: "/>
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 213px;" value="#{programasMB.idManualTarifario}"  filter="true" filterMatchMode="contains">                                                                                                
+                                                <f:selectItems value="#{programasMB.listaManuales}" var="manual" itemLabel="#{manual.nombreManualTarifario}" itemValue="#{manual.idManualTarifario}" />
+                                            </p:selectOneMenu>
+                                        </td> 
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <table style="margin-left: auto; margin-right: auto;">
+                                                <tr>
+                                                    <td>&nbsp;</td>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Cuota Moderadora" /></td>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Copago" /></td>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="% Medicamentos" /></td>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="% Insumos" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Nivel 1" /> </td>
+                                                    <td><pe:inputNumber decimalSeparator=","  style="width: 10%"  value="#{programasMB.cm1}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.cp1}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.medicamentoValor1}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.insumosPorcentaje1}"/> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Nivel 2" /> </td>
+                                                    <td><pe:inputNumber decimalSeparator=","  style="width: 10%"  value="#{programasMB.cm2}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.cp2}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.medicamentoValor2}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.insumosPorcentaje2}"/> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Nivel 3" /> </td>
+                                                    <td><pe:inputNumber decimalSeparator=","  style="width: 10%"  value="#{programasMB.cm3}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.cp3}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.medicamentoValor3}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.insumosPorcentaje3}"/> </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Nivel 4" /> </td>
+                                                    <td><pe:inputNumber decimalSeparator=","  style="width: 10%"  value="#{programasMB.cm4}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.cp4}"/> </td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Nivel 5" /> </td>
+                                                    <td><pe:inputNumber decimalSeparator=","  style="width: 10%"  value="#{programasMB.cm5}"/> </td>
+                                                    <td><pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{programasMB.cp5}"/> </td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Cotizante" /> </td>
+                                                    <td><p:selectBooleanButton styleClass="campoFormulario" value="#{programasMB.cmc}" onLabel="SI" offLabel="NO" style="width:40px"/></td>
+                                                    <td><p:selectBooleanButton styleClass="campoFormulario" value="#{programasMB.cpc}" onLabel="SI" offLabel="NO" style="width:40px"/></td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><p:outputLabel styleClass="campoNoObligatorio" value="Beneficiario" /> </td>
+                                                    <td><p:selectBooleanButton styleClass="campoFormulario" value="#{programasMB.cmb}" onLabel="SI" offLabel="NO" style="width:40px"/></td>
+                                                    <td><p:selectBooleanButton styleClass="campoFormulario" value="#{programasMB.cpb}" onLabel="SI" offLabel="NO" style="width:40px"/></td>
+                                                    <td>&nbsp;</td>
+                                                    <td>&nbsp;</td>
+                                                </tr>                                                
+                                            </table>
+                                        </td> 
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>                        
+                    </table>
+                    <br/>
+                    <br/>
+                </p:tab>                   
+            </p:tabView>            
+
+        </h:form>
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarProgramas" header="BUSCAR PROGRAMA" widgetVar="dialogoBuscarProgramas" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaProgramas" 
+                                var="programa" 
+                                widgetVar="wvTablaProgramas"
+                                value="#{programasMB.listaProgramas}" 
+                                rowKey="#{programa.idPrograma}"  
+                                selection="#{programasMB.programaSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 700px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay Programas"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="100" filterBy="#{programa.codigoPrograma}" filterMatchMode="contains">
+                                    #{programa.codigoPrograma}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="300" filterBy="#{programa.nombrePrograma}" filterMatchMode="contains">
+                                    #{programa.nombrePrograma}
+                                </p:column>                                
+                                <p:column headerText="CONTRATO" width="200" filterBy="#{programa.idContrato.descripcion}" filterMatchMode="contains">
+                                    #{programa.idContrato.descripcion}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar Programa"
+                                update=":IdFormProgramas"
+                                actionListener="#{programasMB.cargarPrograma}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarContrato" header="ELIMINAR PROGRAMA" widgetVar="dialogoEliminarPrograma" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarPrograma" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminacion de este programa ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarPrograma').hide();"
+                        actionListener="#{progamasMB.confirmarEliminarPrograma}"/>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>
+

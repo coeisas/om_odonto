@@ -1,0 +1,227 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>        
+        <title>Pacientes</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormServicios">              
+            <p:growl id="IdMensajeServicios" showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>            
+            <div>
+                <p:commandButton 
+                    title="Nuevo servicio" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"                            
+                    actionListener="#{serviciosMB.limpiarFormularioServicios}"                    
+                    update=":IdFormServicios"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar servicio" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border" 
+                    actionListener="#{serviciosMB.buscarServicio}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar servicio" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    actionListener="#{serviciosMB.eliminarServicio}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar servicio" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    update=":IdFormServicios"
+                    actionListener="#{serviciosMB.guardarServicio}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>    
+            </div>                    
+            <br/>
+            <p:tabView id="IdTabViewServicios" style=" width: 95%;  margin-left: auto; margin-right: auto">  
+                <p:tab title="#{serviciosMB.tituloTabServicios}">
+                    <br/>
+                    <p:panel style="margin: 10px; padding: 10px;">
+                        <table style="margin-left: auto; margin-right: auto;">
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Código interno"/>
+                                    <p:inputText   styleClass="campoFormulario"  size="55" disabled="false" value="#{serviciosMB.codigoServicio}"/>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Valor Particular" />                                
+                                    <pe:inputNumber styleClass="campoFormulario"    decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{serviciosMB.factorSOAT}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Nombre Servicio"/>
+                                    <p:inputText   styleClass="campoFormulario" size="99" value="#{serviciosMB.nombreServicio}"/>                            
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Código SOAT" />
+                                    <p:inputText    styleClass="campoFormulario"    size="20" disabled="false" value="#{serviciosMB.codigoSoat}"/>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Factor SOAT" />                                
+                                    <pe:inputNumber styleClass="campoFormulario"    decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{serviciosMB.factorSOAT}"/>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Código CUP"/>
+                                    <p:inputText    styleClass="campoFormulario"    size="20" disabled="false" value="#{serviciosMB.codigoCup}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Código ISS" />
+                                    <p:inputText    styleClass="campoFormulario"    size="22" disabled="false" value="#{serviciosMB.codigoIss}"/>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Factor ISS" />                                
+                                    <pe:inputNumber styleClass="campoFormulario"    decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{serviciosMB.factorISS}"/>
+                                    <p:outputLabel  styleClass="campoNoObligatorio" value="Código CUMS" />
+                                    <p:inputText    styleClass="campoFormulario"    size="22" disabled="false" value="#{serviciosMB.codigoCums}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Especialidad"/>                                    
+                                    <p:inputText   styleClass="campoFormulario"    size="40" />
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Tipo de Servicio"/>
+                                    <p:inputText   styleClass="campoFormulario"    size="39" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Centro costo"/>
+                                    <p:inputText   styleClass="campoFormulario" size="49" />
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Visible"/>                                    
+                                    <p:selectBooleanButton styleClass="campoFormulario" value="#{serviciosMB.visible}" onLabel="SI" offLabel="NO" style="width:40px" />
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Requiere Autorización"/>                                
+                                    <p:selectBooleanButton styleClass="campoFormulario" value="#{serviciosMB.visible}" onLabel="SI" offLabel="NO" style="width:40px" />
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td >                                     
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Agrupación"/>                                
+                                    <p:selectOneMenu styleClass="campoFormulario"  style="width: 240px;">
+                                        <f:selectItem itemLabel="05 - Procedimiento de promocion" itemValue="05 - Procedimiento de promocion"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Finalidad"/>                                
+                                    <p:selectOneMenu styleClass="campoFormulario"  style="width: 250px;" value="#{serviciosMB.finalidad}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaFinalidadProcedimiento}"/>
+                                    </p:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td >                                     
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Ambito"/>                                
+                                    <p:selectOneMenu styleClass="campoFormulario"   style="width: 150px;" value="#{serviciosMB.codigoAmbito}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaAmbito}"/>
+                                    </p:selectOneMenu>
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Acto Qtx"/>                                
+                                    <p:selectOneMenu styleClass="campoFormulario"  style="width: 365px;" value="#{serviciosMB.codigoActQtx}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaActoQuirurgico}"/>
+                                    </p:selectOneMenu>
+                                </td> 
+                            </tr>
+                        </table>
+                    </p:panel>                    
+                    <p:panel style="margin: 10px; padding: 10px;">
+                        <table style="margin-left: auto; margin-right: auto;">
+                            <tr> 
+                                <td style="background-color: #eaecfe"> <p:outputLabel styleClass="campoNoObligatorio" value="Aplica a Sexo"/> </td>
+                                <td> 
+                                    <p:selectOneMenu style="width: 135px;" value="#{serviciosMB.sexo}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaGenero3}"/>
+                                    </p:selectOneMenu>                                    
+                                </td> 
+                                <td style="background-color: #eaecfe"> <p:outputLabel styleClass="campoNoObligatorio" value="Zona"/> </td>
+                                <td> 
+                                    <p:selectOneMenu style="width: 135px;" value="#{serviciosMB.zona}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaZona}"/>
+                                    </p:selectOneMenu>                                    
+                                </td> 
+                            </tr>
+                            <tr>
+                                <td>    
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Edad Inicial"/>
+                                </td>
+                                <td>
+                                    <pe:inputNumber styleClass="campoFormulario"    decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{serviciosMB.edadInicial}"/>
+                                </td>
+                                <td style="background-color: #eaecfe"> <p:outputLabel styleClass="campoNoObligatorio" value="Tipo"/> </td>
+                                <td> 
+                                    <p:selectOneMenu style="width: 135px;" value="#{serviciosMB.unidadEdadInicial}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaTipoEdad}"/>
+                                    </p:selectOneMenu>
+                                </td> 
+                            </tr>
+                            <tr>
+                                <td>    
+                                    <p:outputLabel styleClass="campoNoObligatorio" value="Edad Final"/>
+                                </td>
+                                <td>
+                                    <pe:inputNumber styleClass="campoFormulario"    decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{serviciosMB.edadFinal}"/>
+                                </td>
+                                <td style="background-color: #eaecfe"> <p:outputLabel styleClass="campoNoObligatorio" value="Tipo"/> </td>
+                                <td> 
+                                    <p:selectOneMenu style="width: 135px;" value="#{serviciosMB.unidadEdadFinal}">
+                                        <f:selectItems value="#{aplicacionGeneralMB.listaTipoEdad}"/>
+                                    </p:selectOneMenu>
+                                </td> 
+                            </tr>
+                        </table>
+                    </p:panel>
+                </p:tab> 
+            </p:tabView>
+            <br/>
+        </h:form>
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarServicios" header="BUSCAR SERVICIO" widgetVar="dialogoBuscarServicios" resizable="false" modal="true">  
+                <br/>
+                <p:dataTable 
+                    id="IdTablaServicios" 
+                    var="servicio" 
+                    widgetVar="wvTablaServicios"
+                    value="#{serviciosMB.listaServicios}" 
+                    rowKey="#{servicio.idServicio}"  
+                    selection="#{serviciosMB.servicioSeleccionadoTabla}" 
+                    paginator="true"
+                    style="width: 600px; height: 300px;"
+                    rows="10"                                    
+                    paginatorPosition="bottom"                                
+                    emptyMessage="No hay servicios"
+                    scrollable="true" 
+                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                    
+                    pageLinks="5"
+                    selectionMode="single"
+                    resizableColumns="true">
+                    <p:column headerText="ID" width="0" >  
+                        #{servicio.idServicio}  
+                    </p:column>
+                    <p:column headerText="CODIGO" width="10" filterBy="#{servicio.codigoServicio}" filterMatchMode="contains">
+                        #{servicio.codigoServicio}
+                    </p:column>
+                    <p:column headerText="NOMBRE" width="90" filterBy="#{servicio.nombreServicio}" filterMatchMode="contains">
+                        #{servicio.nombreServicio}
+                    </p:column>
+                </p:dataTable>  
+                <br/>
+                <p:commandButton value="Cargar seleccionado" update=":IdFormServicios" actionListener="#{serviciosMB.cargarServicio}"/>
+                <br/>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarServicio" header="ELIMINAR SERVICIO" widgetVar="dialogoEliminarServicio" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarServicio" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminación de este servicio ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarServicio').hide();"
+                        actionListener="#{serviciosMB.confirmarEliminarServicio}"                        
+                        update=":IdFormServicios"/>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

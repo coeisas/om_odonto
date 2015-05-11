@@ -1,0 +1,143 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Clasificaciones</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        #{empresaMB.cargarDatosEmpresa()}
+        <h:form id="IdFormEmpresa">              
+            <p:growl id="IdMensajeEmpresa"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>
+            <div>
+                <p:commandButton 
+                    title="Guardar/Actualizar datos empresa" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    update=":IdFormEmpresa"
+                    actionListener="#{empresaMB.guardarEmpresa}"                   
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                            
+                &nbsp;
+                <p:commandButton                     
+                    title="Volver a cargar" value="&nbsp;"                                        
+                    styleClass="icon-spin fg-lightBlue bg-white no-border" 
+                    actionListener="#{empresaMB.cargarDatosEmpresa}"
+                    update=":IdFormEmpresa"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" > 
+                <p:tab title="Datos Empresa">                      
+                    <br/>
+                    <table style="margin-left: auto; margin-right: auto; border: 2px;">                        
+                        <tr>                            
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoObligatorio" value="Razón social" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.razonSocial}" size="111"/>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Dirección"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.direccion}" size="61"/>                                
+                                <p:outputLabel styleClass="campoObligatorio" value="Código Ministerio" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.codigoMinisterio}" size="25"/>
+                                
+                                
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Régimen"/>                                
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.regimen}" maxlength="50" size="36"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Télefono 1"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.telefono1}" maxlength="10"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Teléfono 2"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.telefono2}" maxlength="10"/>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td colspan="2">    
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tipo documento"/>                                
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{empresaMB.tipoDocumento}">                                    
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}" />
+                                </p:selectOneMenu> 
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Identificacion"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.numIdentificacion}" size="40"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Digito verificación"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.dv}" size="1" maxlength="1"/>
+                            </td>
+                        </tr>
+
+                        <tr>                            
+                            <td colspan="2">
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tip. Doc. Representante Legal:"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{empresaMB.tipoDocRepLegal}">                                    
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Identificación Representante Legal"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.numDocRepLegal}" size="30"/>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td rowspan="5">
+                                <p:graphicImage id="IdLogo" url="#{empresaMB.urlLogo}" cache="false" style="width: 150px; height: 150px; cursor: pointer;" onclick="PF('dlgUploadLogo').show()" title="Click para seleccionar"/>
+                                <br/>
+                                <p:dialog id="upload1" widgetVar="dlgUploadLogo" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                    <p:fileUpload 
+                                        fileUploadListener="#{empresaMB.uploadFoto}"  auto="true"
+                                        update="IdLogo" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUploadLogo.hide();"
+                                        mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar" />                            
+                                    <br/>
+                                    <br/>
+                                    <p:commandButton type="button" value="Cerrar" onclick="PF('dlgUploadLogo').hide()"/>
+                                </p:dialog>
+                            </td>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Nombre Completo Representante legal"/>                                
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.nomRepLegal}" size="52"/>
+                            </td>
+                        </tr>
+                        <tr>    
+                            <td>                                
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Departamento"/>                                
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 180px;" value="#{empresaMB.departamento}" filter="true" filterMatchMode="contains">
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{empresaMB.cargarMunicipios}"                                                
+                                        render="IdMunicipios"/> 
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaDepartamentos}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel     styleClass="campoNoObligatorio" value="Municipio"/>
+                                <p:selectOneMenu   styleClass="campoFormulario" id="IdMunicipios" style="width: 160px;" value="#{empresaMB.municipio}" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{empresaMB.listaMunicipios}" />
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td>    
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Sitio web"/>
+                                <p:inputText   styleClass="campoFormulario"    value="#{empresaMB.website}" size="85"/>
+                            </td>
+                        </tr>
+                        <tr>                            
+                            <td>    
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Observaciones"/>
+                                <p:inputTextarea   styleClass="campoFormulario"  style="width: 413px; "  value="#{empresaMB.observaciones}"/>
+                            </td>                            
+                        </tr>
+                    </table>        
+                    <br/>
+                </p:tab>                   
+            </p:tabView>               
+        </h:form>       
+    </h:body>
+</html>

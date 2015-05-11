@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
+    </h:head>
+    <h:body>
+        <p:growl id="msgs" autoUpdate="true" showDetail="true"/>
+
+        <h:form id="idFormDiasNoLaborales">
+            <p:layout>
+                <p:layoutUnit position="west" style="padding: 1em 2em">
+                    <table>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Sede:"/>
+                                <p:selectOneMenu styleClass="campoFormulario" value="#{diasNoLaboralesMB.idSede}">
+                                    <f:selectItem itemValue="#{null}" itemLabel="..." noSelectionOption="true"/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaSedes}"/>
+                                    <f:selectItem itemValue="#{diasNoLaboralesMB.todas}" itemLabel="TODAS"/>
+                                    <p:ajax event="change" listener="#{diasNoLaboralesMB.cargarDiasNoLaborales}" update="@none"/>
+                                </p:selectOneMenu> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>                        
+                                <p:outputLabel styleClass="campoObligatorio" value="Dia No Laboral:"/>
+                                <p:calendar styleClass="campoFormulario" pages="3" locale="es" navigator="true" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="11" value="#{diasNoLaboralesMB.fechaNoLaboral}">
+                                    <p:ajax event="dateSelect" listener="#{diasNoLaboralesMB.validarDiaSeleccionado}" update="@none" />
+                                </p:calendar>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>                        
+                                <p:commandButton id="idButton" style="display: #{diasNoLaboralesMB.display}" value="Insertar Dia No Laboral" icon="ui-icon-plus" styleClass="campoFormulario" title="Insertar dia no laboral" actionListener="#{diasNoLaboralesMB.insertarDia()}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </p:layoutUnit>
+                <p:layoutUnit position="center">
+                    <div style="margin: 0 auto;width: 80%">
+                        <p:dataTable 
+                            id="idTable"
+                            emptyMessage="No hay dias no laborales"
+                            var="diaNoLaboral"
+                            value="#{diasNoLaboralesMB.listaDiasNoLaborales}"
+                            rows="10"
+                            resizableColumns="false"
+                            disabledSelection="true"
+                            paginator="true"
+                            paginatorPosition="bottom"
+                            pageLinks="5"
+                            styleClass="campoFormulario"
+                            >
+                            <f:facet name="header">
+                                <h:outputText value="Dias no laborales"/>
+                            </f:facet>
+                            <p:column style="width: 10%;">
+                                <p:commandButton style="font-size: 1em;width: 1.5em;height: 1.5em;" title="Eliminar dia" icon="ui-icon-trash" actionListener="#{diasNoLaboralesMB.eliminarDia}" update="@none">
+                                    <f:attribute name="sede" value="#{diaNoLaboral.cfgDiasNoLaboralesPK.idSede}"/>
+                                    <f:attribute name="fecha" value="#{diaNoLaboral.cfgDiasNoLaboralesPK.fechaNoLaboral}"/>
+                                </p:commandButton>
+                            </p:column>
+                            <p:column headerText="Fecha">
+                                <h:outputText value="#{diaNoLaboral.cfgDiasNoLaboralesPK.fechaNoLaboral}">
+                                    <f:convertDateTime locale="es_CO" dateStyle="long"/>
+                                </h:outputText>
+                            </p:column>
+
+                        </p:dataTable> 
+                    </div>
+                </p:layoutUnit>
+            </p:layout>
+
+        </h:form>
+
+    </h:body>
+</html>
+

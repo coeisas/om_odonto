@@ -1,0 +1,131 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Clasificaciones</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormConsultorios">              
+            <p:growl id="IdMensajeConsultorios"  showDetail="true" sticky="false" autoUpdate="true" life="2000"/>
+            <div style="margin: 15px;">
+                <p:outputLabel styleClass="labelFormularioBold" value="Sede: "/>
+                <p:selectOneMenu styleClass="campoFormulario" value="#{consultoriosMB.idSedeSeleccionada}" style="width: 200px;" filter="true" filterMatchMode="contains">
+                    <f:ajax event="change" listener="#{consultoriosMB.cambiaSede}" render="IdFormConsultorios"/>
+                    <f:selectItem itemLabel=""/>
+                    <f:selectItems value="#{aplicacionGeneralMB.listaSedes}"/>
+                </p:selectOneMenu>
+            </div>            
+            <div>
+                <p:commandButton 
+                    rendered="#{consultoriosMB.mostrarControlesConsultorios}"
+                    title="Nuevo consultorio" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{consultoriosMB.limpiarFormularioConsultorio}"                    
+                    update=":IdFormConsultorios"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    rendered="#{consultoriosMB.mostrarControlesConsultorios}"
+                    title="Buscar consultorio" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{consultoriosMB.buscarConsultorio}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    rendered="#{consultoriosMB.mostrarControlesConsultorios}"
+                    title="Eliminar consultorio" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                    actionListener="#{consultoriosMB.eliminarConsultorio}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    rendered="#{consultoriosMB.mostrarControlesConsultorios}"
+                    title="Guardar/Actualizar consultorio" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border"                     
+                    actionListener="#{consultoriosMB.guardarConsultorio}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" rendered="#{consultoriosMB.mostrarControlesConsultorios}">                                 
+                <p:tab title="#{consultoriosMB.tituloTabConsultorio}" id="IdTabConsultorios" >
+                    <br/>
+                    <p:panelGrid id="IdPanelEditarConsultorio" styleClass="panelGridSinBordes" style="margin-left: auto; margin-right: auto;" columns="2">                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Código"/>
+                        <p:inputText   value="#{consultoriosMB.codigoConsultorio}" maxlength="5" size="35" />                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>
+                        <p:inputText   value="#{consultoriosMB.nombreConsultorio}" size="35" />                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Piso"/>
+                        <p:spinner value="#{consultoriosMB.pisoConsultorio}" min="1" size="32"/>
+                        <p:outputLabel styleClass="campoObligatorio" value="Especialidad"/>
+                        <p:selectOneMenu styleClass="campoFormulario" value="#{consultoriosMB.especialidadConsultorio}" style="width: 200px;" filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel=""/>
+                            <f:selectItems value="#{aplicacionGeneralMB.listaEspecialidades}"/>
+                        </p:selectOneMenu>                        
+                    </p:panelGrid>
+                    <br/>
+                </p:tab>                        
+            </p:tabView>               
+        </h:form>
+        <h:form id="IdFormDialogs">  
+            <p:dialog id="IdDialogoBuscarConsultorios" header="BUSCAR CONSULTORIO" widgetVar="dialogoBuscarConsultorios" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaConsultorios" 
+                                var="consultorio" 
+                                widgetVar="wvTablaConsultorios"
+                                value="#{consultoriosMB.listaConsultorios}" 
+                                rowKey="#{consultorio.idConsultorio}"  
+                                selection="#{consultoriosMB.consultorioSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay consultorios"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="1" filterBy="#{consultorio.codConsultorio}">
+                                    #{consultorio.codConsultorio}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="20" filterBy="#{consultorio.nomConsultorio}">
+                                    #{consultorio.nomConsultorio}
+                                </p:column>                                
+                                <p:column headerText="ESPECIALIDAD" width="50" filterBy="#{consultorio.codEspecialidad.descripcion}">
+                                    #{consultorio.codEspecialidad.descripcion}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton value="Cargar consultorio" update=":IdFormConsultorios" actionListener="#{consultoriosMB.cargarConsultorio}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarConsultorio" header="ELIMINAR CONSULTORIO" widgetVar="dialogoEliminarConsultorio" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarConsultorio" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminación de este consultorio ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarConsultorio').hide();"
+                        actionListener="#{consultoriosMB.confirmarEliminarConsultorio}"                        
+                        update=":IdFormConsultorios"/>
+                </p:panelGrid>
+            </p:dialog>                         
+        </h:form>
+    </h:body>
+</html>

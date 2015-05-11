@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <script src="../recursos/js/calendario.js"/>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <style>
+            .ui-panelgrid td, .ui-panelgrid tr
+            {
+                border-style: none !important
+            }
+        </style>        
+    </h:head>
+    <h:body>
+
+        <p:growl autoUpdate="true" showDetail="true" />
+
+        <h:form id="idFormDatosPaciente">
+            <p:panelGrid style="width: 98%">
+                <p:row>
+                    <p:column>
+                        <h2>Informacion del Paciente</h2>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="labelFormularioBold" id="idtipodocumento" value="#{citasMasivasV3MB.pacienteSeleccionado.tipoIdentificacion.descripcion}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:inputText  styleClass="campoFormulario"  id="iddocumento" size="20" value="#{citasMasivasV3MB.identificacion}" >
+                            <p:ajax event="blur" listener="#{citasMasivasV3MB.findPaciente}" update="@form :idFormDetallesCita"/>
+                        </p:inputText>
+                        <p:watermark for="iddocumento" value="Digite identificacion"/>
+                        <p:commandButton
+                            id="cbtnPaciente"
+                            title="Buscar Paciente"
+                            style=" width: 22px; height: 22px;"
+                            onclick="PF('dlgPaciente').show();"
+                            icon="ui-icon-search"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Paciente:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}" />
+                        <p:outputLabel styleClass="labelFormulario" id="idpaciente" value="#{citasMasivasV3MB.pacienteSeleccionado.primerNombre} #{citasMasivasV3MB.pacienteSeleccionado.segundoNombre} #{citasMasivasV3MB.pacienteSeleccionado.primerApellido} #{citasMasivasV3MB.pacienteSeleccionado.segundoApellido}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Género:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" id="idsexo" value="#{citasMasivasV3MB.pacienteSeleccionado.genero.observacion}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Fecha Nacimiento:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario"  id="idfecnac" value="#{citasMasivasV3MB.pacienteSeleccionado.fechaNacimiento}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}">
+                            <f:convertDateTime locale="es_CO" pattern="MM/dd/yyyy"/>   
+                        </p:outputLabel>                                       
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Edad:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" id="idedad" value="#{citasMasivasV3MB.pacienteSeleccionado.edad}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="G.S. RH:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel  styleClass="labelFormulario" id="idrh" value="#{citasMasivasV3MB.pacienteSeleccionado.grupoSanguineo.descripcion}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Estado Civil:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel  styleClass="labelFormulario" id="idecivil" value="#{citasMasivasV3MB.pacienteSeleccionado.estadoCivil.descripcion}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Lugar Nacimiento:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" id="idlugnac"  value="#{citasMasivasV3MB.pacienteSeleccionado.municipio.descripcion} #{citasMasivasV3MB.pacienteSeleccionado.departamento.descripcion}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Teléfono:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" id="idtel" value="#{citasMasivasV3MB.pacienteSeleccionado.telefonoResidencia}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Dirección:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel  styleClass="labelFormulario" id="iddir" value="#{citasMasivasV3MB.pacienteSeleccionado.direccion}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Administradora:" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                        <p:outputLabel styleClass="labelFormulario" id="idadministradora" value="#{citasMasivasV3MB.pacienteSeleccionado.idAdministradora.razonSocial}" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>        
+        </h:form>
+
+        <h:form id="idFormDetallesCita">
+            <p:panelGrid style="width: 98%" rendered="#{citasMasivasV3MB.hayPacienteSeleccionado}">
+                <p:row>
+                    <p:column>
+                        <h2>Detalles de la Cita</h2>
+                    </p:column>
+                </p:row>
+                <p:row>
+                    <p:column>
+                        <p:outputLabel styleClass="labelFormularioBold" value="Paquete:"/>
+                        <p:selectOneMenu id="idSelectPaquetes" styleClass="campoFormulario" value="#{citasMasivasV3MB.idPaquete}">
+                            <f:selectItem itemValue="#{null}" itemLabel="..."/>
+                            <f:selectItems value="#{citasMasivasV3MB.listaPaquetes}"/>
+                            <p:ajax event="change" listener="#{citasMasivasV3MB.determinarAutorizacionParaPaquete}" update="@none" />
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Fecha Inicial:" styleClass="labelFormularioBold"/>
+                        <p:calendar navigator="true" id="fechIni" widgetVar="calwidgetini"  mindate="calwidgetini.today()" value="#{citasMasivasV3MB.fechaInicial}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="12" styleClass="campoFormulario"/>                                
+                        <p:outputLabel value="Fecha Final:" styleClass="labelFormularioBold"/>                            
+                        <p:calendar navigator="true" id="fechFin" widgetVar="calwidgetfin" mindate="calwidgetfin.today()" value="#{citasMasivasV3MB.fechaFinal}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="12" styleClass="campoFormulario"/>
+                        <p:outputLabel value="Hora:" styleClass="labelFormularioBold"/>                            
+                        <p:calendar timeOnly="true" id="horaini" widgetVar="calwidgethora" value="#{citasMasivasV3MB.horaInicial}" locale="es" timeZone="America/Bogota" pattern="HH:mm" mask="99:99" size="7" styleClass="campoFormulario"/>
+                        <p:commandButton id="idButtonVerTurnos" styleClass="campoFormulario" icon="ui-icon-calendar" title="Ver Turnos" value="Ver Turnos" actionListener="#{citasMasivasV3MB.buscarDiponibilidad()}"/>
+                    </p:column>
+                </p:row>
+            </p:panelGrid>
+            <br/>
+            <p:dataTable id="idTableTurnos" value="#{citasMasivasV3MB.listaTurnos}" paginatorPosition="bottom" rows="5" emptyMessage="No hay turnos" var="turno" paginator="true" rendered="#{citasMasivasV3MB.rendComponente}">
+                <f:facet name="header">Turnos Seleccionados</f:facet>
+                <p:column headerText="Fecha" width="35%">
+                    <h:outputText value="#{turno.fecha}">
+                        <f:convertDateTime locale="es_CO" dateStyle="full"/>                       
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="Hora" width="15%">
+                    <h:outputText value="#{turno.horaIni}">
+                        <f:convertDateTime pattern="h:mm a" timeZone="America/Bogota"/>
+                    </h:outputText>
+
+                </p:column>
+                <p:column headerText="Prestador">
+                    <h:outputText value="#{turno.idPrestador.nombreCompleto()}" />
+                </p:column>
+            </p:dataTable>
+            <br/>
+            <div align="center">
+                <p:commandButton id="idButtonCrearCitas" icon="ui-icon-disk" value="Crear Citas" actionListener="#{citasMasivasV3MB.crearCitas()}" rendered="#{citasMasivasV3MB.rendComponente}"/>
+                <p:commandButton icon="ui-icon-newwin" value="Mostrar Citas Creadas" onclick="PF('dlgCitas').show();" rendered="#{citasMasivasV3MB.rendTablaResultado}"  />
+            </div>
+            <p:blockUI block="idFormDetallesCita" trigger="idButtonCrearCitas">
+                <p:panelGrid id="blockcontent" columns="2"> 
+                    <h:graphicImage value="../../recursos/img/loading.gif" height="30px" width="30px" />
+                    <h:outputText value="Por favor espere, citas creándose ..."/>
+                </p:panelGrid>
+            </p:blockUI>
+            <p:blockUI block="idFormDetallesCita" trigger="idButtonVerTurnos">
+                <p:panelGrid id="blockcontentDos" columns="2"> 
+                    <h:graphicImage value="../../recursos/img/loading.gif" height="30px" width="30px" />
+                    <h:outputText value="Por favor espere, turnos escogiendose ..."/>
+                </p:panelGrid>
+            </p:blockUI>            
+        </h:form>
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+            <h:form id="formFindPaciente">
+                <p:dataTable
+                    id="idPDelegirPaciente"
+                    var="paciente" 
+                    value="#{citasMasivasV3MB.listaPacientes}"
+                    rowKey="#{paciente.idPaciente}"  
+                    selection="#{citasMasivasV3MB.pacienteSeleccionado}" 
+                    paginator="true"
+                    style="width: 600px;"
+                    rows="10"
+                    lazy="true"
+                    paginatorPosition="bottom"                                
+                    emptyMessage="No se encontraron pacientes"
+                    scrollable="true" 
+                    pageLinks="5"
+                    widgetVar="pacientesTable"
+                    selectionMode="single"
+                    resizableColumns="true"
+                    >
+                    <p:column headerText="Nro Documento" width="25%" filterBy="#{paciente.identificacion}" filterMatchMode="contains" filterStyle="width: 145px;">
+                        <h:outputText value="#{paciente.identificacion}"/>                                  
+                    </p:column>
+                    <p:column headerText="Nombre" width="44%" filterBy="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" filterStyle="width: 250px;" filterMatchMode="contains">
+                        <h:outputText value="#{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}" />
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <div style="text-align: center">
+                    <p:commandButton
+                        id="cbtnPaciente"
+                        value="Cargar Paciente"
+                        update = ":idFormDatosPaciente :idFormDetallesCita" 
+                        actionListener="#{citasMasivasV3MB.actualizarPaciente()}"
+                        oncomplete = "PF('dlgPaciente').hide();"                                
+                        />
+                </div>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Citas Creadas" widgetVar="dlgCitas" resizable="false" modal="true">
+            <h:form id="formResultCitas">
+                <!--selection="# {citasMasivasV3MB.pacienteSeleccionado}" -->
+                <p:dataTable
+                    id="idTableCitas"
+                    var="cita" 
+                    value="#{citasMasivasV3MB.listaCitas}"
+                    rowKey="#{cita.idCita}"      
+                    paginator="true"
+                    style="width: 600px;"
+                    rows="5"
+                    paginatorPosition="bottom"                                
+                    emptyMessage="No se encontraron Citas"
+                    scrollable="true" 
+                    widgetVar="citaTable"
+                    disabledSelection="true"
+                    resizableColumns="false"
+                    >
+                    <p:column headerText="Fecha" width="15%" >
+                        <h:outputText value="#{cita.idTurno.fecha}">
+                            <f:convertDateTime locale="es_CO" dateStyle="full"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Hora" width="15%">
+                        <h:outputText value="#{cita.idTurno.horaIni}" >
+                            <f:convertDateTime pattern="h:mm a" timeZone="America/Bogota"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Prestador">
+                        <h:outputText value="#{cita.idTurno.idPrestador.primerNombre} #{cita.idTurno.idPrestador.segundoNombre} #{cita.idTurno.idPrestador.primerApellido} #{cita.idTurno.idPrestador.segundoApellido}"/>
+                    </p:column>
+                    <p:column headerText="Servicio">
+                        <h:outputText value="#{cita.idServicio.nombreServicio}"/>
+                    </p:column>
+                </p:dataTable>
+                <br/>
+                <div align="center">
+                    <!--
+                    <p:commandButton
+                        id="cbtnCerrar"
+                        value="Cerrar"
+                        oncomplete = "PF('dlgCitas').hide();"                                
+                        />
+                    -->
+                    <div style="text-align: center">
+                        <p:commandButton style="font-size: 20px; width: 20px; height: 20px;" styleClass="icon-file-pdf fg-lightBlue bg-white no-border" title="Recordatorio" value="&nbsp;" actionListener="#{reporteCitasMB.generarRecordatorioMasivoV3}" ajax="false" onclick="this.form.target = '_blank'">
+                            <f:attribute name="logo_empresa" value="#{loginMB.rutaCarpetaImagenes}#{loginMB.empresaActual.logo.urlImagen}" />
+                        </p:commandButton>
+                    </div>                    
+                </div>
+            </h:form>
+        </p:dialog>
+        
+        <p:dialog draggable="false" header="Estado Autorizacion" modal="true" resizable="false" widgetVar="dlgEstadoAutorizacion">
+            <p:dataTable
+                id="idTablaAutorizacion"
+                value="#{citasMasivasV3MB.listadoAutorizado}"
+                var="Autorizacion"
+                rows="5"
+                paginator="true"
+                paginatorPosition="bottom"
+                disabledSelection="true"
+                resizableColumns="false"
+                style="width: 600px"
+                >
+                <p:column headerText="N° Autorizacion">
+                    #{Autorizacion.numAutorizacion}
+                </p:column>
+                <p:column headerText="Servicio" width="50%">
+                    #{Autorizacion.servicio}
+                </p:column>
+                <p:column headerText="Sesiones Autorizadas">
+                    #{Autorizacion.sesionesAutorizadas}
+                </p:column>
+                <p:column headerText="Sesiones Realizadas">
+                    #{Autorizacion.sesionesRealizadas}
+                </p:column>
+                <p:column headerText="Sesiones Pendientes">
+                    #{Autorizacion.sesionesPendientes}
+                </p:column>
+            </p:dataTable>            
+        </p:dialog>
+    </h:body>
+</html>
+

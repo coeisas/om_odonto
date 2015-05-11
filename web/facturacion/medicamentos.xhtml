@@ -1,0 +1,163 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Medicamentos</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormMedicamentos">              
+            <p:growl id="IdMensajeMedicamentos"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                        
+            <div>
+                <p:commandButton 
+                    title="Nuevo medicamento" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{medicamentosMB.limpiarFormularioMedicamentos}"
+                    update=":IdFormMedicamentos"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton
+                    title="Buscar medicamentos" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{medicamentosMB.buscarMedicamentos}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton
+                    title="Eliminar medicamento" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                    actionListener="#{medicamentosMB.eliminarMedicamento}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar/Actualizar medicamento" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    actionListener="#{medicamentosMB.guardarMedicamento}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>  
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
+                <p:tab title="#{medicamentosMB.tituloTabMedicamentos}">                    
+                    <br/>
+                    <table style="margin-left: auto; margin-right: auto;">
+                        <tr>
+                            <td>
+                                <p:outputLabel  styleClass="campoObligatorio" value="Código Medicamento"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.codigoMedicamento}" size="10" maxlength="10" />                    
+                                <p:outputLabel  styleClass="campoObligatorio" value="Nombre Medicamento"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.nombreMedicamento}" size="55" maxlength="100" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Código Cums"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.codigoCums}" size="24" maxlength="20" />                    
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Código Cups"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.codigoCups}" size="23" maxlength="20" />                              
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Tipo medicamento"/>
+                                <p:selectBooleanButton styleClass="campoFormulario" value="#{medicamentosMB.pos}" onLabel="POS" offLabel="NO POS" style="width:82px"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Nombre Genérico"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.nombreGenerico}" size="39" maxlength="100" />
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Nombre Comercial"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.nombreComercial}" size="38" maxlength="100" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Forma medicamento"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.formaMedicamento}" size="39" maxlength="100" />
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Concentración"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.concentracion}" size="39" maxlength="10" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>                                
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Unidad medida"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.unidadMedida}" size="20" maxlength="10" />
+                                <p:outputLabel  styleClass="campoNoObligatorio" value="Control médico"/>
+                                <p:selectBooleanButton styleClass="campoFormulario" value="#{medicamentosMB.controlMedico}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                                <p:outputLabel  styleClass="campoObligatorio" value="Registro sanitario"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.registroSanitario}" size="30" maxlength="50" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                                <p:outputLabel  styleClass="campoObligatorio" value="Modo admministración"/>
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.modAdmin}" size="62" maxlength="50" />
+                                <p:outputLabel  styleClass="campoObligatorio" value="Valor"/>
+                                <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," maxlength="15" minValue="0" value="#{medicamentosMB.valor}"/>                            
+
+                            </td>
+                        </tr>
+                    </table>                        
+                    <br/>
+                </p:tab>                
+            </p:tabView>               
+        </h:form>
+        <h:form id="IdFormDialogs">            
+            <p:dialog id="IdDialogoBuscarMedicamentos" header="BUSCAR MEDICAMENTOS" widgetVar="dialogoBuscarMedicamentos" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaMedicamentos" 
+                                var="medicamento" 
+                                widgetVar="wvTablaMedicamentos"
+                                value="#{medicamentosMB.listaMedicamentos}" 
+                                rowKey="#{medicamento.idMedicamento}"  
+                                selection="#{medicamentosMB.medicamentoSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay medicamentos"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="1" filterBy="#{medicamento.codigoMedicamento}" filterMatchMode="contains">
+                                    #{medicamento.codigoMedicamento}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="20" filterBy="#{medicamento.nombreMedicamento}" filterMatchMode="contains">
+                                    #{medicamento.nombreMedicamento}
+                                </p:column>                                
+                                <p:column headerText="FORMA" width="20" filterBy="#{medicamento.formaMedicamento}" filterMatchMode="contains">
+                                    #{medicamento.formaMedicamento}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton value="Cargar medicamento" update=":IdFormMedicamentos" actionListener="#{medicamentosMB.cargarMedicamento}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarMedicamento" header="ELIMINAR MEDICAMENTO" widgetVar="dialogoEliminarMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarMedicamento" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminación de este medicamento ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarMedicamento').hide();"
+                        actionListener="#{medicamentosMB.confirmarEliminarMedicamento}"                        
+                        update=":IdFormMedicamentos"/>
+                </p:panelGrid>
+            </p:dialog>                         
+        </h:form>
+    </h:body>
+</html>

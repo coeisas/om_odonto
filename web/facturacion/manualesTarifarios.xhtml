@@ -1,0 +1,647 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"      
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>        
+        <title>Manuales Tarifarios</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"/>
+    </h:head>
+    <h:body>
+        <h:form id="IdFormManuales">
+            <p:growl id="IdMensajeManuales"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>            
+            <div>
+                <p:commandButton 
+                    title="Nuevo Manual Tarifario" value="&nbsp;"
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{manualesTarifariosMB.limpiarFormularioManualesTarifarios}"
+                    oncomplete="PF('wvTabView').select(0);"
+                    update=":IdFormManuales"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar Manual Tarifario" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{manualesTarifariosMB.buscarManualTarifario}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar Manual Tarifario" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    actionListener="#{manualesTarifariosMB.eliminarManualTarifario}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar Manual Tarifario" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('wvTabView').select(0);"
+                    update=":IdFormManuales"
+                    actionListener="#{manualesTarifariosMB.guardarManualTarifario}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>
+                &nbsp;     
+                <p:remoteCommand name="remoteCommand"  update=":IdFormManuales" />
+            </div>
+            <br/>            
+            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView" dynamic="true">  
+                <p:tab title="#{manualesTarifariosMB.tituloTabManual}">  
+                    <br/>
+                    <table style="margin-left: auto; margin-right: auto;" >                         
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Código Manual"/>
+                                <p:inputText styleClass="campoFormulario" size="71" value="#{manualesTarifariosMB.codigoManual}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Nombre Manual"/>
+                                <p:inputText styleClass="campoFormulario" size="70" maxlength="150" value="#{manualesTarifariosMB.nombreManual}"/>
+                            </td>
+                        </tr>                        
+                    </table>
+                    <br/>
+                </p:tab>    
+                <p:tab title="#{manualesTarifariosMB.tituloTabServicios}" disabled="#{manualesTarifariosMB.manualSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar Servicio" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoAgregarServicio}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar Servicio" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.quitarServicio}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+
+                    <p:dataTable 
+                        id="IdTablaServiciosManual" 
+                        var="servicioManual" 
+                        widgetVar="wvTablaServiciosManual"
+                        value="#{manualesTarifariosMB.listaServiciosManual}" 
+                        filteredValue="#{manualesTarifariosMB.listaServiciosManualFiltro}"
+                        rowKey="#{servicioManual.columna1}-#{servicioManual.columna2}"  
+                        selection="#{manualesTarifariosMB.servicioManualSeleccionado}"                                     
+                        paginator="true"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Servicios en este manual"
+                        scrollable="true" 
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            SERVICIOS DEL MANUAL TARIFARIO
+                        </f:facet>
+
+                        <p:column headerText="CODIGO" width="100" filterBy="#{servicioManual.columna3}" filterMatchMode="contains">
+                            #{servicioManual.columna3}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{servicioManual.columna4}" filterMatchMode="contains">
+                            #{servicioManual.columna4}
+                        </p:column>
+                        <p:column headerText="TARIFA" width="50" filterBy="#{servicioManual.columna5}" filterMatchMode="contains">
+                            #{servicioManual.columna5}
+                        </p:column>
+                        <p:column headerText="VALOR INICIAL" width="100" filterBy="#{servicioManual.columna6}" filterMatchMode="contains">
+                            #{servicioManual.columna6}
+                        </p:column>
+                        <p:column headerText="% DESCUENTO" width="50" filterBy="#{servicioManual.columna7}" filterMatchMode="contains">
+                            #{servicioManual.columna7}
+                        </p:column>
+                        <p:column headerText="% HONORARIO MEDICO" width="50" filterBy="#{servicioManual.columna8}" filterMatchMode="contains">
+                            #{servicioManual.columna8}
+                        </p:column>                                    
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{servicioManual.columna9}" filterMatchMode="contains">
+                            #{servicioManual.columna9}
+                        </p:column>
+                        <p:column headerText="META" width="50" filterBy="#{servicioManual.columna10}" filterMatchMode="contains">
+                            #{servicioManual.columna10}
+                        </p:column>
+                        <p:column headerText="PERIODICIDAD" width="50" filterBy="#{servicioManual.columna11}" filterMatchMode="contains">
+                            #{servicioManual.columna11}
+                        </p:column>                                    
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{servicioManual.columna12}" filterMatchMode="contains">
+                            #{servicioManual.columna12}
+                        </p:column>                                    
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{servicioManual.columna12}" filterMatchMode="contains">
+                            #{servicioManual.columna13}
+                        </p:column>
+                    </p:dataTable>  
+
+                </p:tab>
+                <p:tab title="#{manualesTarifariosMB.tituloTabPaquetes}" disabled="#{manualesTarifariosMB.manualSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar Paquete" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoAgregarPaquete}"                        
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar Paquete" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{manualesTarifariosMB.quitarPaquete}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdTablaPaqueteManual" 
+                        var="paqueteManual" 
+                        widgetVar="wvTablaPaquetesManual"
+                        value="#{manualesTarifariosMB.listaPaquetesManual}" 
+                        filteredValue="#{manualesTarifariosMB.listaPaquetesManualFiltro}"
+                        rowKey="#{paqueteManual.columna2}"  
+                        selection="#{manualesTarifariosMB.paqueteManualSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Paquetes en este manual"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            PAQUETES DEL MANUAL TARIFARIO
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="100" filterBy="#{paqueteManual.columna3}" filterMatchMode="contains">
+                            #{paqueteManual.columna3}
+                        </p:column>                                    
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{paqueteManual.columna4}" filterMatchMode="contains">
+                            #{paqueteManual.columna4}
+                        </p:column>
+                        <p:column headerText="VALOR INICIAL" width="100" filterBy="#{paqueteManual.columna5}" filterMatchMode="contains">
+                            #{paqueteManual.columna5}
+                        </p:column>
+                        <p:column headerText="DESCUENTO" width="50" filterBy="#{paqueteManual.columna6}" filterMatchMode="contains">
+                            #{paqueteManual.columna6}
+                        </p:column>
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{paqueteManual.columna7}" filterMatchMode="contains">
+                            #{paqueteManual.columna7}
+                        </p:column>
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{paqueteManual.columna8}" filterMatchMode="contains">
+                            #{paqueteManual.columna8}
+                        </p:column>
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{paqueteManual.columna9}" filterMatchMode="contains">
+                            #{paqueteManual.columna9}
+                        </p:column>
+                    </p:dataTable>  
+                </p:tab>
+                <p:tab title="#{manualesTarifariosMB.tituloTabMedicamentos}" disabled="#{manualesTarifariosMB.manualSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar Medicamento" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoAgregarMedicamento}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar Medicamento" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{manualesTarifariosMB.quitarMedicamento}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdTablaMedicamentosManual" 
+                        var="medicamentoManual" 
+                        widgetVar="wvTablaMedicamentosManual"
+                        value="#{manualesTarifariosMB.listaMedicamentosManual}" 
+                        filteredValue="#{manualesTarifariosMB.listaMedicamentosManualFiltro}"
+                        rowKey="#{medicamentoManual.columna2}"  
+                        selection="#{manualesTarifariosMB.medicamentoManualSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Medicamentos en este manual"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            MEDICAMENTOS DEL MANUAL TARIFARIO
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="100" filterBy="#{medicamentoManual.columna3}" filterMatchMode="contains">
+                            #{medicamentoManual.columna3}
+                        </p:column>                                   
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{medicamentoManual.columna4}" filterMatchMode="contains">
+                            #{medicamentoManual.columna4}
+                        </p:column>                                   
+                        <p:column headerText="FORMA" width="200" filterBy="#{medicamentoManual.columna5}" filterMatchMode="contains">
+                            #{medicamentoManual.columna5}
+                        </p:column>                                   
+                        <p:column headerText="VALOR INICIAL" width="100" filterBy="#{medicamentoManual.columna6}" filterMatchMode="contains">
+                            #{medicamentoManual.columna6}
+                        </p:column>
+                        <p:column headerText="DESCUENTO" width="50" filterBy="#{medicamentoManual.columna7}" filterMatchMode="contains">
+                            #{medicamentoManual.columna7}
+                        </p:column>
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{medicamentoManual.columna8}" filterMatchMode="contains">
+                            #{medicamentoManual.columna8}
+                        </p:column>
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{medicamentoManual.columna9}" filterMatchMode="contains">
+                            #{medicamentoManual.columna9}
+                        </p:column>
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{medicamentoManual.columna10}" filterMatchMode="contains">
+                            #{medicamentoManual.columna10}
+                        </p:column>
+                    </p:dataTable>  
+                </p:tab>
+                <p:tab title="#{manualesTarifariosMB.tituloTabInsumos}" disabled="#{manualesTarifariosMB.manualSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar Insumo" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoAgregarInsumo}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar Insumo" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{manualesTarifariosMB.quitarInsumo}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdTablaInsumosManual" 
+                        var="insumoManual" 
+                        widgetVar="wvTablaInsumosManual"
+                        value="#{manualesTarifariosMB.listaInsumosManual}" 
+                        filteredValue="#{manualesTarifariosMB.listaInsumosManualFiltro}"
+                        rowKey="#{insumoManual.columna2}"  
+                        selection="#{manualesTarifariosMB.insumoManualSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Insumos en este manual"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            INSUMOS DEL MANUAL TARIFARIO
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="100" filterBy="#{insumoManual.columna3}" filterMatchMode="contains">
+                            #{insumoManual.columna3}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{insumoManual.columna4}" filterMatchMode="contains">
+                            #{insumoManual.columna4}
+                        </p:column>
+                        <p:column headerText="VALOR INICIAL" width="100" filterBy="#{insumoManual.columna5}" filterMatchMode="contains">
+                            #{insumoManual.columna5}
+                        </p:column>
+                        <p:column headerText="DESCUENTO" width="50" filterBy="#{insumoManual.columna6}" filterMatchMode="contains">
+                            #{insumoManual.columna6}
+                        </p:column>
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{insumoManual.columna7}" filterMatchMode="contains">
+                            #{insumoManual.columna7}
+                        </p:column>
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{insumoManual.columna8}" filterMatchMode="contains">
+                            #{insumoManual.columna8}
+                        </p:column>
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{insumoManual.columna9}" filterMatchMode="contains">
+                            #{insumoManual.columna9}
+                        </p:column>
+                    </p:dataTable>  
+                </p:tab>
+            </p:tabView>            
+        </h:form>
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarManualTarifario" header="BUSCAR MANUAL TARIFARIO" widgetVar="dialogoBuscarManualesTarifarios" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaManualesTarifarios" 
+                                var="manual" 
+                                widgetVar="wvTablaManualesTarifarios"
+                                value="#{manualesTarifariosMB.listaManuales}" 
+                                rowKey="#{manual.idManualTarifario}"  
+                                selection="#{manualesTarifariosMB.manualSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay Manuales"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="1" filterBy="#{manual.codigoManualTarifario}" filterMatchMode="contains">
+                                    #{manual.codigoManualTarifario}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="90" filterBy="#{manual.nombreManualTarifario}" filterMatchMode="contains">
+                                    #{manual.nombreManualTarifario}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar Manual Tarifario" 
+                                oncomplete="remoteCommand()"
+                                actionListener="#{manualesTarifariosMB.cargarManualTarifario}"/>
+
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarManualTarifario" header="ELIMINAR MANUAL TARIFARIO" widgetVar="dialogoEliminarManualTarifario" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarManualTarifario" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminacion de este manual tarifario ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarManualTarifario').hide();"
+                        actionListener="#{manualesTarifariosMB.confirmarEliminarManualTarifario}"/>
+                </p:panelGrid>
+            </p:dialog>
+
+            <p:dialog id="IdDialogoAgregarServicio" header="AGREGAR SERVICIO A MANUAL TARIFARIO" widgetVar="dialogoAgregarServicio" resizable="false" modal="true">
+                <p:panelGrid id="IdPanelAgregarServicio" styleClass="panelGridSinBordes" style="width: 520px;">
+                    <p:row>                        
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Servicio"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 410px;" value="#{manualesTarifariosMB.idServicio}"  filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{manualesTarifariosMB.cambiaServicio}"
+                                        update="IdPanelAgregarServicio"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaServicios}" var="servicio" itemLabel="#{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Tipo tarifa"/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{manualesTarifariosMB.tipoTarifa}">
+                                <p:ajax event="change"
+                                        listener="#{manualesTarifariosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio IdValorInicialServicio"/>                            
+                                <f:selectItems value="#{manualesTarifariosMB.listaTipoTarifa}"/>       
+                            </p:selectOneMenu>                    
+                            <h:outputText styleClass="campoNoObligatorio" value="Unidad de valor"/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{manualesTarifariosMB.unidadValor}">
+                                <p:ajax event="change"
+                                        listener="#{manualesTarifariosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio IdValorInicialServicio"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaUnidadesValor}" var="unidad" itemLabel="#{unidad.anio}" itemValue="#{unidad.anio}"/>
+                            </p:selectOneMenu>
+                            <h:outputText          styleClass="campoNoObligatorio" value="Activo"/>
+                            <p:selectBooleanButton  value="#{manualesTarifariosMB.activoServicio}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Meta cumplimiento"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{manualesTarifariosMB.metaCumplimiento}"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Periodicidad"/>                    
+                            <pe:inputNumber  decimalSeparator="," decimalPlaces="0" minValue="0" value="#{manualesTarifariosMB.periodicidad}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Valor Inicial"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorInicialServicio" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialServicio}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoServicio}" decimalPlaces="2"  minValue="-100" maxValue="100" >
+                                <p:ajax event="blur"
+                                        listener="#{manualesTarifariosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+
+                            <h:outputText   styleClass="campoNoObligatorio" value="Honorario médico"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{manualesTarifariosMB.honorarioMedico}" minValue="0">
+                                <p:ajax event="blur"
+                                        listener="#{manualesTarifariosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio"/>
+                            </pe:inputNumber>
+                            <h:outputText   styleClass="campoObligatorio" style="width: 95px;" value="Valor Final"/>                    
+                            <pe:inputNumber  id="IdValorFinalServicio" styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{manualesTarifariosMB.valorFinalServicio}"/>                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 390px; height: 50px;" value="#{manualesTarifariosMB.observacionServicio}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Agregar"                                                 
+                                actionListener="#{manualesTarifariosMB.agregarServicio}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarServicio" header="QUITAR SERVICIO A MANUAL TARIFARIO" widgetVar="dialogoQuitarServicio" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarServicio" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el servicio del manual tarifario ?"/>                    
+                    <p:commandButton 
+                        value="Quitar"    
+                        update=":IdFormManuales:IdTabView"
+                        actionListener="#{manualesTarifariosMB.confirmarQuitarServicio}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAgregarPaquete" header="AGREGAR PAQUETE A MANUAL TARIFARIO" widgetVar="dialogoAgregarPaquete" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarPaquete" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Paquete"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 400px;" value="#{manualesTarifariosMB.idPaquete}"  filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{manualesTarifariosMB.cambiaPaquete}"
+                                        update="IdPanelAgregarPaquete"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaPaquetes}" var="paquete" itemLabel="#{paquete.nombrePaquete}" itemValue="#{paquete.idPaquete}"/>
+                            </p:selectOneMenu>                    
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialPaquete}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoPaquete}" decimalPlaces="2"  minValue="-100" maxValue="100">
+                                <p:ajax event="blur"
+                                        listener="#{manualesTarifariosMB.calcularValoresPaquete}"
+                                        update="IdValorFinalPaquete"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{manualesTarifariosMB.activoPaquete}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalPaquete" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorFinalPaquete}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText    styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{manualesTarifariosMB.observacionPaquete}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Agregar"                         
+                                actionListener="#{manualesTarifariosMB.agregarPaquete}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarPaquete" header="QUITAR PAQUETE A MANUAL TARIFARIO" widgetVar="dialogoQuitarPaquete" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarPaquete" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el paquete del manual tarifario ?"/>                    
+                    <p:commandButton 
+                        value="Quitar" 
+                        oncomplete="PF('dialogoQuitarPaquete').hide();"
+                        actionListener="#{manualesTarifariosMB.confirmarQuitarPaquete}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAgregarMedicamento" header="AGREGAR MEDICAMENTO A MANUAL TARIFARIO" widgetVar="dialogoAgregarMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarMedicamento" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Medicamento"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 400px;" value="#{manualesTarifariosMB.idMedicamento}" filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{manualesTarifariosMB.cambiaMedicamento}"
+                                        update="IdPanelAgregarMedicamento"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaMedicamentos}" var="medicamento" itemLabel="#{medicamento.codigoMedicamento} - #{medicamento.nombreMedicamento} (#{medicamento.formaMedicamento})" itemValue="#{medicamento.idMedicamento}"/>
+                            </p:selectOneMenu>                    
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialMedicamento}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoMedicamento}" decimalPlaces="2"  minValue="-100" maxValue="100" >
+                                <p:ajax event="blur"
+                                        listener="#{manualesTarifariosMB.calcularValoresMedicamento}"
+                                        update="IdValorFinalMedicamento"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{manualesTarifariosMB.activoMedicamento}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalMedicamento" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorFinalMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{manualesTarifariosMB.observacionMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Agregar"                         
+                                actionListener="#{manualesTarifariosMB.agregarMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarMedicamento" header="QUITAR MEDICAMENTO A MANUAL TARIFARIO" widgetVar="dialogoQuitarMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarMedicamento" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el medicamento del manual tarifario ?"/>                    
+                    <p:commandButton 
+                        value="Quitar" 
+                        oncomplete="PF('dialogoQuitarMedicamento').hide();"
+                        actionListener="#{manualesTarifariosMB.confirmarQuitarMedicamento}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAgregarInsumo" header="AGREGAR INSUMO A MANUAL TARIFARIO" widgetVar="dialogoAgregarInsumo" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarInsumo" styleClass="panelGridSinBordes" >
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Insumo"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 400px;" value="#{manualesTarifariosMB.idInsumo}"  filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{manualesTarifariosMB.cambiaInsumo}"
+                                        update="IdPanelAgregarInsumo"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaInsumos}" var="insumo" itemLabel="#{insumo.nombreInsumo}" itemValue="#{insumo.idInsumo}"/>
+                            </p:selectOneMenu>                    
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialInsumo}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoInsumo}" decimalPlaces="2"  minValue="-100" maxValue="100" >
+                                <p:ajax event="blur"
+                                        listener="#{manualesTarifariosMB.calcularValoresInsumo}"
+                                        update="IdValorFinalInsumo"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{manualesTarifariosMB.activoInsumo}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            <h:outputText  styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalInsumo" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorFinalInsumo}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{manualesTarifariosMB.observacionInsumo}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Agregar"                         
+                                actionListener="#{manualesTarifariosMB.agregarInsumo}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarInsumo" header="QUITAR INSUMO A MANUAL TARIFARIO" widgetVar="dialogoQuitarInsumo" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarInsumo" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el insumo del manual tarifario ?"/>                    
+                    <p:commandButton 
+                        value="Quitar" 
+                        oncomplete="PF('dialogoQuitarInsumo').hide();"
+                        actionListener="#{manualesTarifariosMB.confirmarQuitarInsumo}"/>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

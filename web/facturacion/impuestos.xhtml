@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Impuestos</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormImpuestos">              
+            <p:growl id="IdMensajeImpuestos"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                        
+            <div>
+                <p:commandButton 
+                    title="Nuevo impuesto" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{impuestosMB.limpiarFormularioImpuestos}"
+                    update=":IdFormImpuestos"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton
+                    title="Buscar impuestos" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{impuestosMB.buscarImpuestos}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar/Actualizar impuesto" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    actionListener="#{impuestosMB.guardarImpuesto}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>  
+                &nbsp;
+                <p:commandButton
+                    title="Eliminar impuesto" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                    actionListener="#{impuestosMB.eliminarImpuesto}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
+                <p:tab title="#{impuestosMB.tituloTabImpuestos}">                    
+                    <br/>
+                    <p:panelGrid id="IdPanelEditarImpuesto" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;">                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>                        
+                        <p:selectOneMenu styleClass="campoFormulario" style="width: 140px;" value="#{impuestosMB.nombre}">                            
+                            <f:selectItem itemValue="IVA" itemLabel="IVA"/>
+                            <f:selectItem itemValue="CREE" itemLabel="CREE"/>
+                        </p:selectOneMenu>                                             
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Fecha Inicial"/>
+                        <p:calendar id="IdFechaInicial" navigator="true" locale="es" value="#{impuestosMB.fechaInicial}" pattern="dd/MM/yyyy" mask="true" size="23" style="width: 200px;" />
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Fecha Final"/>
+                        <p:calendar id="IdFechaFinal" navigator="true" locale="es" value="#{impuestosMB.fechaFinal}" pattern="dd/MM/yyyy" mask="true" size="23" style="width: 200px;" />
+                        <h:outputText styleClass="campoNoObligatorio" value="Valor"/>                    
+                        <pe:inputNumber decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{impuestosMB.valor}"/>
+                    </p:panelGrid>
+                    <br/>
+                </p:tab>                
+            </p:tabView>               
+        </h:form>
+        <h:form id="IdFormDialogs">            
+            <p:dialog id="IdDialogoBuscarImpuestos" header="BUSCAR IMPUESTO" widgetVar="dialogoBuscarImpuestos" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaImpuestos" 
+                                var="impuesto" 
+                                widgetVar="wvTablaImpuestos"
+                                value="#{impuestosMB.listaImpuestos}" 
+                                rowKey="#{impuesto.idImpuesto}"  
+                                selection="#{impuestosMB.impuestoSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay impuestos"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="NOMBRE" width="1" filterBy="#{impuesto.nombre}" filterMatchMode="contains">
+                                    #{impuesto.nombre}
+                                </p:column>                                
+                                <p:column headerText="INICIO" width="20" >
+                                    <h:outputText value="#{impuesto.fechaInicial}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>                                
+                                <p:column headerText="FIN" width="20" >
+                                    <h:outputText value="#{impuesto.fechaFinal}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>                                
+                                <p:column headerText="VALOR" width="20" >       
+                                    #{impuesto.valor}                                    
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton value="Cargar impuesto" update=":IdFormImpuestos" actionListener="#{impuestosMB.cargarImpuesto}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarImpuesto" header="ELIMINAR IMPUESTO" widgetVar="dialogoEliminarImpuesto" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarImpuesto" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminación de este impuesto ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarImpuesto').hide();"
+                        actionListener="#{impuestosMB.confirmarEliminarImpuesto}"                        
+                        update=":IdFormImpuestos"/>
+                </p:panelGrid>
+            </p:dialog>                         
+        </h:form>
+    </h:body>
+</html>

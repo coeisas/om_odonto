@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6ede5320-0d6d-4c4a-88e9-5b051aaf0bc6">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="title" class="java.lang.String"/>
+	<parameter name="logoEmpresa" class="java.lang.String"/>
+	<field name="idCita" class="java.lang.Integer"/>
+	<field name="empresa" class="java.lang.String"/>
+	<field name="administradora" class="java.lang.String"/>
+	<field name="motivoCancelacion" class="java.lang.String"/>
+	<field name="pacientePN" class="java.lang.String"/>
+	<field name="pacienteSN" class="java.lang.String"/>
+	<field name="pacientePA" class="java.lang.String"/>
+	<field name="pacienteSA" class="java.lang.String"/>
+	<field name="pacienteTipoDoc" class="java.lang.String"/>
+	<field name="pacienteNumDoc" class="java.lang.String"/>
+	<field name="empresaTelefono" class="java.lang.String"/>
+	<field name="empresaDireccion" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="42" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="572" height="42" uuid="71bb8094-b534-4869-aa14-f88c7d5a1723"/>
+			</rectangle>
+			<image scaleImage="RetainShape" isUsingCache="false">
+				<reportElement x="5" y="2" width="100" height="38" uuid="ea969720-6ecd-41c4-afb1-83ce2e141501"/>
+				<imageExpression><![CDATA[$P{logoEmpresa}]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="0" y="2" width="572" height="12" uuid="6ebd7d7e-7f41-4121-9c43-fd0d8226dfcc"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="14" width="572" height="26" uuid="3999cc46-2591-481f-a1e9-df2ba6302a4b"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{title}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="17" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="2" width="56" height="15" uuid="765afeee-a939-446d-a7b2-d2e1adb88f59"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cita No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="56" y="2" width="86" height="15" uuid="d34dbbd0-fa3f-4d99-8727-c3282b1eb1a6"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Identificacion]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="142" y="2" width="162" height="15" uuid="64dfbf33-4b18-44a9-994e-3197d254c746"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Paciente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="304" y="2" width="89" height="15" uuid="92be6090-7f20-41c3-be9e-01640754441a"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Administradora]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="2" width="141" height="15" uuid="8da8449a-49dd-46b6-8cb0-af05fc1b33f6"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Motivo Cancelacion]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="19" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="56" height="16" uuid="c3bcdd6d-8d8c-48ea-b4e8-9be48ac1c58d"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{idCita}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="304" y="0" width="89" height="16" uuid="a409afd1-58ef-4776-8f2d-fe0a3d1d56d6"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{administradora}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="393" y="0" width="141" height="16" uuid="430e8af8-6f84-47a8-9e43-e0846f360978"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{motivoCancelacion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="56" y="0" width="86" height="16" uuid="5dd1730e-e73b-4563-b676-e5aea6f54795"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pacienteTipoDoc}+" "+$F{pacienteNumDoc}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="142" y="0" width="162" height="16" uuid="efefba26-0e08-4fc1-bbad-350dace44599"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pacientePN}+ " " + ($F{pacienteSN}==null?"":$F{pacienteSN}) + " " +$F{pacientePA}+ " " + ($F{pacienteSA}==null?"":$F{pacienteSA})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="8" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="224" y="0" width="80" height="20" uuid="9eb263ac-2e9b-4791-8b30-43f6f642f560"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="304" y="0" width="40" height="20" uuid="2f486569-f06b-4e96-85cd-1ef61795da39"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="179" height="20" uuid="a27e0386-425f-4218-883b-79668c8501ff"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DIRECCION: "+$F{empresaDireccion}.toUpperCase() + "\nTELEFONO: " + $F{empresaTelefono}.toUpperCase()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="27" splitType="Stretch"/>
+	</summary>
+</jasperReport>

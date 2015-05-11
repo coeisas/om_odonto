@@ -1,0 +1,173 @@
+////////////////////////////////////////////////////////////////////////////////
+/////////////////////////// CONTROLES //////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+LIBRERIAS
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"      
+    xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:f="http://java.sun.com/jsf/core"
+
+
+Boton principal
+        <p:commandButton                     
+        title="Eliminar Manual Tarifario" value="&nbsp;"                                        
+        styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+        actionListener="#{claseMB.eliminarManualTarifario}"
+        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+Cadena de texto
+        <p:outputLabel styleClass="campoObligatorio" value="Código Manual"/>
+        <p:inputText styleClass="campoFormulario" size="26" value="#{claseMB.codigoManual}"/>
+Area de texto
+        <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+        <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{claseMB.observacionServicio}"/>
+Calendario
+        <p:calendar navigator="true" locale="es" value="#{claseMB.fechaReg}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />
+SelectOneMenu con ListEntidad
+        <h:outputText styleClass="campoObligatorio" value="Servicio"/>                    
+        <p:selectOneMenu styleClass="campoFormulario" style="width: 380px;" value="#{claseMB.idServicio}"  filter="true" filterMatchMode="contains">
+            <f:selectItems value="#{claseMB.listaServicios}" var="servicio" itemLabel="#{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
+        </p:selectOneMenu>
+SelectOneMenu con ItemList y ajax
+        <h:outputText styleClass="campoObligatorio" value="Servicio"/>                    
+        <p:selectOneMenu styleClass="campoFormulario" style="width: 380px;" value="#{claseMB.idServicio}"  filter="true" filterMatchMode="contains">
+            <p:ajax event="change" update=":id" listener="#{citasMB.validarAutorizacion(1)}"/>
+            <f:selectItems value="#{claseMB.listaServicios}"/>
+        </p:selectOneMenu>
+Doouble Integer
+        <h:outputText styleClass="campoNoObligatorio" value="Meta cumplimiento"/>                    
+        <pe:inputNumber decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{claseMB.metaCumplimiento}"/>
+Integer
+        <p:spinner id="cantidad" value="#{claseMB.sesionesAutorizadas}" min="1" max="300" size="3" />
+Boolean(boton SI/NO)
+        <p:selectBooleanButton styleClass="campoFormulario" value="#{claseMB.visible}" onLabel="SI" offLabel="NO" style="width:40px" />
+Boolean(chequeo)
+        <p:selectBooleanCheckbox value="#{selectBooleanView.value1}" />
+RadioButton
+        <p:selectOneRadio value="#{radioView.console}">
+            <f:selectItem itemLabel="Xbox One" itemValue="Xbox One" />
+            <f:selectItem itemLabel="PS4" itemValue="PS+" />
+            <f:selectItem itemLabel="Wii U" itemValue="Wii U" />
+        </p:selectOneRadio>
+DataTable
+        <p:dataTable 
+            id="IdTablaServiciosManual" 
+            var="servicioManual" 
+            widgetVar="wvTablaServiciosManual"
+            value="#{claseMB.listaServiciosManual}" 
+            filteredValue="#{claseMB.listaServiciosManualFiltro}"
+            rowKey="#{servicioManual.columna1}-#{servicioManual.columna2}"  
+            selection="#{claseMB.servicioManualSeleccionado}"                                     
+            paginator="true"
+            rows="10"                                    
+            paginatorPosition="bottom"                                
+            emptyMessage="No hay Servicios en este manual"
+            scrollable="true" 
+            scrollWidth="750"  
+            scrollHeight="250"
+            currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+            pageLinks="5"
+            selectionMode="single"
+            resizableColumns="true">                                                                                               
+            <f:facet name="header">
+                SERVICIOS DEL MANUAL TARIFARIO
+            </f:facet>
+
+            <p:column headerText="CODIGO" width="100" filterBy="#{servicioManual.columna3}" filterMatchMode="contains">
+                #{servicioManual.columna3}
+            </p:column>
+            <p:column headerText="NOMBRE" width="300" filterBy="#{servicioManual.columna4}" filterMatchMode="contains">
+                #{servicioManual.columna4}
+            </p:column>
+            <p:column headerText="MANUAL" width="50" filterBy="#{servicioManual.columna5}" filterMatchMode="contains">
+                #{servicioManual.columna5}
+            </p:column>
+            <p:column headerText="VALOR" width="100" filterBy="#{servicioManual.columna6}" filterMatchMode="contains">
+                #{servicioManual.columna6}
+            </p:column>
+            <p:column headerText="META" width="100" filterBy="#{servicioManual.columna7}" filterMatchMode="contains">
+                #{servicioManual.columna7}
+            </p:column>
+            <p:column headerText="PERIODICIDAD" width="50" filterBy="#{servicioManual.columna8}" filterMatchMode="contains">
+                #{servicioManual.columna8}
+            </p:column>
+            <p:column headerText="DESCUENTO" width="50" filterBy="#{servicioManual.columna9}" filterMatchMode="contains">
+                #{servicioManual.columna9}
+            </p:column>
+            <p:column headerText="HONORARIO MEDICO" width="50" filterBy="#{servicioManual.columna10}" filterMatchMode="contains">
+                #{servicioManual.columna10}
+            </p:column>
+            <p:column headerText="ACTIVO" width="50" filterBy="#{servicioManual.columna11}" filterMatchMode="contains">
+                #{servicioManual.columna11}
+            </p:column>
+            <p:column headerText="OBSERVACION" width="300" filterBy="#{servicioManual.columna12}" filterMatchMode="contains">
+                #{servicioManual.columna12}
+            </p:column>
+        </p:dataTable>
+Text area para Dialogo de confirmación
+    <p:inputTextarea 
+        value="Este usuario tiene una sesión abierta actualmente, ¿ desea cerrar la otra sesión e iniciar una nueva en este momento?" 
+        readonly="true" 
+        style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 60px; width: 320px;"/>
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    public void sacarMensaje1() {        imprimirMensaje("Error", "111", FacesMessage.SEVERITY_ERROR);        System.out.println("1111-----");    }
+    public void sacarMensaje2() {        imprimirMensaje("Error", "222", FacesMessage.SEVERITY_ERROR);        System.out.println("222-----");    }
+    public void sacarMensaje3() {        imprimirMensaje("Error", "333", FacesMessage.SEVERITY_ERROR);        System.out.println("333-----");    }
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////SALIDA POR CONSOLA//////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    public void sacarMensaje(){
+        System.out.println("SE SACA UN MENSAJE");
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "s", "s"));
+    }
+
+
+////////////////////////////////////////////////////////////////////////////////
+///////////////BUSCAR UN ELEMENTO POR SU IDENTIFICADOR//////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+    <script>        
+        function sacarNombre(){
+            var fic = $('#archivo').val().split('\\');
+            $('#url-archivo').val(fic[fic.length-1]);
+        }  
+        function sacarNombre2(){
+            var fic = $('#archivo2').val().split('\\');
+            $('#url-archivo2').val(fic[fic.length-1]);
+        }  
+    </script>
+
+////////////////////////////////////////////////////////////////////////////////
+///////////////DESCARGAR UN PDF GENERADO POR JASPER REPORT /////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+//            JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(listaDatosPrincipales);
+//            String reportPath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/reportes/clase/reporteRegCli.jasper");
+//            Map parametros = new HashMap();
+//            JasperPrint jasperPrint = JasperFillManager.fillReport(reportPath, parametros, beanCollectionDataSource);
+//            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+//            httpServletResponse.addHeader("Content-disposition", "attachment; filename=reporte.pdf");
+//            -ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream();
+//            -JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
+//            -FacesContext.getCurrentInstance().responseComplete();
+
+
+
+//el manejo de imagenes se debe tener en cuenta que la ruta c:/imagenesOpenmedical debe existir(trabajando en windows)
+//el manejo de imagenes se debe tener en cuenta que la ruta /home/imagenesOpenmedical/ debe existir(trabajando en linux)
+//para lo anterior deben ser configurados los archivos:
+1) web.xml  =>
+    <context-param>
+        <param-name>uploadDirectory</param-name>
+        <param-value>windows</param-value>//aqui colocar windows o linux
+    </context-param>
+
+2) glassfish-web.xml =>
+    <property name="alternatedocroot_1" value="from=/imagenesOpenmedical/* dir=C:\"/>//aqui cambiar por dir=/home/imagenesOpenmedical/
+
+                              

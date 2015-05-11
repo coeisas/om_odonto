@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
+    <h:head>        
+        <title>Clasificaciones</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormSedes">              
+            <p:growl id="IdMensajeSedes"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>
+            <div>
+                <p:commandButton 
+                    title="Nueva sede" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{sedesMB.limpiarSede}"                    
+                    update=":IdFormSedes"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar sede" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{sedesMB.buscarSede}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar sede" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"  
+                    actionListener="#{sedesMB.eliminarSede}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar/Actualizar sede" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    update=":IdFormSedes :IdFormDialogs:IdDialogoBuscarSede :IdFormDialogs:IdTablaSedes"
+                    actionListener="#{sedesMB.guardarSede}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                            
+                &nbsp;
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" >                 
+                <p:tab title="#{sedesMB.tituloTabSede}">
+                    <br/>                            
+                    <table style="margin-left: auto; margin-right: auto; ">
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Código Sede" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{sedesMB.codigoSede}" size="10"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="Nombre Sede" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{sedesMB.nombreSede}" size="20"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Direccion" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{sedesMB.direccionSede}" size="38"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Encargado" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{sedesMB.encargadoSede}" size="40"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Telefono 1" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{sedesMB.telefono1Sede}" size="17"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Telefono 2" />
+                                <p:inputText   styleClass="campoFormulario"    value="#{sedesMB.telefono2Sede}" size="18"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Departamento"/>                                
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 180px;" value="#{sedesMB.departamentoSede}" filter="true" filterMatchMode="contains">
+                                    <f:ajax 
+                                        event="change"
+                                        listener="#{sedesMB.cargarMunicipiosSede}"                                                
+                                        render="IdMunicipiosSede"/> 
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaDepartamentos}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel     styleClass="campoNoObligatorio" value="Municipio"/>
+                                <p:selectOneMenu   styleClass="campoFormulario" id="IdMunicipiosSede" style="width: 160px;" value="#{sedesMB.municipioSede}" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{sedesMB.listaMunicipiosSede}" />
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/>
+                </p:tab>        
+            </p:tabView>               
+        </h:form>       
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarSede" header="BUSCAR SEDE" widgetVar="dialogoBuscarSede" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaSedes" 
+                                var="sede" 
+                                widgetVar="wvTablaSedes"
+                                value="#{sedesMB.listaSedes}" 
+                                rowKey="#{sede.idSede}"  
+                                selection="#{sedesMB.sedeSeleccionadaTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay sede"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO SEDE" width="1" filterBy="#{sede.codigoSede}">
+                                    #{sede.codigoSede}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE SEDE" width="90" filterBy="#{sede.nombreSede}">
+                                    #{sede.nombreSede}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar sede"                                        
+                                update=":IdFormSedes:IdTabView"
+                                actionListener="#{sedesMB.cargarSede}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarSede" header="ELIMINAR SEDE" widgetVar="dialogoEliminarSede" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarSede" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminacion de esta sede?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarSede').hide();"
+                        actionListener="#{sedesMB.confirmarEliminarSede}"/>
+                    
+                </p:panelGrid>
+            </p:dialog>            
+        </h:form>
+    </h:body>
+</html>

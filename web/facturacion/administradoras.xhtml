@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>        
+        <title>Administradoras</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"/>          
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormAdministradoras">   
+            #{administradorasMB.recargarSiHaySeleccionado()}
+            <p:growl id="IdMensajeAdministradoras"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>            
+            <div>
+                <p:commandButton 
+                    title="Nueva Administradora" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"                            
+                    actionListener="#{administradorasMB.limpiarFormularioAdministradoras}"                    
+                    oncomplete="PF('wvTabView').select(0);"
+                    update=":IdFormAdministradoras"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar Administradora" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border" 
+                    actionListener="#{administradorasMB.buscarAdministradoras}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar Administradora" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border"                     
+                    actionListener="#{administradorasMB.eliminarAdministradora}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar/Actualizar Administradora" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    actionListener="#{administradorasMB.guardarAdministradora}"               
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                    
+            </div>
+            <br/>
+            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView">  
+                <p:tab title="#{administradorasMB.tituloTabAdministradora}">                      
+                    <br/> <br/>                    
+                    <table style="margin-left: auto; margin-right: auto;" >                         
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Código administradora"/>
+                                <p:inputText   styleClass="campoFormulario" size="20" value="#{administradorasMB.codigoAdminstradora}"/>
+                                <p:outputLabel styleClass="campoObligatorio" value="Razón Social"/>
+                                <p:inputText   styleClass="campoFormulario" size="60" value="#{administradorasMB.razonSocial}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Tipo Entidad"/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 110px;" value="#{administradorasMB.tipoAdministradora}">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoAdministradora}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel styleClass="campoObligatorio" value="Tipo Identificación" />
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 90px;" value="#{administradorasMB.tipoDocumento}">                                      
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}" />
+                                </p:selectOneMenu>                                    
+                                <p:outputLabel styleClass="campoObligatorio" value="Número Identificación"/>
+                                <p:inputText styleClass="campoFormulario"  size="20" value="#{administradorasMB.numeroIdentificacion}"/>&nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Dirección"/>
+                                <p:inputText   styleClass="campoFormulario" size="40" value="#{administradorasMB.direccion}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Teléfono"/>
+                                <p:inputText   styleClass="campoFormulario" size="21" value="#{administradorasMB.telefono1}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Teléfono 2"/>                  
+                                <p:inputText   styleClass="campoFormulario" size="21" value="#{administradorasMB.telefono2}"/>
+                            </td>
+                        </tr>                                                                                                        
+                        <tr>
+                            <td>    
+                                <p:outputLabel styleClass="campoObligatorio" value="Departamento"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 125px;" value="#{administradorasMB.departamento}"  filter="true" filterMatchMode="contains">
+                                    <f:ajax event="change" listener="#{administradorasMB.cargarMunicipios}" render="IdMunicipios"/> 
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaDepartamentos}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel styleClass="campoObligatorio" value="Municipio"/>
+                                <p:selectOneMenu styleClass="campoFormulario" id="IdMunicipios" style="width: 150px;" value="#{administradorasMB.municipio}"  filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{administradorasMB.listaMunicipios}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tipo Ident. Representante" />
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 80px;" value="#{administradorasMB.tipoDocumentoRepresentante}">                                  
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}" />
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Identificación Representante"/>
+                                <p:inputText   styleClass="campoFormulario" size="22" value="#{administradorasMB.numeroDocumentoRepresentante}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Nombre Representante" />
+                                <p:inputText   styleClass="campoFormulario" size="45" value="#{administradorasMB.nombreRepresentante}"/>
+                            </td>                                        
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Código RIP"/>
+                                <p:inputText styleClass="campoFormulario" size="11" value="#{administradorasMB.codigoRip}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Código Ingreso"/>
+                                <p:inputText styleClass="campoFormulario" size="11" value="#{administradorasMB.codigoIngreso}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Código Rubro"/>
+                                <p:inputText styleClass="campoFormulario" size="11" value="#{administradorasMB.codigoRubro}"/>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Código Concepto"/>
+                                <p:inputText styleClass="campoFormulario" size="10" value="#{administradorasMB.codigoConcepto}"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <br/> <br/> 
+                </p:tab>     
+                <p:tab title="#{administradorasMB.tituloTabContratos}" disabled="#{administradorasMB.administradoraSeleccionada == null}">
+                    <br/><br/>
+                    <div style="margin-left: 15px;">
+                        <p:commandButton 
+                            rendered="#{administradorasMB.administradoraSeleccionada != null}"
+                            title="Nuevo contrato" value="&nbsp;"
+                            styleClass="icon-plus-2 fg-lightBlue bg-white no-border"                             
+                            actionListener="#{administradorasMB.nuevoContrato}"                    
+                            style="font-size: 20px; width: 20px; height: 20px; "/>                            
+                        &nbsp;                        
+                        <p:commandButton 
+                            rendered="#{administradorasMB.administradoraSeleccionada != null}"
+                            title="Editar Contrato" value="&nbsp;"
+                            styleClass="icon-pencil fg-lightBlue bg-white no-border"                             
+                            actionListener="#{administradorasMB.editarContrato}"
+                            style="font-size: 20px; width: 20px; height: 20px; "/>
+                        &nbsp;                        
+                        <p:commandButton 
+                            rendered="#{administradorasMB.administradoraSeleccionada != null}"
+                            title="Copiar Contratos" value="&nbsp;"
+                            styleClass="icon-copy fg-lightBlue bg-white no-border"                             
+                            oncomplete="PF('dialogoCopiarContratos').show();"
+                            style="font-size: 20px; width: 20px; height: 20px; "/>
+
+                    </div>
+                    <br/>
+                    <p:dataTable 
+                        id="IdTablaContratos" 
+                        var="contrato" 
+                        widgetVar="wvTablaContratos"
+                        value="#{administradorasMB.listaContratos}" 
+                        rowKey="#{contrato.idContrato}"  
+                        selection="#{administradorasMB.contratoSeleccionado}" 
+                        paginator="true"
+                        style="width: 600px; height: 300px; margin-left: auto; margin-right: auto;"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay contratos"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">  
+                        <f:facet name="header">
+                            CONTRATOS ASOCIADOS
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="1" filterBy="#{contrato.codigoContrato}" filterMatchMode="contains">
+                            #{contrato.codigoContrato}
+                        </p:column>                                
+                        <p:column headerText="NOMBRE" width="90" filterBy="#{contrato.descripcion}" filterMatchMode="contains">
+                            #{contrato.descripcion}
+                        </p:column>                                
+                    </p:dataTable>  
+                    <br/>
+                </p:tab>
+            </p:tabView>
+        </h:form>
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarAdministradoras" header="BUSCAR ADMINISTRADORA" widgetVar="dialogoBuscarAdministradoras" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaAdministradoras" 
+                                var="administradora" 
+                                widgetVar="wvTablaAdministradoras"
+                                value="#{administradorasMB.listaAdministradoras}" 
+                                rowKey="#{administradora.idAdministradora}"  
+                                selection="#{administradorasMB.administradoraSeleccionadaTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay administradoras"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="1" filterBy="#{administradora.codigoAdministradora}" filterMatchMode="contains">
+                                    #{administradora.codigoAdministradora}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="90" filterBy="#{administradora.razonSocial}" filterMatchMode="contains">
+                                    #{administradora.razonSocial}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar Administradora"                                        
+                                update=":IdFormAdministradoras:IdTabView"
+                                actionListener="#{administradorasMB.cargarAdministradora}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarSede" header="ELIMINAR ADMINISTRADORA" widgetVar="dialogoEliminarAdministradora" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarAdministradora" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminacion de esta sede?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarAdministradora').hide();"
+                        actionListener="#{administradorasMB.confirmarEliminarAdministradora}"/>
+                </p:panelGrid>
+            </p:dialog>            
+            <p:dialog id="IdDialogoCopiarContratos" header="COPIAR CONTRATOS" widgetVar="dialogoCopiarContratos" resizable="false" modal="true">                
+                <br/>
+                <p:outputLabel styleClass="campoObligatorio" value="Administradora: "/>
+                <p:selectOneMenu styleClass="campoFormulario" style="width: 480px;" value="#{administradorasMB.idAdministradoraACopiar}"  filter="true" filterMatchMode="contains">
+                    <f:ajax 
+                        event="change"
+                        listener="#{administradorasMB.cambiaAdministradoraCopia}"                                                
+                        render="IdTablaCopiarContratos"/>
+                    <f:selectItem itemLabel="" itemValue=""/>
+                    <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
+                </p:selectOneMenu>
+                <br/><br/><br/>
+                <p:dataTable 
+                    id="IdTablaCopiarContratos" 
+                    var="contratoCopia" 
+                    widgetVar="wvTablaCopiarContratos"
+                    value="#{administradorasMB.listaContratosCopia}" 
+                    rowKey="#{contratoCopia.idContrato}"  
+                    selection="#{administradorasMB.contratosCopiaSeleccionados}" 
+                    paginator="true"
+                    style="width: 600px; height: 300px;"
+                    rows="10"                                    
+                    paginatorPosition="bottom"                                
+                    emptyMessage="No hay contratos"
+                    scrollable="true" 
+                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    pageLinks="5"
+                    selectionMode="multiple"
+                    resizableColumns="true">                                                                                               
+                    <p:column headerText="CODIGO" width="1" filterBy="#{contratoCopia.codigoContrato}" filterMatchMode="contains">
+                        #{contratoCopia.codigoContrato}
+                    </p:column>                                
+                    <p:column headerText="NOMBRE" width="90" filterBy="#{contratoCopia.descripcion}" filterMatchMode="contains">
+                        #{contratoCopia.descripcion}
+                    </p:column>                                
+                </p:dataTable>  
+                <br/><br/>
+                <p:commandButton 
+                    value="Copiar seleccionados"                                        
+                    update=":IdFormAdministradoras:IdTabView"
+                    actionListener="#{administradorasMB.copiarContratos}"/>
+                <br/><br/>
+            </p:dialog>             
+        </h:form>
+    </h:body>
+</html>
+

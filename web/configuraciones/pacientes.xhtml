@@ -1,0 +1,402 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>        
+        <title>Pacientes</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
+    </h:head>
+    <h:body>             
+        <h:form id="IdFormPrincipal">              
+            <p:growl id="IdMensajePacientes"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <!--===================================================================================-->
+            <br/>
+            <div>
+                <p:commandButton 
+                    title="Limpiar Formulario" value="&nbsp;"                                        
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{pacientesMB.limpiarFormulario}"                    
+                    update=":IdFormPrincipal"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoBuscarPaciente').show()"
+                    update="IdTablaPacientes"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('dialogoEliminarPaciente').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    update=":IdFormPrincipal IdTabView"
+                    actionListener="#{pacientesMB.guardarPaciente}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                            
+                &nbsp;
+                <!-- p:commandButton 
+                    title="Importar" value="&nbsp;"
+                    styleClass="icon-file-excel fg-lightBlue bg-white no-border"                     
+                    oncomplete="PF('dialogoImportarPacientes').show()"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/ -->                            
+
+            </div>
+            <br/>            
+            
+            <p:tabView style=" width: 99%;" activeIndex="#{pacientesMB.tabActivaPacientes}" id="IdTabView" > 
+                <p:tab title="#{pacientesMB.tituloTabPacientes}">  
+                    <table style="margin: 20px; margin-left: auto; margin-right: auto;">
+                        <tr>
+                            <td style="vertical-align: top;">
+                                <div style="width: 90px; ">
+                                    <p:graphicImage id="IdFoto" url="#{pacientesMB.urlFoto}" cache="false" style="width: 80px; height: 70px;"/>                              
+                                    <p:commandButton id="cmdUpload" value="&nbsp;" icon="ui-icon-folder-open" onclick="PF('dlgUploadFoto').show()" type="button" title="Upload archivo foto" />
+                                    <p:commandButton id="cmdWebCam" value="&nbsp;" icon="ui-icon-video" onclick="PF('dlgWebCam').show()" type="button" title="Webcam"/>                                                                                                
+                                    <p:dialog id="webcam" widgetVar="dlgWebCam" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                        <p:photoCam widgetVar="pcPhoto" listener="#{pacientesMB.tomarFoto}" update="IdFoto"/>
+                                        <br/>
+                                        <p:commandButton type="button" value="Tomar" onclick="PF('pcPhoto').capture()" update="IdFoto" onsuccess="PF('dlgWebCam').hide()"/>
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgWebCam').hide()"/>                            
+                                    </p:dialog>
+                                    <p:dialog id="upload1" widgetVar="dlgUploadFoto" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                        <p:fileUpload 
+                                            fileUploadListener="#{pacientesMB.uploadFoto}" sizeLimit="204800" auto="true"
+                                            update="IdFoto" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
+                                            mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar" />                            
+                                        <br/>
+                                        <br/>
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgUploadFoto').hide()"/>
+                                    </p:dialog>
+                                    <br/><br/>
+                                    <p:graphicImage id="IdFirma" url="#{pacientesMB.urlFirma}" cache="false" style="width: 80px; height: 40px;"/>
+                                    <p:commandButton id="cmdUploadFirma" value="&nbsp;" icon="ui-icon-folder-open" onclick="PF('dlgUploadFirma').show()" type="button" title="Upload Archivo firma" />
+                                    <p:dialog id="upload2" widgetVar="dlgUploadFirma" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
+                                        <p:fileUpload 
+                                            fileUploadListener="#{pacientesMB.uploadFirma}" sizeLimit="204800" auto="true"
+                                            update="IdFirma" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
+                                            mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar"/>                            
+                                        <br/>
+                                        <p:commandButton type="button" value="Cerrar" onclick="PF('dlgUploadFirma').hide()"/>
+                                    </p:dialog>
+                                </div>
+                            </td>                        
+                            <td style="vertical-align: top;">
+                                <table >
+                                    <tr>                           
+                                        <td>
+                                            <p:outputLabel   styleClass="campoObligatorio" value="Tipo Identificación"/>
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 80px;" value="#{pacientesMB.tipoIdentificacion}">                                    
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}" />
+                                            </p:selectOneMenu>                                         
+                                            <p:outputLabel   styleClass="campoObligatorio" value="Identificación"/>
+                                            <p:inputText     styleClass="campoFormulario" size="16" value="#{pacientesMB.identificacion}"/>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Lugar expedición"/>
+                                            <p:inputText     styleClass="campoFormulario" size="16" value="#{pacientesMB.lugarExpedicion}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Fec. Nacimiento"/>
+                                            <p:calendar styleClass="campoFormulario" navigator="true" mask="true" locale="es" pattern="dd/MM/yyyy" value="#{pacientesMB.fechaNacimiento}" size="14">
+                                                <f:ajax 
+                                                    event="change"
+                                                    listener="#{pacientesMB.cambiaFechaNacimiento}"
+                                                    render="IdEdad"/> 
+                                            </p:calendar>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" id="IdEdad" value="#{pacientesMB.fechNacimiConvetEdad}" style="width: 72px;" />
+                                            <p:outputLabel   styleClass="campoObligatorio" value="Género"/>
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 150px;" value="#{pacientesMB.genero}">                                    
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaGenero}" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="RH"/> 
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{pacientesMB.grupoSanguineo}">                                                    
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaGrupoSanguineo}" />
+                                            </p:selectOneMenu>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>   
+                                            <p:outputLabel styleClass="campoObligatorio" value="Nombres"/>
+                                            <p:inputText styleClass="campoFormulario" size="19" value="#{pacientesMB.primerNombre}"/>
+                                            <p:inputText styleClass="campoFormulario" size="19" value="#{pacientesMB.segundoNombre}"/>
+                                            <p:outputLabel styleClass="campoObligatorio" value="Apellidos"/>                                            
+                                            <p:inputText styleClass="campoFormulario" size="18" value="#{pacientesMB.primerApellido}"/>
+                                            <p:inputText styleClass="campoFormulario" size="18" value="#{pacientesMB.segundoApellido}"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>   
+
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Ocupación"/>
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 352px;" value="#{pacientesMB.ocupacion}" filter="true" filterMatchMode="contains">
+                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaOcupaciones}" class="width1" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Estado civil"/> 
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 130px;" value="#{pacientesMB.estadoCivil}">
+                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaEstadoCivil}" />
+                                            </p:selectOneMenu>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>   
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Tel. residencia"/>
+                                            <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.telefonoResidencia}" size="24"/>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Tel. oficina"/>
+                                            <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.telefonoOficina}" size="21"/>
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Celular"/> 
+                                            <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.celular}" size="20"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>                                   
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Departamento"/>
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 150px;" value="#{pacientesMB.departamento}" filter="true" filterMatchMode="contains">
+                                                <f:ajax 
+                                                    event="change"
+                                                    listener="#{pacientesMB.cargarMunicipios}"                                                
+                                                    render="IdMunicipios"/> 
+                                                <f:selectItem itemLabel="" itemValue=""/>
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaDepartamentos}" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel     styleClass="campoNoObligatorio" value="Municipio"/>
+                                            <p:selectOneMenu   styleClass="campoFormulario" id="IdMunicipios" style="width: 140px;" value="#{pacientesMB.municipio}" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{pacientesMB.listaMunicipios}" />
+                                            </p:selectOneMenu>
+                                            <p:outputLabel   styleClass="campoObligatorio" value="Zona"/>
+                                            <p:selectOneMenu styleClass="campoFormulario" style="width: 125px;" value="#{pacientesMB.zona}">                                    
+                                                <f:selectItems value="#{aplicacionGeneralMB.listaZona}" />
+                                            </p:selectOneMenu>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <p:outputLabel     styleClass="campoNoObligatorio" value="Barrio"/>                                                
+                                            <p:inputText       styleClass="campoFormulario" value="#{pacientesMB.barrio}" size="37"/>                                
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Dirección"/> 
+                                            <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.direccion}" size="56"/>
+                                        </td>
+                                    </tr>                                    
+                                    <tr>
+                                        <td>                                
+                                            <p:outputLabel     styleClass="campoNoObligatorio" value="Email"/>                                                
+                                            <p:inputText       styleClass="campoFormulario" value="#{pacientesMB.email}" size="89"/>  
+                                            <p:outputLabel   styleClass="campoNoObligatorio" value="Paciente Activo"/>
+                                            <p:selectBooleanCheckbox styleClass="campoFormulario" value="#{pacientesMB.activo}"/>
+                                        </td>
+                                    </tr>
+                                </table> 
+                            </td>
+                        </tr>
+                    </table>
+                </p:tab>
+                <p:tab title="Datos adicionales">  
+                    <table style="margin: 20px; margin-left: auto; margin-right: auto;">
+                        <tr>
+                            <td>   
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="EPS"/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 340px;" value="#{pacientesMB.administradora}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Tipo afiliado"/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 279px;" value="#{pacientesMB.tipoAfiliado}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoAfiliado}" />
+                                </p:selectOneMenu> 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Régimen"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 233px;" value="#{pacientesMB.regimen}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaRegimen}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Categoria"/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 195px;" value="#{pacientesMB.categoriaPaciente}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaCategoriaPaciente}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Estrato"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 120px;" value="#{pacientesMB.estrato}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEstrato}" />
+                                </p:selectOneMenu>                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Etnia"/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 170px;" value="#{pacientesMB.etnia}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEtnia}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Escolaridad"/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 193px;" value="#{pacientesMB.escolaridad}">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEscolaridad}" />
+                                </p:selectOneMenu>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Numero autorización"/> 
+                                <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.numeroAutorizacion}" size="18"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>                                 
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Responsable"/>
+                                <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.responsable}" size="35"/>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Tel. Responsable" />
+                                <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.telefonoResponsable}" size="12"/>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Parentesco" />
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 175px;" value="#{pacientesMB.parentesco}" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaParentesco}" />
+                                </p:selectOneMenu>                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Acompañante"/>
+                                <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.acompanante}" size="34"/>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Tel. acompañante" />
+                                <p:inputText     styleClass="campoFormulario" value="#{pacientesMB.telefonoAcompanante}" size="12"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Fec. Afiliación"/>
+                                <p:calendar      styleClass="campoFormulario"    navigator="true" locale="es" pattern="dd/MM/yyyy" mask="true" size="10" value="#{pacientesMB.fechaAfiliacion}"/>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Fec. sisben" />
+                                <p:calendar      styleClass="campoFormulario"    navigator="true" locale="es" pattern="dd/MM/yyyy" mask="true" size="10" value="#{pacientesMB.fechaSisben}"/>                            
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Carnet" />
+                                <p:inputText     styleClass="campoFormulario"    value="#{pacientesMB.carnet}" size="26"/>
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Vencimiento carnet  " />
+                                <p:calendar      styleClass="campoFormulario"    navigator="true" locale="es" pattern="dd/MM/yyyy" mask="true" size="10" value="#{pacientesMB.fechaVenceCarnet}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td> 
+                                <p:outputLabel   styleClass="campoNoObligatorio" value="Observaciones"/>
+                                <p:inputTextarea value="#{pacientesMB.observaciones}" style="width: 633px;"/>
+                            </td>       
+                        </tr>
+                    </table>
+                </p:tab>
+            </p:tabView>             
+            <p:dialog id="IdDialogoBuscarPaciente" header="Buscar paciente" widgetVar="dialogoBuscarPaciente" resizable="false" modal="true">  
+                <p:ajax event="close" oncomplete="PF('wvTablaPacientes').clearFilters(); PF('wvTablaPacientes').getPaginator().setPage(0);" update="IdTablaPacientes" />
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaPacientes" 
+                                var="paciente" 
+                                widgetVar="wvTablaPacientes"
+                                value="#{pacientesMB.listaPacientes}" 
+                                rowKey="#{paciente.idPaciente}"  
+                                selection="#{pacientesMB.pacienteSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay pacientes"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                pageLinks="5"
+                                lazy="true"
+                                selectionMode="single"
+                                resizableColumns="true">                                                               
+                                <p:column headerText="ID" width="0" >  
+                                    #{paciente.idPaciente}  
+                                </p:column>
+                                <p:column headerText="IDENTIFICACION" width="10" filterBy="#{paciente.identificacion}">
+                                    #{paciente.identificacion}
+                                </p:column>
+                                <p:column headerText="NOMBRES" width="90" filterBy="#{paciente.primerNombre}">
+                                    #{paciente.primerNombre} #{paciente.segundoNombre} #{paciente.primerApellido} #{paciente.segundoApellido}
+                                </p:column>
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar seleccionado"
+                                oncomplete="PF('dialogoBuscarPaciente').hide(); PF('wvTablaPacientes').clearFilters(); PF('wvTablaPacientes').getPaginator().setPage(0);"                                 
+                                update=":IdFormPrincipal IdTabView IdTablaPacientes"
+                                actionListener="#{pacientesMB.cargarPaciente}"/>
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarPaciente" header="ELIMINAR PACIENTE" widgetVar="dialogoEliminarPaciente" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarPaciente" styleClass="panelGridSinBordes" columns="1">
+                    <p:row>
+                        <p:column colspan="2">
+                            <h:outputText value="¿ Confirma La eliminacion de este paciente?"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Eliminar" 
+                                oncomplete="PF('dialogoEliminarPaciente').hide();"
+                                actionListener="#{pacientesMB.eliminarPaciente}"                        
+                                update=":IdFormPrincipal"/>
+                            <p:commandButton 
+                                value="Cancelar" 
+                                oncomplete="PF('dialogoEliminarPaciente').hide();"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog> 
+            <p:dialog id="IdDialogoImportarPacientes" header="IMPORTAR PACIENTES" widgetVar="dialogoImportarPacientes" resizable="false" modal="true">  
+                <p:panelGrid id="panelImportarPacientes" styleClass="panelGridSinBordes" columns="1">
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:fileUpload                                         
+                                id="IdBtnFileSelect"                                        
+                                fileUploadListener="#{pacientesMB.importarPacientes}"                                          
+                                mode="advanced"                                           
+                                cancelLabel="Cancelar"
+                                uploadLabel="Subir"                                        
+                                label="Archivo"
+                                sizeLimit="50000000"
+                                invalidFileMessage="Solo se aceptan archivos xlsx, csv y txt"
+                                invalidSizeMessage="El tamaño del archivo debe ser inferior a 5MB"
+                                update="IdMensajePacientes"
+                                allowTypes="/(\.|\/)(xlsx|csv|txt)$/">                                        
+                            </p:fileUpload>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Importar" 
+                                oncomplete="PF('dialogoImportarPacientes').hide();"
+                                actionListener="#{pacientesMB.eliminarPaciente}"                        
+                                update=":IdFormPrincipal"/>
+                            <p:commandButton 
+                                value="Cancelar" 
+                                oncomplete="PF('dialogoImportarPacientes').hide();"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog> 
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="790" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02c38202-e803-4b77-8f62-7d3b98718dd0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="fecha" class="java.util.Date"/>
+	<parameter name="title" class="java.lang.String"/>
+	<parameter name="logoEmpresa" class="java.lang.String"/>
+	<field name="idAutorizacion" class="java.lang.Integer"/>
+	<field name="administradora" class="java.lang.String"/>
+	<field name="paciente" class="java.lang.String"/>
+	<field name="numAutorizacion" class="java.lang.String"/>
+	<field name="cerrada" class="java.lang.Boolean"/>
+	<field name="servicio" class="java.lang.String"/>
+	<field name="sesionesAutorizadas" class="java.lang.Integer"/>
+	<field name="sesionesRealizadas" class="java.lang.Integer"/>
+	<field name="sesionesPendientes" class="java.lang.Integer"/>
+	<group name="administradora">
+		<groupExpression><![CDATA[$F{administradora}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="572" height="20" uuid="c9eb8c09-460f-4921-9d92-30a90dff4fcc"/>
+					<textElement verticalAlignment="Middle">
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{administradora}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="8"/>
+		</groupFooter>
+	</group>
+	<group name="paciente">
+		<groupExpression><![CDATA[$F{paciente}]]></groupExpression>
+		<groupHeader>
+			<band height="24">
+				<rectangle>
+					<reportElement x="0" y="0" width="572" height="24" uuid="0c01c7a7-ede3-46f3-9a29-8b2b1422e71d"/>
+				</rectangle>
+				<textField>
+					<reportElement x="13" y="0" width="559" height="23" uuid="44bf6486-53b0-49ad-880c-8277daf98022"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{paciente}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="autorizacion">
+		<groupExpression><![CDATA[$F{idAutorizacion}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<textField>
+					<reportElement x="13" y="0" width="185" height="13" uuid="fc8662f8-fb96-4743-83af-290725148d07"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["AUTORIZACION:  "+$F{numAutorizacion}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="198" y="0" width="168" height="13" uuid="8e99d0e3-d43b-4e0b-91f2-bc0bd5f44aac"/>
+					<textElement verticalAlignment="Middle">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CERRADA: " + ($F{cerrada} ? "SI" : "NO")]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="13" y="13" width="200" height="12" uuid="fb877699-1592-4605-87dc-57c777326d63"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SERVICIO]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="213" y="13" width="129" height="12" uuid="66892c79-bec5-4d9c-8014-fddf98cea2f8"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SESIONES AUTORIZADAS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="342" y="13" width="110" height="12" uuid="b88a933b-d046-40ce-ba10-2fbb2ff3a717"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SESIONES REALIZADAS]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="452" y="13" width="120" height="12" uuid="03e81a15-29d6-499d-a4e6-36fc564f9ca1"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SESIONES PENDIENTES]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="52" splitType="Stretch">
+			<rectangle radius="10">
+				<reportElement x="0" y="0" width="572" height="52" uuid="856a0670-e70c-4509-a271-34fce01eb2cd"/>
+			</rectangle>
+			<textField>
+				<reportElement x="0" y="0" width="572" height="52" uuid="854129c5-0332-4c67-b2cc-d6315dc93eba"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{title}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="8" y="2" width="100" height="50" uuid="d13c7ce5-13c2-4d0f-aa9e-9f0e8afe4874"/>
+				<imageExpression><![CDATA[$P{logoEmpresa}]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="24" splitType="Stretch">
+			<textField pattern="MM/dd/yyyy">
+				<reportElement x="360" y="0" width="212" height="24" uuid="7750608a-d4ee-412b-84bc-4c54982cbef6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{fecha}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement x="13" y="0" width="200" height="13" uuid="0bf5339e-df14-48ef-97f7-9e3f72d609e9"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="452" y="0" width="120" height="13" uuid="a957e8b2-312f-4b17-bbbb-8421839f5c29"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sesionesPendientes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="213" y="0" width="129" height="13" uuid="be52faa7-726e-4324-ace2-f57095a8616c"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sesionesAutorizadas}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="342" y="0" width="110" height="13" uuid="31aac626-e7c6-4c78-9372-3e7c5b414367"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sesionesRealizadas}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

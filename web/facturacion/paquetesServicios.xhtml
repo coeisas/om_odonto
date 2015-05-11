@@ -1,0 +1,584 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>        
+        <title>Paquetes</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"/>
+    </h:head>
+    <h:body>     
+        <h:form id="IdFormPaquetes">
+            <p:growl id="IdMensajePaquetes"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <br/>            
+            <div>
+                <p:commandButton 
+                    title="Nuevo Paquete" value="&nbsp;"
+                    styleClass="icon-new fg-lightBlue bg-white no-border"
+                    actionListener="#{paquetesServiciosMB.limpiarFormularioPaquetes}"
+                    oncomplete="PF('wvTabView').select(0);"
+                    update=":IdFormPaquetes"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Buscar Paquete" value="&nbsp;"                                        
+                    styleClass="icon-search fg-lightBlue bg-white no-border"                     
+                    actionListener="#{paquetesServiciosMB.buscarPaquete}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton                     
+                    title="Eliminar Paquete" value="&nbsp;"                                        
+                    styleClass="icon-cancel fg-lightBlue bg-white no-border" 
+                    actionListener="#{paquetesServiciosMB.eliminarPaquete}"
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Guardar Paquete" value="&nbsp;"
+                    styleClass="icon-floppy fg-lightBlue bg-white no-border" 
+                    oncomplete="PF('wvTabView').select(0);"
+                    update=":IdFormPaquetes"
+                    actionListener="#{paquetesServiciosMB.guardarPaquete}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>
+                &nbsp;    
+
+
+
+                <p:remoteCommand name="callButton2"  update=":IdFormPaquetes" />
+            </div>
+            <br/>            
+            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView" dynamic="true">  
+                <p:tab title="#{paquetesServiciosMB.tituloTabPaquete}">  
+                    <br/>
+                    <table style="margin-left: auto; margin-right: auto;" >                         
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Código Paquete"/>
+                                <p:inputText styleClass="campoFormulario" size="26" value="#{paquetesServiciosMB.codigoPaquete}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Nombre Paquete"/>
+                                <p:inputText styleClass="campoFormulario" size="25" value="#{paquetesServiciosMB.nombrePaquete}"/>
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Valor Calculado"/>
+                                <pe:inputNumber decimalSeparator="," value="#{paquetesServiciosMB.valorCalculadoPaquete}" disabled="true"/>                                
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoObligatorio" value="Valor Paquete"/>
+                                <pe:inputNumber decimalSeparator="," value="#{paquetesServiciosMB.valorPaquete}"/>                                
+                            </td>
+                        </tr>                        
+
+                    </table>
+                    <br/>
+                </p:tab>    
+                <p:tab title="#{paquetesServiciosMB.tituloTabServicios}" disabled="#{paquetesServiciosMB.paqueteSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"                        
+                        actionListener="#{paquetesServiciosMB.cargarDialogoAgregarServicio}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar servicio" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{paquetesServiciosMB.quitarServicio}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdTablaServiciosPaquete" 
+                        var="servicioPaquete" 
+                        widgetVar="wvTablaServiciosPaquete"
+                        value="#{paquetesServiciosMB.listaServiciosPaquete}" 
+                        filteredValue="#{paquetesServiciosMB.listaServiciosPaqueteFiltro}"
+                        rowKey="#{servicioPaquete.columna1}-#{servicioPaquete.columna2}"  
+                        selection="#{paquetesServiciosMB.servicioPaqueteSeleccionado}"                                     
+                        paginator="true"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Servicios en este paquete"
+                        scrollable="true" 
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            SERVICIOS DEL PAQUETE
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="100" filterBy="#{servicioPaquete.columna3}" filterMatchMode="contains">
+                            #{servicioPaquete.columna3}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{servicioPaquete.columna4}" filterMatchMode="contains">
+                            #{servicioPaquete.columna4}
+                        </p:column>
+                        <p:column headerText="TARIFA" width="50" filterBy="#{servicioPaquete.columna5}" filterMatchMode="contains">
+                            #{servicioPaquete.columna5}
+                        </p:column>
+                        <p:column headerText="VALOR UNITARIO" width="100" filterBy="#{servicioPaquete.columna6}" filterMatchMode="contains">
+                            #{servicioPaquete.columna6}
+                        </p:column>
+                        <p:column headerText="DESCUENTO" width="50" filterBy="#{servicioPaquete.columna7}" filterMatchMode="contains">
+                            #{servicioPaquete.columna7}
+                        </p:column>
+                        <p:column headerText="HONORARIO MEDICO" width="50" filterBy="#{servicioPaquete.columna8}" filterMatchMode="contains">
+                            #{servicioPaquete.columna8}
+                        </p:column>
+                        <p:column headerText="CANTIDAD" width="100" filterBy="#{servicioPaquete.columna9}" filterMatchMode="contains">
+                            #{servicioPaquete.columna9}
+                        </p:column>                                    
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{servicioPaquete.columna10}" filterMatchMode="contains">
+                            #{servicioPaquete.columna10}
+                        </p:column>
+                        <p:column headerText="META" width="100" filterBy="#{servicioPaquete.columna11}" filterMatchMode="contains">
+                            #{servicioPaquete.columna11}
+                        </p:column>
+                        <p:column headerText="PERIODICIDAD" width="50" filterBy="#{servicioPaquete.columna12}" filterMatchMode="contains">
+                            #{servicioPaquete.columna12}
+                        </p:column>                                    
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{servicioPaquete.columna13}" filterMatchMode="contains">
+                            #{servicioPaquete.columna13}
+                        </p:column>
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{servicioPaquete.columna14}" filterMatchMode="contains">
+                            #{servicioPaquete.columna14}
+                        </p:column>
+                    </p:dataTable>  
+                </p:tab>                
+                <p:tab title="#{paquetesServiciosMB.tituloTabMedicamentos}" disabled="#{paquetesServiciosMB.paqueteSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{paquetesServiciosMB.cargarDialogoAgregarMedicamento}"                 
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar medicamento" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{paquetesServiciosMB.quitarMedicamento}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdTablaMedicamentoPaquete" 
+                        var="medicamentoPaquete" 
+                        widgetVar="wvTablaMedicamentosPaquete"
+                        value="#{paquetesServiciosMB.listaMedicamentosPaquete}" 
+                        filteredValue="#{paquetesServiciosMB.listaMedicamentosPaqueteFiltro}"
+                        rowKey="#{medicamentoPaquete.columna2}"  
+                        selection="#{paquetesServiciosMB.medicamentoPaqueteSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Medicamentos en este paquete"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            MEDICAMENTOS DEL PAQUETE
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="100" filterBy="#{medicamentoPaquete.columna3}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna3}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{medicamentoPaquete.columna4}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna4}
+                        </p:column>   
+                        <p:column headerText="FORMA" width="200" filterBy="#{medicamentoPaquete.columna5}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna5}
+                        </p:column>
+                        <p:column headerText="VALOR UNITARIO" width="100" filterBy="#{medicamentoPaquete.columna6}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna6}
+                        </p:column>
+                        <p:column headerText="CANTIDAD" width="50" filterBy="#{medicamentoPaquete.columna7}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna7}
+                        </p:column>
+                        <p:column headerText="DESCUENTO" width="50" filterBy="#{medicamentoPaquete.columna8}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna8}
+                        </p:column>
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{medicamentoPaquete.columna9}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna9}
+                        </p:column>
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{medicamentoPaquete.columna10}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna10}
+                        </p:column>
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{medicamentoPaquete.columna11}" filterMatchMode="contains">
+                            #{medicamentoPaquete.columna11}
+                        </p:column>
+                    </p:dataTable>  
+                </p:tab>
+                <p:tab title="#{paquetesServiciosMB.tituloTabInsumos}" disabled="#{paquetesServiciosMB.paqueteSeleccionado == null}">
+                    <br/>
+                    <p:commandButton 
+                        title="Agregar" value="&nbsp;"
+                        styleClass="icon-plus-2 fg-lightBlue bg-white no-border"
+                        actionListener="#{paquetesServiciosMB.cargarDialogoAgregarInsumo}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Quitar insumo" value="&nbsp;"                                        
+                        styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
+                        actionListener="#{paquetesServiciosMB.quitarInsumo}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    <br/><br/>
+                    <p:dataTable 
+                        id="IdTablaInsumosPaquete" 
+                        var="insumoPaquete" 
+                        widgetVar="wvTablaInsumosPaquete"
+                        value="#{paquetesServiciosMB.listaInsumosPaquete}" 
+                        filteredValue="#{paquetesServiciosMB.listaInsumosPaqueteFiltro}"
+                        rowKey="#{insumoPaquete.columna2}"  
+                        selection="#{paquetesServiciosMB.insumoPaqueteSeleccionado}" 
+                        paginator="true"
+                        scrollWidth="100%"  
+                        scrollHeight="250"
+                        rows="10"                                    
+                        paginatorPosition="bottom"                                
+                        emptyMessage="No hay Insumos en este paquete"
+                        scrollable="true" 
+                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        pageLinks="5"
+                        selectionMode="single"
+                        resizableColumns="true">                                                                                               
+                        <f:facet name="header">
+                            INSUMOS DEL PAQUETE
+                        </f:facet>
+                        <p:column headerText="CODIGO" width="100" filterBy="#{insumoPaquete.columna3}" filterMatchMode="contains">
+                            #{insumoPaquete.columna3}
+                        </p:column>
+                        <p:column headerText="NOMBRE" width="300" filterBy="#{insumoPaquete.columna4}" filterMatchMode="contains">
+                            #{insumoPaquete.columna4}
+                        </p:column>
+                        <p:column headerText="VALOR UNITARIO" width="100" filterBy="#{insumoPaquete.columna5}" filterMatchMode="contains">
+                            #{insumoPaquete.columna5}
+                        </p:column>
+                        <p:column headerText="DESCUENTO" width="50" filterBy="#{insumoPaquete.columna6}" filterMatchMode="contains">
+                            #{insumoPaquete.columna6}
+                        </p:column>
+                        <p:column headerText="CANTIDAD" width="50" filterBy="#{insumoPaquete.columna7}" filterMatchMode="contains">
+                            #{insumoPaquete.columna7}
+                        </p:column>                                    
+                        <p:column headerText="VALOR FINAL" width="100" filterBy="#{insumoPaquete.columna8}" filterMatchMode="contains">
+                            #{insumoPaquete.columna8}
+                        </p:column>
+                        <p:column headerText="ACTIVO" width="50" filterBy="#{insumoPaquete.columna9}" filterMatchMode="contains">
+                            #{insumoPaquete.columna9}
+                        </p:column>
+                        <p:column headerText="OBSERVACION" width="300" filterBy="#{insumoPaquete.columna10}" filterMatchMode="contains">
+                            #{insumoPaquete.columna10}
+                        </p:column>
+                    </p:dataTable>  
+                </p:tab>
+            </p:tabView>            
+        </h:form>
+        <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoBuscarPaquete" header="BUSCAR PAQUETE" widgetVar="dialogoBuscarPaquetes" resizable="false" modal="true">                
+                <table>
+                    <tr>
+                        <td>
+                            <p:dataTable 
+                                id="IdTablaPaquetesServicios" 
+                                var="paquete" 
+                                widgetVar="wvTablaPaquetes"
+                                value="#{paquetesServiciosMB.listaPaquetes}" 
+                                rowKey="#{paquete.idPaquete}"  
+                                selection="#{paquetesServiciosMB.paqueteSeleccionadoTabla}" 
+                                paginator="true"
+                                style="width: 600px; height: 300px;"
+                                rows="10"                                    
+                                paginatorPosition="bottom"                                
+                                emptyMessage="No hay Paquetes"
+                                scrollable="true" 
+                                currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                pageLinks="5"
+                                selectionMode="single"
+                                resizableColumns="true">                                                                                               
+                                <p:column headerText="CODIGO" width="1" filterBy="#{paquete.codigoPaquete}" filterMatchMode="contains">
+                                    #{paquete.codigoPaquete}
+                                </p:column>                                
+                                <p:column headerText="NOMBRE" width="90" filterBy="#{paquete.nombrePaquete}" filterMatchMode="contains">
+                                    #{paquete.nombrePaquete}
+                                </p:column>                                
+                                <p:column headerText="VALOR" width="90" filterBy="#{paquete.valorPaquete}" filterMatchMode="contains">
+                                    #{paquete.valorPaquete}
+                                </p:column>                                
+                            </p:dataTable>  
+                        </td>    
+                    </tr>
+                    <tr>
+                        <td>
+                            <br/>
+                            <p:commandButton 
+                                value="Cargar Paquete" 
+                                oncomplete="callButton2()"
+                                actionListener="#{paquetesServiciosMB.cargarPaquete}"/>
+
+                        </td>    
+                    </tr>
+                </table>
+            </p:dialog> 
+            <p:dialog id="IdDialogoEliminarPaquete" header="ELIMINAR PAQUETE" widgetVar="dialogoEliminarPaquete" resizable="false" modal="true">  
+                <p:panelGrid id="panelEliminarPaquete" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma La eliminacion de este paquete ?"/>                    
+                    <p:commandButton 
+                        value="Eliminar" 
+                        oncomplete="PF('dialogoEliminarPaquete').hide();"
+                        actionListener="#{paquetesServiciosMB.confirmarEliminarPaquete}"/>
+                </p:panelGrid>
+            </p:dialog>
+
+            <p:dialog id="IdDialogoAgregarServicio" header="AGREGAR SERVICIO A PAQUETE" widgetVar="dialogoAgregarServicio" resizable="false" modal="true">                  
+                <p:panelGrid id="IdPanelAgregarServicio" styleClass="panelGridSinBordes">
+                    <p:row>                        
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Servicio"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 410px;" value="#{paquetesServiciosMB.idServicio}"  filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{paquetesServiciosMB.cambiaServicio}"
+                                        update="IdPanelAgregarServicio"/>
+                                <f:selectItems value="#{paquetesServiciosMB.listaServicios}" var="servicio" itemLabel="#{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" style="width: 110px;" value="Tipo tarifa"/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 125px;" value="#{paquetesServiciosMB.tipoTarifa}">
+                                <p:ajax event="change"
+                                        listener="#{paquetesServiciosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio IdValorInicialServicio"/>                            
+                                <f:selectItems value="#{paquetesServiciosMB.listaTipoTarifa}"/>       
+                            </p:selectOneMenu>
+                            <h:outputText styleClass="campoNoObligatorio" value="Unidad de valor"/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 125px;" value="#{paquetesServiciosMB.unidadValor}">
+                                <p:ajax event="change"
+                                        listener="#{paquetesServiciosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio IdValorInicialServicio"/>
+                                <f:selectItems value="#{paquetesServiciosMB.listaUnidadesValor}" var="unidad" itemLabel="#{unidad.anio}" itemValue="#{unidad.anio}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Meta cumplimiento"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{paquetesServiciosMB.metaCumplimiento}"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Periodicidad"/>                    
+                            <pe:inputNumber  decimalSeparator="," decimalPlaces="0" minValue="0" value="#{paquetesServiciosMB.periodicidad}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Valor Inicial"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorInicialServicio" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{paquetesServiciosMB.valorUnitarioServicio}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{paquetesServiciosMB.descuentoServicio}" decimalPlaces="2"  minValue="-100" maxValue="100" >
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                      
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Honorario médico"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{paquetesServiciosMB.honorarioMedico}" minValue="0">
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio"/>
+                            </pe:inputNumber>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Cantidad"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{paquetesServiciosMB.cantidadServicios}" decimalPlaces="0"  minValue="1">
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresServicio}"
+                                        update="IdValorFinalServicio"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoObligatorio" style="width: 110px;" value="Valor Final"/>                    
+                            <pe:inputNumber  id="IdValorFinalServicio" styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{paquetesServiciosMB.valorFinalServicio}"/>
+                            <h:outputText          styleClass="campoNoObligatorio" value="Activo"/>
+                            <p:selectBooleanButton  value="#{paquetesServiciosMB.activoServicio}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 390px; height: 50px;" value="#{paquetesServiciosMB.observacionServicio}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Agregar"                                                 
+                                actionListener="#{paquetesServiciosMB.agregarServicio}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarServicio" header="QUITAR SERVICIO A PAQUETE" widgetVar="dialogoQuitarServicio" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarServicio" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el servicio del paquete ?"/>                    
+                    <p:commandButton 
+                        value="Quitar"    
+                        update=":IdFormPaquetes:IdTabView"
+                        actionListener="#{paquetesServiciosMB.confirmarQuitarServicio}"/>
+                </p:panelGrid>
+            </p:dialog>            
+            <p:dialog id="IdDialogoAgregarMedicamento" header="AGREGAR MEDICAMENTO A PAQUETE" widgetVar="dialogoAgregarMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarMedicamento" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Medicamento"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 400px;" value="#{paquetesServiciosMB.idMedicamento}" filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{paquetesServiciosMB.cambiaMedicamento}"
+                                        update="IdPanelAgregarMedicamento"/>
+                                <f:selectItems value="#{paquetesServiciosMB.listaMedicamentos}" var="medicamento" itemLabel="#{medicamento.codigoMedicamento} - #{medicamento.nombreMedicamento} (#{medicamento.formaMedicamento})" itemValue="#{medicamento.idMedicamento}"/>
+                            </p:selectOneMenu>                    
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{paquetesServiciosMB.valorUnitarioMedicamento}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{paquetesServiciosMB.descuentoMedicamento}" decimalPlaces="2"  minValue="-100" maxValue="100" >
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresMedicamento}"
+                                        update="IdValorFinalMedicamento"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Cantidad"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" value="#{paquetesServiciosMB.cantidadMedicamentos}" decimalPlaces="0"  minValue="1">
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresMedicamento}"
+                                        update="IdValorFinalMedicamento"/>
+                            </pe:inputNumber>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalMedicamento" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{paquetesServiciosMB.valorFinalMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{paquetesServiciosMB.activoMedicamento}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{paquetesServiciosMB.observacionMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Agregar"                         
+                                actionListener="#{paquetesServiciosMB.agregarMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarMedicamento" header="QUITAR MEDICAMENTO A PAQUETE" widgetVar="dialogoQuitarMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarMedicamento" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el medicamento del paquete ?"/>                    
+                    <p:commandButton 
+                        value="Quitar" 
+                        oncomplete="PF('dialogoQuitarMedicamento').hide();"
+                        actionListener="#{paquetesServiciosMB.confirmarQuitarMedicamento}"/>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoAgregarInsumo" header="AGREGAR INSUMO A PAQUETE" widgetVar="dialogoAgregarInsumo" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelAgregarInsumo" styleClass="panelGridSinBordes" >
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Insumo"/>                    
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 400px;" value="#{paquetesServiciosMB.idInsumo}"  filter="true" filterMatchMode="contains">
+                                <p:ajax event="change"
+                                        listener="#{paquetesServiciosMB.cambiaInsumo}"
+                                        update="IdPanelAgregarInsumo"/>
+                                <f:selectItems value="#{paquetesServiciosMB.listaInsumos}" var="insumo" itemLabel="#{insumo.nombreInsumo}" itemValue="#{insumo.idInsumo}"/>
+                            </p:selectOneMenu>                    
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{paquetesServiciosMB.valorUnitarioInsumo}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{paquetesServiciosMB.descuentoInsumo}" decimalPlaces="2"  minValue="-100" maxValue="100" >
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresInsumo}"
+                                        update="IdValorFinalInsumo"/>
+                            </pe:inputNumber>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Cantidad"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" value="#{paquetesServiciosMB.cantidadInsumos}" decimalPlaces="0"  minValue="1">
+                                <p:ajax event="blur"
+                                        listener="#{paquetesServiciosMB.calcularValoresInsumo}"
+                                        update="IdValorFinalInsumo"/>
+                            </pe:inputNumber>
+                            <h:outputText  styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalInsumo" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{paquetesServiciosMB.valorFinalInsumo}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{paquetesServiciosMB.activoInsumo}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{paquetesServiciosMB.observacionInsumo}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Agregar"                         
+                                actionListener="#{paquetesServiciosMB.agregarInsumo}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoQuitarInsumo" header="QUITAR INSUMO A PAQUETE" widgetVar="dialogoQuitarInsumo" resizable="false" modal="true">  
+                <p:panelGrid id="panelQuitarInsumo" styleClass="panelGridSinBordes" columns="1">
+                    <h:outputText value="¿ Confirma quitar el insumo del paquete ?"/>                    
+                    <p:commandButton 
+                        value="Quitar" 
+                        oncomplete="PF('dialogoQuitarInsumo').hide();"
+                        actionListener="#{paquetesServiciosMB.confirmarQuitarInsumo}"/>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </h:body>
+</html>

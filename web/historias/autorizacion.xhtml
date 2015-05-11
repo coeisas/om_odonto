@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">  
+    <h:head>
+        <title>Usuarios</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script> 
+    </h:head>
+    <h:body>
+        #{historiasMB.inicializar()}
+        <h:form id="IdFormRegistroClinico">  
+            <p:growl id="IdMensajeUsuarios"  showDetail="true" sticky="false" autoUpdate="true" life="2000"/>
+            <table style="margin-left: auto; margin-right: auto;" >
+                <tr><td colspan="2"><h2>SOLICITUD DE AUTORIZACION DE SERVICIOS DE SALUD</h2></td></tr>                                
+                <tr>
+                    <td colspan="2"><p:outputLabel value="ENTIDAD A LA QUE SE LE SOLICITA (PAGADOR)"/></td>                    
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:focus for="IdFocus" />
+                        <p:inputText  id="IdFocus" styleClass="width2" value="#{historiasMB.datosFormulario.dato0}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><p:outputLabel value="CODIGO"/></td>                    
+                    <td>&nbsp;</td>                    
+                </tr>
+                <tr>
+                    <td>                        
+                        <p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato1}"/>
+                    </td>
+                    <td>&nbsp;</td>                    
+                </tr>
+                <tr><td colspan="2"><h2>INFORMACION DE LA ATENCION Y SERVICIOS SOLICITADOS</h2></td></tr>                                
+                <tr>
+                    <td><p:outputLabel value="ORIGEN DE LA ATENCION"/></td>
+                    <td><p:outputLabel value="TIPO DE SERVICIOS SOLICITADOS"/></td>
+                </tr>
+                <tr>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato2}"/></td>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato3}"/></td>
+                </tr>                
+                <tr>
+                    <td colspan="2"><p:outputLabel value="PRIORIDAD DE LA ATENCION"/></td>
+
+                </tr>
+                <tr>
+                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato4}"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:outputLabel value="UBICACION DEL PACIENTE AL MOMENTO DE LA SOLICITUD DE AUTORIZACION"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato5}"/></td>
+                </tr>
+                <tr>
+                    <td><p:outputLabel value="SERVICIO"/></td>
+                    <td><p:outputLabel value="CAMA"/></td>
+                </tr>
+                <tr>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato6}"/></td>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato7}"/></td>
+                </tr>                
+                <tr>
+                    <td colspan="2"><p:outputLabel value="MANEJO INTEGRAL SEGUN GUIA DE:"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato27}"/></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="CODIGO CUPS" style="margin-left: 20px;"/>
+                        <p:outputLabel value="CANTIDAD" style="margin-left: 40px;"/>
+                        <p:outputLabel value="DESCRIPCION" style="margin-left: 60px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="1" /> &nbsp;
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato8}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato9}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato10}" style="width: 385px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="2" /> &nbsp;
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato11}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato12}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato13}" style="width: 385px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="3" /> &nbsp;
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato14}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato15}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato16}" style="width: 385px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="4" /> &nbsp;
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato17}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato18}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato19}" style="width: 385px;"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="5" /> &nbsp;
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato20}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato21}" style="width: 100px; margin-right: 10px;"/>
+                        <p:inputText  value="#{historiasMB.datosFormulario.dato22}" style="width: 385px;"/>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td colspan="2"><p:outputLabel value="JUSTIFICACION CLINICA" /></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p:inputTextarea  styleClass="width2" value="#{historiasMB.datosFormulario.dato23}"  /></td>
+                </tr>                
+                <tr>
+                    <td colspan="2"><h2>IMPRESION DIAGNOSTICA</h2></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO PPAL"/>
+                        <p:autoComplete size="86" value="#{historiasMB.datosFormulario.dato24}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 1"/>
+                        <p:autoComplete size="86" value="#{historiasMB.datosFormulario.dato25}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 2"/>
+                        <p:autoComplete size="86" value="#{historiasMB.datosFormulario.dato26}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>                
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel value="FECHA-HORA REGISTRO"/><p:calendar navigator="true" locale="es" value="#{historiasMB.fechaReg}" pattern="dd/MM/yyyy HH:mm:ss" size="23" mask="true"  />
+                    </td>
+                </tr>
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td><p:outputLabel value="MEDICO"/></td>
+                    <td><p:outputLabel value="ESPECIALIDAD"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <p:selectOneMenu style="width: 315px;" value="#{historiasMB.idPrestador}" filter="true" filterMatchMode="contains">                            
+                            <p:ajax event="change" listener="#{historiasMB.cambiaMedico}" update="IdEspecialidad"/>
+                            <f:selectItem itemLabel="" itemValue=""/>
+                            <f:selectItems value="#{historiasMB.listaPrestadores}" var="p" itemLabel="#{p.primerNombre} #{p.segundoNombre} #{p.primerApellido} #{p.segundoApellido}" itemValue="#{p.idUsuario}"/>
+                        </p:selectOneMenu>
+                    </td>
+                    <td><p:inputText id="IdEspecialidad" readonly="true" styleClass="width1" value="#{historiasMB.especialidadPrestador}"/></td>
+                </tr>                
+                <tr><td>&nbsp;</td></tr>
+                <tr>
+                    <td colspan="2">
+                        <p:commandButton icon="ui-icon-disk" value="Guardar Nuevo Registro" actionListener="#{historiasMB.guardarRegistro}" disabled="#{historiasMB.modificandoRegCli}"/>
+                        <p:commandButton icon="ui-icon-arrowthickstop-1-s" value="Actualizar Registro" actionListener="#{historiasMB.actualizarRegistro}" disabled="#{!historiasMB.modificandoRegCli}" rendered="#{loginMB.superUsuario}"/>
+                        <p:commandButton icon="ui-icon-document" value="Limpiar Formulario" actionListener="#{historiasMB.btnLimpiarFormulario}" update="IdFormRegistroClinico"/>
+                    </td>
+                </tr>
+            </table>
+            <p:dialog id="IdTextosDlgPredefinidos" header="TEXTOS PREDEFINIDOS" width="645" widgetVar="dlgTextosPredefinidos" resizable="false" closable="true" modal="true">                                
+                <p:panelGrid styleClass="panelGridSinBordes" id="IdPanelTextosPredefinidos">
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel   styleClass="labelFormulario" style="width: 60px;" value="Categoría: "/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 220px;" value="#{historiasMB.idMaestroTextoPredef}" >
+                                <f:ajax event="change" listener="#{historiasMB.cambiaMaestro}" render="IdComboTextosPredefinidos IdEditorTextoPredefinido IdNombrePredefinido"/> 
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{historiasMB.listaMaestrosTxtPredefinidos}" var="maestro" itemValue="#{maestro.idMaestro}" itemLabel="#{maestro.nombre}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel   styleClass="labelFormulario" style="width: 60px;" value="Predefinidos: "/>
+                            <p:selectOneMenu styleClass="campoFormulario" style="width: 220px;" id="IdComboTextosPredefinidos"  value="#{historiasMB.idTextoPredef}" >
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{historiasMB.cambiaTextoPredefinido}"                                                
+                                    render="IdEditorTextoPredefinido IdNombrePredefinido"/>                                 
+                                <f:selectItems value="#{historiasMB.listaTxtPredefinidos}" var="texto" itemValue="#{texto.idTxtPredefinido}" itemLabel="#{texto.nombre}"/>
+                            </p:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel styleClass="labelFormulario" value="Nombre: " style="width: 60px;"/>
+                            <p:inputText   styleClass="campoFormulario" id="IdNombrePredefinido" size="39" value="#{historiasMB.nombreTextoPredefinido}"/>                                                    
+                            <p:commandButton icon="ui-icon-circle-arrow-s" title="Usar seleccionado"    actionListener="#{historiasMB.usarTextoPredefinido}"/>
+                            <p:commandButton icon="ui-icon-disk"           title="Guardar/Actualizar"   actionListener="#{historiasMB.guardarTextoPredefinido}" />            
+                            <p:commandButton icon="ui-icon-trash"          title="Eliminar predefinido" id="IdBtnEliminarPredefinido"/>                                        
+                            <p:overlayPanel for="IdBtnEliminarPredefinido" widgetVar="opEliminarPredefinido">
+                                <p:outputLabel   styleClass="labelFormulario" value="¿Confirma la eliminación?  "/>
+                                <p:commandButton value="Si" title="Crear nueva categoría" actionListener="#{historiasMB.eliminarPredefinido}" oncomplete="PF('opEliminarPredefinido').hide();"/>                        
+                            </p:overlayPanel> 
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:editor id="IdEditorTextoPredefinido" value="#{historiasMB.detalleTextoPredef}" width="600" controls="bold italic underline font size bullets numbering alignleft center alignright justify undo redo"/>
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>             
+            </p:dialog>
+        </h:form>        
+    </h:body>
+</html>
