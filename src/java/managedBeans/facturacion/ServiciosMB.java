@@ -5,6 +5,7 @@
  */
 package managedBeans.facturacion;
 
+import beans.enumeradores.ClasificacionesEnum;
 import beans.utilidades.MetodosGenerales;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -14,6 +15,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import managedBeans.seguridad.AplicacionGeneralMB;
 import modelo.entidades.CfgCentroCosto;
 import modelo.entidades.FacServicio;
 import modelo.fachadas.CfgCentroCostoFacade;
@@ -80,6 +83,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
     private String codigoDiagnostico = "";
     private boolean autorizacion = false;
     private boolean visible = true;
+    private AplicacionGeneralMB aplicacionGeneralMB;
 
     //---------------------------------------------------
     //------------- FUNCIONES INICIALES  ----------------
@@ -89,7 +93,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
     }
 
     public ServiciosMB() {
-
+        aplicacionGeneralMB = FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{aplicacionGeneralMB}", AplicacionGeneralMB.class);
     }
 
     //---------------------------------------------------
@@ -231,6 +235,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         try {
             servicioFacade.remove(servicioSeleccionado);
             limpiarFormularioServicios();
+            aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.Servicios);
             RequestContext.getCurrentInstance().update("IdFormServicios");
             imprimirMensaje("Correcto", "El servicio ha sido eliminado", FacesMessage.SEVERITY_INFO);
         } catch (Exception e) {
@@ -250,6 +255,8 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         } else {
             actualizarServicioExistente();
         }
+        aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.Servicios);
+
     }
 
     private void guardarNuevoServicio() {
@@ -300,7 +307,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         }
         if (validarNoVacio(codigoActQtx)) {
             nuevoServicio.setActoQuirurgico(clasificacionesFacade.find(Integer.parseInt(codigoActQtx)));
-        }        
+        }
         if (validarNoVacio(codigoDiagnostico)) {
             nuevoServicio.setCodigoDiagnostico(diagnosticoFacade.find(codigoDiagnostico));
         }
@@ -308,6 +315,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         nuevoServicio.setVisible(visible);
         tituloTabServicios = "Nuevo Servicio";
         servicioFacade.create(nuevoServicio);
+        limpiarFormularioServicios();
         RequestContext.getCurrentInstance().update("IdFormServicios");
         imprimirMensaje("Correcto", "El servicio ha sido creado.", FacesMessage.SEVERITY_INFO);
     }
@@ -352,7 +360,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
             servicioSeleccionado.setUnidadEdadFinal(clasificacionesFacade.find(Integer.parseInt(unidadEdadFinal)));
         }
         servicioSeleccionado.setRipAplica(ripAplica);
-        
+
         if (validarNoVacio(finalidad)) {
             servicioSeleccionado.setFinalidad(clasificacionesFacade.find(Integer.parseInt(finalidad)));
         }

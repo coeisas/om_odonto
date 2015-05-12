@@ -620,7 +620,7 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
         datosReporte.setValor(82, "<b>NIT: </b>" + empresa.getTipoDoc().getDescripcion() + "  " + empresa.getNumIdentificacion());//NIT
         datosReporte.setValor(83, empresa.getWebsite());//sitio web
 
-        datosReporte.setValor(85, "<b>ASEGURADORA RESPONSABLE DE LA ATENCION, NUMERO DE POLIZA SI ES SOAT Y VIGENCIA: </b> ");
+        //datosReporte.setValor(85, "<b>ASEGURADORA RESPONSABLE DE LA ATENCION, NUMERO DE POLIZA SI ES SOAT Y VIGENCIA: </b> ");
 
         //----------------------------------------------------------------------
         //CARGO DATOS QUE SE LLENARON EN EL REGISTRO (hc_detalle)---------------

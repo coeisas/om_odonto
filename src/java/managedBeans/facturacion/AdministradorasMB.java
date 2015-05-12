@@ -5,6 +5,7 @@
  */
 package managedBeans.facturacion;
 
+import beans.enumeradores.ClasificacionesEnum;
 import beans.utilidades.MetodosGenerales;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +14,9 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import managedBeans.seguridad.AplicacionGeneralMB;
 import modelo.entidades.CfgClasificaciones;
 import modelo.entidades.FacAdministradora;
 import modelo.entidades.FacContrato;
@@ -79,11 +82,13 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
     private String codigoIngreso = "";
     private String codigoRubro = "";
     private String codigoConcepto = "";
+    private AplicacionGeneralMB aplicacionGeneralMB;
 
     //---------------------------------------------------
     //------------- FUNCIONES INICIALES  ----------------
     //---------------------------------------------------      
     public AdministradorasMB() {
+        aplicacionGeneralMB = FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{aplicacionGeneralMB}", AplicacionGeneralMB.class);
     }
 
     //---------------------------------------------------
@@ -190,6 +195,7 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
             administradoraFacade.remove(administradoraSeleccionada);
             listaAdministradoras = administradoraFacade.buscarOrdenado();
             limpiarFormularioAdministradoras();
+            aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.Administradoras);
             RequestContext.getCurrentInstance().update("IdFormAdministradoras");
             imprimirMensaje("Correcto", "La administradora ha sido eliminada", FacesMessage.SEVERITY_INFO);
         } catch (Exception e) {
@@ -216,6 +222,7 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         } else {
             actualizarAdministradoraExistente();
         }
+        aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.Administradoras);
     }
 
     private void guardarNuevaAdminstradora() {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" uuid="9f7fc654-ee1d-4b56-916d-b168aa7d7a43">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="228"/>
-	<property name="ireport.y" value="371"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="184"/>
 	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -441,7 +441,7 @@
 						<font fontName="SansSerif" size="9"/>
 						<paragraph leftIndent="5"/>
 					</textElement>
-					<textFieldExpression><![CDATA[$F{dato85}]]></textFieldExpression>
+					<textFieldExpression><![CDATA[$F{dato18}]]></textFieldExpression>
 				</textField>
 			</frame>
 			<frame>

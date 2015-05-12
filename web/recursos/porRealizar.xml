@@ -2,29 +2,33 @@
 <!-- /////////////////////////////// NOTAS DE CONEXIONES /////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <NOTAS>
-este es un cambio en la copia inicial del proyecto
+    SERVIDOR 431 038 342    
 </NOTAS>
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- //////////////////////////////// SE DEBE REALIZAR ///////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
-
-
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-<DUDAS>
-    ? cuales son las clasificiaciones que aparecen en cada uno de los archivos
-    ? donde se requieren textos predefinidos en los formatos de la optica 
-    ? solicitar datos empresa firmas pacientes usuarios tarifas servidcios administradoras contratos   
-    ? como se maneja el folio a nivel de registro? osea paratodos y solo es consecutivo?(DE SER POSIBLE APLICARLO A OPENMEDICAL ASI NO SE USE)
-    PARA TODOS 
-    ? como se maneja el numero historia si se necesita(no es un concatenado) o solo es el numero identificacion? (DE SER POSIBLE APLICARLO A OPENMEDICAL ASI NO SE USE)
-    QUITARLO (NO USAR NUMERO DE HISTORIA CLINICA- SACARLO DE IDENTIFICACION PACIENTE)
-    ? ocultar opcion de editar registros clinicos(Actualizar registro)
-    ? Formulario referencia > aseguradora,poliza,soat,vigencia ¿DE DONDE SALE?
-    ? falta direccion respondable del paciente, o lo solicito por el formulario
-    ? Formulario de contrarreferencia aparece consecutivo ¿como se maneja?
-    ? formulario de solicitud de autorizcion de servicio aparece 'NUMERO DE SOLICITUD'¿Como se maneja?  
+<DUDAS>           
+    ? falta direccion responsable del paciente, o lo solicito por el formulario  paciente
+    ? Formulario de contrarreferencia aparece consecutivo ¿como se maneja? mano
+    ? formulario de solicitud de autorizcion de servicio aparece 'NUMERO DE SOLICITUD'¿Como se maneja?  mano
+    
+3. Nos esta faltando ayuda en varios campos que digan que son tanto en servicios como en contrato.
+    debe esplicarme que o como quiere que salga...
+        
+4. Al crear el servicio la especialidad hay que escribirla y no sale de clasificaciones como las demas. Favor estandarizar
+5. Como todavia no tenemos contabilidad ocultemos los campos que dicen  Cta en la creacion de contratos En estos momentos confunden al usuario.
+6. Se intento crear un manual tarifario y al darle mas no salieron los servicios creados.
+    
+7. Favor los servicios carguemoslos de la tabla CUPS para no estar creandolos en cada cliente.
+   pero son muchisimos cada entidad maneja solo unos, pero de ser asi realice un script que pase todo lo de cups a servicios y eliminar la tabla cups
+   
+    
+    
+8. Los pacientes se los estan enviando en archivo plano cada EPS asociado a un contrato.
+    ¿Y que pasa con esto?
     
 </DUDAS>

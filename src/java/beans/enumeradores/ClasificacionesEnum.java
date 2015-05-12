@@ -17,6 +17,7 @@ public enum ClasificacionesEnum {
     Ambito,//Ambito de realización del procedimiento"
     CategoriaPaciente,//Ingresos en SMLMV
     CausaExterna,//Identificador de la causa externa que origina el servicio de salud"
+    ClasificacionEvento,//clasificacion evento(formulario referencia)
     DPTO,//Departamentos
     Escolaridad,//Nivel de escolaridad
     Especialidad,//Especialidades de médicos
