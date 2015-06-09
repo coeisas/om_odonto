@@ -67,6 +67,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
     private String tipoSevicio = "";
     private double factorISS = 0;
     private double factorSOAT = 0;
+    private double valorParticular = 0;
     private boolean tipoPos = false;
     private double porcentajeHonorarios = 0;
     private String tipoServicioFurip = "";
@@ -170,6 +171,9 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         }
         if (servicioSeleccionado.getFactorSoat() != null) {
             factorSOAT = servicioSeleccionado.getFactorSoat();
+        }
+        if (servicioSeleccionado.getValorParticular()!= null) {
+            valorParticular = servicioSeleccionado.getValorParticular();
         }
         if (servicioSeleccionado.getTipoPos() != null) {
             tipoPos = servicioSeleccionado.getTipoPos();
@@ -281,6 +285,8 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         }
         nuevoServicio.setFactorIss(factorISS);
         nuevoServicio.setFactorSoat(factorSOAT);
+        nuevoServicio.setValorParticular(valorParticular);
+        
         nuevoServicio.setTipoPos(tipoPos);
         nuevoServicio.setPorcentajeHonorarios(porcentajeHonorarios);
         nuevoServicio.setTipoServicioFurip(tipoServicioFurip);
@@ -342,6 +348,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         }
         servicioSeleccionado.setFactorIss(factorISS);
         servicioSeleccionado.setFactorSoat(factorSOAT);
+        servicioSeleccionado.setValorParticular(valorParticular);
         servicioSeleccionado.setTipoPos(tipoPos);
         servicioSeleccionado.setPorcentajeHonorarios(porcentajeHonorarios);
         servicioSeleccionado.setTipoServicioFurip(tipoServicioFurip);
@@ -647,6 +654,14 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+
+    public double getValorParticular() {
+        return valorParticular;
+    }
+
+    public void setValorParticular(double valorParticular) {
+        this.valorParticular = valorParticular;
     }
 
 }
