@@ -561,7 +561,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
         if (validarNoVacio(tipoPago)) {
             listaTipoFacturacion = cargarClasificacion("TipoFacturacion");//carga todos los tipo de factuaracion
             for (int i = 0; i < listaTipoFacturacion.size(); i++) {
-                if (clasificacionesFachada.find(Integer.parseInt(tipoPago)).getDescripcion().compareTo("Evento") == 0) {//tipo pago es Evento
+                if (clasificacionesFachada.find(Integer.parseInt(tipoPago)).getDescripcion().compareTo("Capitado") == 0) {//tipo pago es Capitado
                     if (listaTipoFacturacion.get(i).getLabel().compareTo("Orden de Servicio") == 0
                             || listaTipoFacturacion.get(i).getLabel().compareTo("Orden de Servicio Extramural") == 0
                             || listaTipoFacturacion.get(i).getLabel().compareTo("Recibo de Caja") == 0
@@ -570,7 +570,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
                         listaTipoFacturacion.remove(i);
                         i--;
                     }
-                } else {//tipo pago es Capitado
+                } else {//tipo pago es Evento
                     if (listaTipoFacturacion.get(i).getLabel().compareTo("Factura de Venta") == 0
                             || listaTipoFacturacion.get(i).getLabel().compareTo("Factura de Venta Extramural") == 0
                             || listaTipoFacturacion.get(i).getLabel().compareTo("Recibo de Caja") == 0

@@ -59,7 +59,7 @@ public class FacServicio implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_servicio", nullable = false)
     private Integer idServicio;
-    @Column(name = "codigo_servicio", length = 5)
+    @Column(name = "codigo_servicio", length = 20)
     private String codigoServicio;
     @Column(name = "codigo_cup", length = 10)
     private String codigoCup;
