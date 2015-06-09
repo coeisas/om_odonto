@@ -40,6 +40,18 @@ public class FacFacturaPacienteFacade extends AbstractFacade<FacFacturaPaciente>
         }
     }
 
+    public List<FacFacturaPaciente> buscarPorAutorizacion(String idAutorizacion) {
+        try {
+            String sql = ""
+                    + " select * from fac_factura_paciente where id_cita in "
+                    + " (select id_cita from cit_citas where id_autorizacion="+idAutorizacion+")";
+            return (List<FacFacturaPaciente>) getEntityManager().createNativeQuery(sql, FacFacturaPaciente.class).getResultList();
+            
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public int numeroTotalRegistros() {
         try {
             return Integer.parseInt(getEntityManager().createNativeQuery("SELECT COUNT(*) FROM fac_factura_paciente").getSingleResult().toString());
@@ -53,7 +65,7 @@ public class FacFacturaPacienteFacade extends AbstractFacade<FacFacturaPaciente>
         return listaFacturas;
     }
     
-    public List<FacFacturaPaciente> buscarFaltanFacturar(){
+    public List<FacFacturaPaciente> buscarFaltanFacturar() {
         try {
             String hql = "SELECT a FROM FacFacturaPaciente a WHERE a.anulada = false and a.facturadaEnAdmi = false AND a.idAdministradora.idAdministradora != 1";
             return getEntityManager().createQuery(hql).getResultList();

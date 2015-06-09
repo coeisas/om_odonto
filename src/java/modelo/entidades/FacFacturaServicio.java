@@ -38,8 +38,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "FacFacturaServicio.findByValorEmpresa", query = "SELECT f FROM FacFacturaServicio f WHERE f.valorEmpresa = :valorEmpresa"),
     @NamedQuery(name = "FacFacturaServicio.findByValorIva", query = "SELECT f FROM FacFacturaServicio f WHERE f.valorIva = :valorIva"),
     @NamedQuery(name = "FacFacturaServicio.findByValorCree", query = "SELECT f FROM FacFacturaServicio f WHERE f.valorCree = :valorCree"),
-    @NamedQuery(name = "FacFacturaServicio.findByNumAutorizacion", query = "SELECT f FROM FacFacturaServicio f WHERE f.numAutorizacion = :numAutorizacion"),
-    @NamedQuery(name = "FacFacturaServicio.findByFechaAutorizacion", query = "SELECT f FROM FacFacturaServicio f WHERE f.fechaAutorizacion = :fechaAutorizacion"),
     @NamedQuery(name = "FacFacturaServicio.findByDiagnosticoPrincipal", query = "SELECT f FROM FacFacturaServicio f WHERE f.diagnosticoPrincipal = :diagnosticoPrincipal"),
     @NamedQuery(name = "FacFacturaServicio.findByDiagnosticoRelacionado", query = "SELECT f FROM FacFacturaServicio f WHERE f.diagnosticoRelacionado = :diagnosticoRelacionado")})
 public class FacFacturaServicio implements Serializable {
@@ -64,11 +62,6 @@ public class FacFacturaServicio implements Serializable {
     private Double valorIva;
     @Column(name = "valor_cree", precision = 17, scale = 17)
     private Double valorCree;
-    @Column(name = "num_autorizacion", length = 20)
-    private String numAutorizacion;
-    @Column(name = "fecha_autorizacion")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaAutorizacion;
     @Column(name = "diagnostico_principal", length = 2147483647)
     private String diagnosticoPrincipal;
     @Column(name = "diagnostico_relacionado", length = 2147483647)
@@ -167,22 +160,6 @@ public class FacFacturaServicio implements Serializable {
 
     public void setValorCree(Double valorCree) {
         this.valorCree = valorCree;
-    }
-
-    public String getNumAutorizacion() {
-        return numAutorizacion;
-    }
-
-    public void setNumAutorizacion(String numAutorizacion) {
-        this.numAutorizacion = numAutorizacion;
-    }
-
-    public Date getFechaAutorizacion() {
-        return fechaAutorizacion;
-    }
-
-    public void setFechaAutorizacion(Date fechaAutorizacion) {
-        this.fechaAutorizacion = fechaAutorizacion;
     }
 
     public String getDiagnosticoPrincipal() {

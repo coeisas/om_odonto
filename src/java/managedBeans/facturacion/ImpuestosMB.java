@@ -56,11 +56,11 @@ public class ImpuestosMB extends MetodosGenerales implements Serializable {
     //------------- FUNCIONES INICIALES  ----------------
     //---------------------------------------------------      
     @PostConstruct
-    public void inicializar(){
+    public void inicializar() {
         limpiarFormularioImpuestos();
     }
-    
-    public ImpuestosMB() {        
+
+    public ImpuestosMB() {
     }
 
     //---------------------------------------------------
@@ -75,7 +75,7 @@ public class ImpuestosMB extends MetodosGenerales implements Serializable {
         fechaFinal.setDate(31);
         fechaFinal.setMonth(11);
         fechaFinal.setYear(c.get(Calendar.YEAR) - 1900);
-        
+        valor = Double.parseDouble("0");
         nombre = "IVA";
     }
 

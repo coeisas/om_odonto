@@ -20,6 +20,14 @@ public class RipsAlmacenadosFacade extends AbstractFacade<RipsAlmacenados> {
         super(RipsAlmacenados.class);
     }
 
+    public void resetearSecuencia() {
+        this.consultaNativaConteo(""
+                + " SELECT "
+                + "   setval"
+                + "   ('public.rips_almacenados_id_rip_almacenado_seq', "
+                + "      (SELECT MAX(id_rip_almacenado) FROM rips_almacenados), true);");
+    }
+
     public RipsAlmacenados buscarPorNombre(String nombre) {
         try {
             return getEntityManager().createNamedQuery("RipsAlmacenados.findByNombre", RipsAlmacenados.class).setParameter("nombre", nombre).getSingleResult();

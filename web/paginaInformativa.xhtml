@@ -44,7 +44,6 @@
                             </td>
                             <td>
                                 <p:dataTable 
-
                                     id="IdTablaCitas" 
                                     var="cita" 
                                     widgetVar="wvTablaCitas"
@@ -80,6 +79,11 @@
                                         #{cita.idPrestador.primerNombre} #{cita.idPrestador.primerApellido}
                                     </p:column>
                                 </p:dataTable>
+                                <br/>
+                                <p:outputLabel 
+                                    style="width: 100%" 
+                                    rendered="#{paginaInformativaMB.pastelRegistros!=null}"
+                                    value="En esta tabla se muestran aquellos turnos de prestadores con cita asignada y que se encuentran en espera de ser diligenciado el correspondiente registro clínico."/>
                             </td>
                         </tr>
                         <tr>

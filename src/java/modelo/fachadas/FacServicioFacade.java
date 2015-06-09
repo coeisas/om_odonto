@@ -26,7 +26,7 @@ public class FacServicioFacade extends AbstractFacade<FacServicio> {
         return listaServicios;
     }
 
-    public int numeroTotalRegistros() {
+    public int numeroTotalRegistros() {// total de visibles y no visibles
         try {
             return Integer.parseInt(getEntityManager().createNativeQuery("SELECT COUNT(*) FROM fac_servicio").getSingleResult().toString());
         } catch (Exception e) {
@@ -45,14 +45,14 @@ public class FacServicioFacade extends AbstractFacade<FacServicio> {
 
     public List<FacServicio> findAutorizacionReqAndVisible() {
         try {
-            Query query = getEntityManager().createQuery("SELECT f FROM FacServicio f WHERE f.visible = true AND f.autorizacion = true");
+            Query query = getEntityManager().createQuery("SELECT f FROM FacServicio f WHERE f.visible = true AND f.autorizacion = true ORDER BY f.codigoServicio");
             return query.getResultList();
         } catch (Exception e) {
             return null;
         }
     }
 
-    public List<FacServicio> busacarOrdenado() {
+    public List<FacServicio> buscarTodosOrdenado() {//busca visibles y no visibles
         try {
             String hql = "SELECT s FROM FacServicio s ORDER BY s.idServicio ASC";
             return getEntityManager().createQuery(hql).getResultList();
@@ -63,7 +63,7 @@ public class FacServicioFacade extends AbstractFacade<FacServicio> {
 
     public List<FacServicio> buscarNoEstanEnManual(Integer idManualTarifario) {//busca los servicios que no se encuentren en un manual tarifario
         try {
-            String sql = "SELECT * FROM fac_servicio WHERE id_servicio NOT IN (SELECT id_servicio FROM fac_manual_tarifario_servicio WHERE id_manual_tarifario = " + idManualTarifario.toString() + ") ORDER BY id_servicio";
+            String sql = "SELECT * FROM fac_servicio WHERE visible = true AND id_servicio NOT IN (SELECT id_servicio FROM fac_manual_tarifario_servicio WHERE id_manual_tarifario = " + idManualTarifario.toString() + ") ORDER BY id_servicio";
             List<FacServicio> listaServicios = (List<FacServicio>) getEntityManager().createNativeQuery(sql, FacServicio.class).getResultList();
             return listaServicios;
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class FacServicioFacade extends AbstractFacade<FacServicio> {
     }
     public List<FacServicio> buscarNoEstanEnPaquete(Integer idPaquete) {//busca los servicios que no se encuentren en un manual tarifario
         try {
-            String sql = "SELECT * FROM fac_servicio WHERE id_servicio NOT IN (SELECT id_servicio FROM fac_paquete_servicio WHERE id_paquete = " + idPaquete.toString() + ") ORDER BY id_servicio";
+            String sql = "SELECT * FROM fac_servicio WHERE visible = true AND id_servicio NOT IN (SELECT id_servicio FROM fac_paquete_servicio WHERE id_paquete = " + idPaquete.toString() + ") ORDER BY id_servicio";
             List<FacServicio> listaServicios = (List<FacServicio>) getEntityManager().createNativeQuery(sql, FacServicio.class).getResultList();
             return listaServicios;
         } catch (Exception e) {

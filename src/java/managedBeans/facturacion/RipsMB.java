@@ -98,6 +98,8 @@ public class RipsMB extends MetodosGenerales implements Serializable {
     CfgDiagnosticoFacade diagnosticoFacade;
     @EJB
     CfgEmpresaFacade empresaFacade;
+    @EJB
+    FacFacturaAdmiFacade facturaAdmiFacade;
     //---------------------------------------------------
     //-----------------ENTIDADES ------------------------
     //---------------------------------------------------
@@ -127,6 +129,10 @@ public class RipsMB extends MetodosGenerales implements Serializable {
     private final Calendar calendarFechaFinalMasUnDia = Calendar.getInstance();
     private final SimpleDateFormat formatoFechaSql = new SimpleDateFormat("dd/MM/yyyy", new Locale("ES"));
     private final DecimalFormat formateadorDecimal = new DecimalFormat("0.00");
+    private FacturarAdministradoraMB facturarAdministradoraMB;
+    private boolean generarRipsDesdeAdministradora = false;
+    private List<FacFacturaAdmi> listaFacturasAdministradora;
+    private RipsAlmacenados ripAlmacenado;//si se esta creando rips desde administradora al final se elimina
 
     //---------------------------------------------------
     //------------- FUNCIONES INICIALES  ----------------
@@ -143,6 +149,17 @@ public class RipsMB extends MetodosGenerales implements Serializable {
         fechaFinal.setYear(calendarFechaFinalMasUnDia.get(Calendar.YEAR) - 1900);
         empresaActual = empresaFacade.find(1);
         listaRipsAlmacenados = ripsAlmacenadosFacade.buscarOrdenado();
+        facturarAdministradoraMB = FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{facturarAdministradoraMB}", FacturarAdministradoraMB.class);
+        nombreRIPS = "";
+        cambiaAdministradora();
+        ripCT = true;
+        ripAF = true;
+        ripUS = true;
+        ripAP = true;
+        ripAC = true;
+        diagnosticos = true;
+        nombreRIPS = "";
+        fechaCreacion = new Date();
     }
 
     public RipsMB() {
@@ -319,57 +336,92 @@ public class RipsMB extends MetodosGenerales implements Serializable {
         return arregloRetorno;
     }
 
-    public void generarRIPS() {//RIPS (C/U EN ARCHIVO INDEPENDIENTE) (No lleva Cabecera, solo datos,Delimitador COMA)
+    public void confirmarEliminarRips() {
+        if (ripSeleccionado == null) {
+            imprimirMensaje("Error", "Se debe seleccionar un registro de la tabla", FacesMessage.SEVERITY_ERROR);
+        }
+        for (RipsAc rAC : ripSeleccionado.getRipsAcList()) {
+            ripsAcFacade.remove(rAC);
+        }
+        for (RipsAf rAF : ripSeleccionado.getRipsAfList()) {
+            ripsAfFacade.remove(rAF);
+        }
+        for (RipsAp rAP : ripSeleccionado.getRipsApList()) {
+            ripsApFacade.remove(rAP);
+        }
+        for (RipsCt rCT : ripSeleccionado.getRipsCtList()) {
+            ripsCtFacade.remove(rCT);
+        }
+        for (RipsUs rUS : ripSeleccionado.getRipsUsList()) {
+            ripsUsFacade.remove(rUS);
+        }
+        ripsAlmacenadosFacade.remove(ripSeleccionado);
+        ripSeleccionado = null;
+        listaRipsAlmacenados = ripsAlmacenadosFacade.buscarOrdenado();
+    }
+
+    public void clickBtnGenerarRIPS() {
+        ripAlmacenado = null;
+        generarRipsDesdeAdministradora = false;
+        generarRIPS();
+    }
+
+    private void generarRIPS() {//RIPS (C/U EN ARCHIVO INDEPENDIENTE) (No lleva Cabecera, solo datos,Delimitador COMA)
         String archivos = "";
-        if (!validarNoVacio(nombreRIPS)) {
-            imprimirMensaje("Error", "Se debe escribir un nombre para el conjnto de RIPS", FacesMessage.SEVERITY_ERROR);
-            return;
-        }
-        RipsAlmacenados ripAlmacenado = ripsAlmacenadosFacade.buscarPorNombre(nombreRIPS);
-        if (ripAlmacenado != null) {
-            imprimirMensaje("Error", "Ya existen RIPS generados con este nombre", FacesMessage.SEVERITY_ERROR);
-            return;
-        }
-        if (!validarNoVacio(idAdministradora)) {
-            imprimirMensaje("Error", "Se debe seleccionar una administradora", FacesMessage.SEVERITY_ERROR);
-            return;
-        }
-        if (!validarNoVacio(idContrato)) {
-            imprimirMensaje("Error", "Se debe seleccionar un contrato", FacesMessage.SEVERITY_ERROR);
-            return;
-        }
-        if (fechaInicial == null) {
-            imprimirMensaje("Error", "La fecha inicial es obligatoria", FacesMessage.SEVERITY_ERROR);
-            return;
-        }
-        if (fechaFinal == null) {
-            imprimirMensaje("Error", "La fecha final es obligatoria", FacesMessage.SEVERITY_ERROR);
-            return;
-        }
-        //determinar si se escogio como minimo un tipo de archivo para los rips
-        if (ripCT) {
-            archivos = archivos + " CT,";
-        }
-        if (ripAF) {
-            archivos = archivos + " AF,";
-        }
-        if (ripUS) {
-            archivos = archivos + " US,";
-        }
-        if (ripAP) {
-            archivos = archivos + " AP,";
-        }
-        if (ripAC) {
-            archivos = archivos + " AC,";
-        }
-        if (diagnosticos) {
-            archivos = archivos + " DIAGNOSTICOS,";
-        }
-        if (archivos.length() == 0) {
-            imprimirMensaje("Error", "No se ha seleccionado ningún archivo a generar", FacesMessage.SEVERITY_ERROR);
-            return;
+        if (generarRipsDesdeAdministradora) {
+            archivos = "CT,AF,US,AP,AC,DIAGNOSTICOS";
         } else {
-            archivos = archivos.substring(0, archivos.length() - 1);
+            if (!validarNoVacio(nombreRIPS)) {
+                imprimirMensaje("Error", "Se debe escribir el código del archivo", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            ripAlmacenado = ripsAlmacenadosFacade.buscarPorNombre(nombreRIPS);
+            if (ripAlmacenado != null) {
+                imprimirMensaje("Error", "Ya existen RIPS generados con este código de archivo", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+
+            if (!validarNoVacio(idAdministradora)) {
+                imprimirMensaje("Error", "Se debe seleccionar una administradora", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            if (!validarNoVacio(idContrato)) {
+                imprimirMensaje("Error", "Se debe seleccionar un contrato", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            if (fechaInicial == null) {
+                imprimirMensaje("Error", "La fecha inicial es obligatoria", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            if (fechaFinal == null) {
+                imprimirMensaje("Error", "La fecha final es obligatoria", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            //determinar si se escogio como minimo un tipo de archivo para los rips
+            if (ripCT) {
+                archivos = archivos + " CT,";
+            }
+            if (ripAF) {
+                archivos = archivos + " AF,";
+            }
+            if (ripUS) {
+                archivos = archivos + " US,";
+            }
+            if (ripAP) {
+                archivos = archivos + " AP,";
+            }
+            if (ripAC) {
+                archivos = archivos + " AC,";
+            }
+            if (diagnosticos) {
+                archivos = archivos + " DIAGNOSTICOS,";
+            }
+            if (archivos.length() == 0) {
+                imprimirMensaje("Error", "No se ha seleccionado ningún archivo a generar", FacesMessage.SEVERITY_ERROR);
+                return;
+            } else {
+                archivos = archivos.substring(0, archivos.length() - 1);
+            }
         }
 
         //se buscan las facturas de administradoras 
@@ -381,37 +433,40 @@ public class RipsMB extends MetodosGenerales implements Serializable {
         ripAlmacenado.setFechaInicial(fechaInicial);
         ripAlmacenado.setFechaFinal(fechaFinal);
 
-        List<FacFacturaAdmi> listaFacturasAdministradora;
-        String sql = "";
-        if (idContrato.compareTo("-1") == 0) {//se busca en todos los contratos de la administradora
-            sql = " SELECT * \n"
-                    + " FROM fac_factura_admi \n"
-                    + " WHERE \n"
-                    + "   id_administradora = " + idAdministradora + " AND \n"
-                    + "   anulada = false AND \n"
-                    + "   fecha_inicial >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
-                    + "   fecha_inicial <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy') AND \n"
-                    + "   fecha_final >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
-                    + "   fecha_final <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy')";
-            listaFacturasAdministradora = facFacturaAdmiFacade.consultaNativaFacturas(sql);
-        } else {//se busca solo en el contrato especificado por el usuario
-            sql = " SELECT * \n"
-                    + " FROM fac_factura_admi \n"
-                    + " WHERE \n"
-                    + "   id_administradora = " + idAdministradora + " AND \n"
-                    + "   id_contrato = " + idContrato + " AND \n"
-                    + "   anulada = false AND \n"
-                    + "   fecha_inicial >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
-                    + "   fecha_inicial <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy') AND \n"
-                    + "   fecha_final >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
-                    + "   fecha_final <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy')";
-            listaFacturasAdministradora = facFacturaAdmiFacade.consultaNativaFacturas(sql);
-            ripAlmacenado.setIdContrato(contratoFacade.find(Integer.parseInt(idContrato)));
-        }
-        System.out.println("CONSULTA PARA DETERMINAR RIPS: \n" + sql);
-        if (listaFacturasAdministradora == null || listaFacturasAdministradora.isEmpty()) {
-            imprimirMensaje("Error", "No existen facturas de administradoras en el rango especificado", FacesMessage.SEVERITY_ERROR);
-            return;
+        if (!generarRipsDesdeAdministradora) {
+            String sql;
+            if (idContrato.compareTo("-1") == 0) {//se busca en todos los contratos de la administradora
+                sql = " SELECT * \n"
+                        + " FROM fac_factura_admi \n"
+                        + " WHERE \n"
+                        + "   id_administradora = " + idAdministradora + " AND \n"
+                        + "   anulada = false AND \n"
+                        + "   fecha_inicial >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
+                        + "   fecha_inicial <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy') AND \n"
+                        + "   fecha_final >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
+                        + "   fecha_final <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy')";
+                listaFacturasAdministradora = facFacturaAdmiFacade.consultaNativaFacturas(sql);
+            } else {//se busca solo en el contrato especificado por el usuario
+                sql = " SELECT * \n"
+                        + " FROM fac_factura_admi \n"
+                        + " WHERE \n"
+                        + "   id_administradora = " + idAdministradora + " AND \n"
+                        + "   id_contrato = " + idContrato + " AND \n"
+                        + "   anulada = false AND \n"
+                        + "   fecha_inicial >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
+                        + "   fecha_inicial <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy') AND \n"
+                        + "   fecha_final >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND \n"
+                        + "   fecha_final <= to_date('" + formatoFechaSql.format(fechaFinal) + "','dd/MM/yyyy')";
+                listaFacturasAdministradora = facFacturaAdmiFacade.consultaNativaFacturas(sql);
+                ripAlmacenado.setIdContrato(contratoFacade.find(Integer.parseInt(idContrato)));
+            }
+            //System.out.println("CONSULTA PARA DETERMINAR RIPS: \n" + sql);
+            if (listaFacturasAdministradora == null || listaFacturasAdministradora.isEmpty()) {
+                imprimirMensaje("Error", "No existen facturas de administradoras en el rango especificado", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+        } else {
+            //a listaFacturasAdministradora ya se cargo la necesaria para el rip desde cacturarAdministradora.xhtml
         }
         ripsAlmacenadosFacade.create(ripAlmacenado);//se almacena el conjunto de rips a almacenar
         int contadorCT = 0;
@@ -419,8 +474,10 @@ public class RipsMB extends MetodosGenerales implements Serializable {
         int contadorUS = 0;
         int contadorAP = 0;
         int contadorAC = 0;
+        boolean cuotaModeradoraCobrada;
         try {
             for (FacFacturaAdmi facturaActual : listaFacturasAdministradora) {
+
                 if (ripAF) {//RIP facturas_y_fac_extramurales
                     contadorAF++;
                     RipsAfPK llave = new RipsAfPK(ripAlmacenado.getIdRipAlmacenado(), contadorAF);
@@ -437,14 +494,19 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     nuevoregistroRipAF.setFecExp(formatoFechaSql.format(facturaActual.getFechaElaboracion()));//cuando se creo la factura
                     nuevoregistroRipAF.setFecInc(formatoFechaSql.format(facturaActual.getFechaInicial()));//fec_ini: desde cuando se esta Facturando
                     nuevoregistroRipAF.setFecFin(formatoFechaSql.format(facturaActual.getFechaFinal()));//fec_fin: hasta cuando se esta facturando
-                    nuevoregistroRipAF.setCodEnt(administradoraActual.getCodigoAdministradora());//Código entidad Administradora: codgo rip en administradora < QUEDA PENDIENTE REENVIO DE ARCHIVO- se ingresa en fac_administradora.codigo_rip />
+                    if (administradoraActual.getCodigoAdministradora().length() > 19) {
+                        nuevoregistroRipAF.setCodEnt(administradoraActual.getCodigoAdministradora().substring(0, 19));//Código entidad Administradora: codgo rip en administradora < QUEDA PENDIENTE REENVIO DE ARCHIVO- se ingresa en fac_administradora.codigo_rip />
+                    } else {
+                        nuevoregistroRipAF.setCodEnt(administradoraActual.getCodigoAdministradora());//Código entidad Administradora: codgo rip en administradora < QUEDA PENDIENTE REENVIO DE ARCHIVO- se ingresa en fac_administradora.codigo_rip />
+                    }
+
                     if (administradoraActual.getRazonSocial().length() > 29) {
                         nuevoregistroRipAF.setNomEnt(administradoraActual.getRazonSocial().substring(0, 29));
                     } else {
                         nuevoregistroRipAF.setNomEnt(administradoraActual.getRazonSocial());
                     }
                     nuevoregistroRipAF.setNumCon(facturaActual.getIdContrato().getCodigoContrato());
-                    nuevoregistroRipAF.setPlanBen(null);//Plan de Beneficios: NO SE MANEJA VA VACIO
+                    nuevoregistroRipAF.setPlanBen("");//Plan de Beneficios: NO SE MANEJA VA VACIO
                     nuevoregistroRipAF.setNumPoli(facturaActual.getIdContrato().getNumeroPoliza());//Número de la póliza(SALE DE TABLA CONTRATO)
                     nuevoregistroRipAF.setValCopa(facturaActual.getValoresCopago());
                     nuevoregistroRipAF.setValCom(Double.parseDouble("0"));//no aplica valor compartido
@@ -462,9 +524,15 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                             RipsUs nuevoregistroRipUS = new RipsUs(llave);
                             nuevoregistroRipUS.setTipIde(facturaPaciente.getIdPaciente().getTipoIdentificacion().getDescripcion());
                             nuevoregistroRipUS.setNumIde(facturaPaciente.getIdPaciente().getIdentificacion());
-                            nuevoregistroRipUS.setCodEntAdm(facturaPaciente.getIdPaciente().getIdAdministradora().getCodigoRip());//Código Entidad Administradora:el que se ingresa en fac_administradora > código_rip
+                            if (facturaPaciente.getIdPaciente().getIdAdministradora().getCodigoRip() != null) {
+                                nuevoregistroRipUS.setCodEntAdm(facturaPaciente.getIdPaciente().getIdAdministradora().getCodigoRip());//Código Entidad Administradora:el que se ingresa en fac_administradora > código_rip
+                            } else {
+                                nuevoregistroRipUS.setCodEntAdm(facturaPaciente.getIdPaciente().getIdAdministradora().getCodigoRip());
+                            }
                             if (facturaPaciente.getIdPaciente().getRegimen() != null) {
                                 nuevoregistroRipUS.setTipUsu(facturaPaciente.getIdPaciente().getRegimen().getCodigo());//Tipo de Usuario: cfg_pacientes > régimen
+                            } else {
+                                nuevoregistroRipUS.setTipUsu("");
                             }
                             nuevoregistroRipUS.setPriNom(facturaPaciente.getIdPaciente().getPrimerNombre());
                             nuevoregistroRipUS.setSegNom(facturaPaciente.getIdPaciente().getSegundoNombre());
@@ -476,15 +544,23 @@ public class RipsMB extends MetodosGenerales implements Serializable {
 
                             if (facturaPaciente.getIdPaciente().getGenero() != null) {
                                 nuevoregistroRipUS.setSexo(facturaPaciente.getIdPaciente().getGenero().getObservacion());
+                            } else {
+                                nuevoregistroRipUS.setSexo("");
                             }
                             if (facturaPaciente.getIdPaciente().getZona() != null) {//Zona de residencia habitual(Si no tiene por defectu U)
                                 nuevoregistroRipUS.setZonaRes(facturaPaciente.getIdPaciente().getZona().getObservacion());
+                            } else {
+                                nuevoregistroRipUS.setZonaRes("");
                             }
                             if (facturaPaciente.getIdPaciente().getDepartamento() != null) {//Código del departamento de residencia habitual (PENDIENTE: Cuadrar códigos de tabla cfg_clacificaciones con DANE)
                                 nuevoregistroRipUS.setCodDepRes(facturaPaciente.getIdPaciente().getDepartamento().getCodigo());//POR EL MOMENTO SE ASIGNAN ESTOS PERO LO DE RESIDENCIA
+                            } else {
+                                nuevoregistroRipUS.setCodDepRes("");
                             }
                             if (facturaPaciente.getIdPaciente().getMunicipio() != null) {
                                 nuevoregistroRipUS.setCodMunRes(facturaPaciente.getIdPaciente().getMunicipio().getObservacion());//SE DEBE CUADRAR LA TABLA CLASIFICACIONES EN EL CAMPO OBSERVACION EL CODIGO DEL MUNICIPIO (NO JUNTO CON EL DEPARTAMENtO COMO ESTA)                        
+                            } else {
+                                nuevoregistroRipUS.setCodMunRes("");
                             }
                             ripsUsFacade.create(nuevoregistroRipUS);
                         }
@@ -492,77 +568,148 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                 }
                 if (ripAP) {
                     //registro de datos para el archivo de procedimientos(aquí van solo servicios y paquetes)
-                    //RIP AP(cod_proc=codigo CUP =>ininican con 8)        
+                    //RIP AP(cod_proc=codigo CUP =>inician con 8)                            
+                    boolean continuar;
                     for (FacFacturaPaciente facturaPaciente : facturaActual.getFacFacturaPacienteList()) {
-                        for (FacFacturaServicio servicioActual : facturaPaciente.getFacFacturaServicioList()) {
-                            contadorAP++;
-                            RipsApPK llave = new RipsApPK(ripAlmacenado.getIdRipAlmacenado(), contadorAP);
-                            RipsAp nuevoregistroRipAP = new RipsAp(llave);
-                            nuevoregistroRipAP.setNumFac(facturaActual.getCodigoDocumento());
-                            nuevoregistroRipAP.setCodPre(empresaActual.getCodigoEmpresa());//Código del prestador de servicios de salud:el que se ingresa en empresa > código_empresa
-                            if (facturaPaciente.getIdPaciente().getTipoIdentificacion() != null) {
-                                nuevoregistroRipAP.setTipIde(facturaPaciente.getIdPaciente().getTipoIdentificacion().getDescripcion());
+                        for (FacFacturaServicio servicioActual : facturaPaciente.getFacFacturaServicioList()) {                            
+                            continuar = true;
+                            if (servicioActual.getIdServicio().getCodigoCup() == null) {
+                                continuar = false;
+                                System.err.println("El servicio: "+servicioActual.getIdServicio().getCodigoServicio()+" - "+servicioActual.getIdServicio().getNombreServicio()+"no tiene codigo CUPS");
                             }
-                            nuevoregistroRipAP.setNumIde(facturaPaciente.getIdPaciente().getIdentificacion());
-                            nuevoregistroRipAP.setFecProc(formatoFechaSql.format(servicioActual.getFechaServicio()));
-                            nuevoregistroRipAP.setNumAut(facturaPaciente.getNumeroAutorizacion());
-                            nuevoregistroRipAP.setCodPro(servicioActual.getIdServicio().getCodigoCup());//Código del procedimiento: fac_servicio > código_cup < PENDIENTE POR CONSEGUIR ESOS CODIGOS />
-                            if (servicioActual.getIdServicio().getAmbito() != null) {
-                                nuevoregistroRipAP.setAmbPro(servicioActual.getIdServicio().getAmbito().getCodigo());
+                            if (continuar && !servicioActual.getIdServicio().getCodigoCup().startsWith("8")) {
+                                continuar = false;
+                                if (continuar && !servicioActual.getIdServicio().getCodigoCup().startsWith("9")) {
+                                    System.err.println("El codigo CUP("+servicioActual.getIdServicio().getCodigoCup()+") del servicio: "+servicioActual.getIdServicio().getCodigoServicio()+" - "+servicioActual.getIdServicio().getNombreServicio()+" no inicia ni con 9 ni con 8");
+                                }
                             }
-                            if (servicioActual.getIdServicio().getFinalidad() != null) {
-                                nuevoregistroRipAP.setFinPro(servicioActual.getIdServicio().getFinalidad().getCodigo());
-                            }
-                            if (servicioActual.getIdMedico().getTipoUsuario() != null) {
-                                nuevoregistroRipAP.setPersAti(servicioActual.getIdMedico().getTipoUsuario().getCodigo());
-                            }
+                            if (continuar) {
+                                contadorAP++;
+                                RipsApPK llave = new RipsApPK(ripAlmacenado.getIdRipAlmacenado(), contadorAP);
+                                RipsAp nuevoregistroRipAP = new RipsAp(llave);
+                                nuevoregistroRipAP.setNumFac(facturaActual.getCodigoDocumento());
+                                nuevoregistroRipAP.setCodPre(empresaActual.getCodigoEmpresa());//Código del prestador de servicios de salud:el que se ingresa en empresa > código_empresa
+                                if (facturaPaciente.getIdPaciente().getTipoIdentificacion() != null) {
+                                    nuevoregistroRipAP.setTipIde(facturaPaciente.getIdPaciente().getTipoIdentificacion().getDescripcion());
+                                } else {
+                                    nuevoregistroRipAP.setTipIde("");
+                                }
+                                nuevoregistroRipAP.setNumIde(facturaPaciente.getIdPaciente().getIdentificacion());
+                                nuevoregistroRipAP.setFecProc(formatoFechaSql.format(servicioActual.getFechaServicio()));
+                                if (facturaPaciente.getNumeroAutorizacion() != null) {
+                                    nuevoregistroRipAP.setNumAut(facturaPaciente.getNumeroAutorizacion());
+                                } else {
+                                    nuevoregistroRipAP.setNumAut("");
+                                }
+                                if (servicioActual.getIdServicio().getCodigoCup() != null) {
+                                    nuevoregistroRipAP.setCodPro(servicioActual.getIdServicio().getCodigoCup());//Código del procedimiento: fac_servicio > código_cup < PENDIENTE POR CONSEGUIR ESOS CODIGOS />
+                                } else {
+                                    nuevoregistroRipAP.setCodPro("");
+                                }
+                                if (servicioActual.getIdServicio().getAmbito() != null) {
+                                    nuevoregistroRipAP.setAmbPro(servicioActual.getIdServicio().getAmbito().getCodigo());
+                                } else {
+                                    nuevoregistroRipAP.setAmbPro("");
+                                }
+                                if (servicioActual.getIdServicio().getFinalidad() != null) {
+                                    nuevoregistroRipAP.setFinPro(servicioActual.getIdServicio().getFinalidad().getCodigo());
+                                } else {
+                                    nuevoregistroRipAP.setFinPro("");
+                                }
+                                if (servicioActual.getIdMedico().getTipoUsuario() != null) {
+                                    nuevoregistroRipAP.setPersAti(servicioActual.getIdMedico().getTipoUsuario().getCodigo());
+                                } else {
+                                    nuevoregistroRipAP.setPersAti("");
+                                }
 
-                            ArrayList<String> diagnosticosDeterminados = determinarDiagnosticos(facturaPaciente);
-                            if (diagnosticosDeterminados != null) {//si es diferente de null tiene 4 elementos asi sean cadenas vacias
-                                nuevoregistroRipAP.setDxPpal(diagnosticosDeterminados.get(0));
-                                nuevoregistroRipAP.setDxRel(diagnosticosDeterminados.get(1));
+                                ArrayList<String> diagnosticosDeterminados = determinarDiagnosticos(facturaPaciente);
+                                if (diagnosticosDeterminados != null) {//si es diferente de null tiene 4 elementos asi sean cadenas vacias
+                                    nuevoregistroRipAP.setDxPpal(diagnosticosDeterminados.get(0));
+                                    nuevoregistroRipAP.setDxRel(diagnosticosDeterminados.get(1));
+                                } else {
+                                    nuevoregistroRipAP.setDxPpal("");
+                                    nuevoregistroRipAP.setDxRel("");
+                                }
+                                nuevoregistroRipAP.setComplicacion("");//no se usa para la entidad
+                                if (servicioActual.getIdServicio().getActoQuirurgico() != null) {
+                                    nuevoregistroRipAP.setActQuirur(servicioActual.getIdServicio().getActoQuirurgico().getCodigo());//a todos asignarles 1 y al ingresar nuevo que sea 1
+                                } else {
+                                    nuevoregistroRipAP.setActQuirur("");
+                                }
+                                nuevoregistroRipAP.setValor(servicioActual.getValorServicio());//Valor del Procedimiento: valor del servicio – (copago+ cuota_mo) + (iva+cree)	
+                                ripsApFacade.create(nuevoregistroRipAP);
                             }
-                            nuevoregistroRipAP.setComplicacion("");//no se usa para la entidad
-                            if (servicioActual.getIdServicio().getActoQuirurgico() != null) {
-                                nuevoregistroRipAP.setActQuirur(servicioActual.getIdServicio().getActoQuirurgico().getCodigo());//a todos asignarles 1 y al ingresar nuevo que sea 1
-                            }
-                            nuevoregistroRipAP.setValor(servicioActual.getValorServicio());//Valor del Procedimiento: valor del servicio – (copago+ cuota_mo) + (iva+cree)	
-                            ripsApFacade.create(nuevoregistroRipAP);
                         }
                     }
                 }
                 if (ripAC) {
                     //REGISTRO DE DATOS PARA EL ARCHIVO DE CONSULTA 
                     //RIP AC(cod proc=CUPS => inician 9 )
+                    boolean continuar;
                     for (FacFacturaPaciente facturaPaciente : facturaActual.getFacFacturaPacienteList()) {
+                        cuotaModeradoraCobrada = false;
                         for (FacFacturaServicio servicioActual : facturaPaciente.getFacFacturaServicioList()) {
-                            contadorAC++;
-                            RipsAcPK llave = new RipsAcPK(ripAlmacenado.getIdRipAlmacenado(), contadorAC);
-                            RipsAc nuevoregistroRipAC = new RipsAc(llave);
-                            nuevoregistroRipAC.setNumFac(facturaActual.getCodigoDocumento());
-                            nuevoregistroRipAC.setCodPre(empresaActual.getCodigoEmpresa());
-                            if (facturaPaciente.getIdPaciente().getTipoIdentificacion() != null) {
-                                nuevoregistroRipAC.setTipIde(facturaPaciente.getIdPaciente().getTipoIdentificacion().getDescripcion());
+                            continuar = true;
+                            if (servicioActual.getIdServicio().getCodigoCup() == null) {
+                                continuar = false;
+                                System.err.println("El servicio: "+servicioActual.getIdServicio().getCodigoServicio()+" - "+servicioActual.getIdServicio().getNombreServicio()+"no tiene codigo CUPS");
                             }
-                            nuevoregistroRipAC.setNumIde(facturaPaciente.getIdPaciente().getIdentificacion());
-                            nuevoregistroRipAC.setFecCons(formatoFechaSql.format(servicioActual.getFechaServicio()));
-                            nuevoregistroRipAC.setNumAut(facturaPaciente.getNumeroAutorizacion());
-                            nuevoregistroRipAC.setCodCon(servicioActual.getIdServicio().getCodigoCup());
-                            nuevoregistroRipAC.setFinCon("10");//por ahora es estatico pero deberia ser dinamico
-                            nuevoregistroRipAC.setCauExt("13");//por ahora es estatico pero deberia ser dinamico
+                            if (continuar && !servicioActual.getIdServicio().getCodigoCup().startsWith("9")) {
+                                continuar = false;
+                                if (continuar && !servicioActual.getIdServicio().getCodigoCup().startsWith("8")) {
+                                    System.err.println("El codigo CUP("+servicioActual.getIdServicio().getCodigoCup()+") del servicio: "+servicioActual.getIdServicio().getCodigoServicio()+" - "+servicioActual.getIdServicio().getNombreServicio()+" no inicia ni con 9 ni con 8");
+                                }
+                            }
+                            if (continuar) {
+                                contadorAC++;
+                                RipsAcPK llave = new RipsAcPK(ripAlmacenado.getIdRipAlmacenado(), contadorAC);
+                                RipsAc nuevoregistroRipAC = new RipsAc(llave);
+                                nuevoregistroRipAC.setNumFac(facturaActual.getCodigoDocumento());
+                                nuevoregistroRipAC.setCodPre(empresaActual.getCodigoEmpresa());
+                                if (facturaPaciente.getIdPaciente().getTipoIdentificacion() != null) {
+                                    nuevoregistroRipAC.setTipIde(facturaPaciente.getIdPaciente().getTipoIdentificacion().getDescripcion());
+                                } else {
+                                    nuevoregistroRipAC.setTipIde("");
+                                }
+                                nuevoregistroRipAC.setNumIde(facturaPaciente.getIdPaciente().getIdentificacion());
+                                nuevoregistroRipAC.setFecCons(formatoFechaSql.format(servicioActual.getFechaServicio()));
+                                if (facturaPaciente.getNumeroAutorizacion() != null) {
+                                    nuevoregistroRipAC.setNumAut(facturaPaciente.getNumeroAutorizacion());
+                                } else {
+                                    nuevoregistroRipAC.setNumAut("");
+                                }
 
-                            ArrayList<String> diagnosticosDeterminados = determinarDiagnosticos(facturaPaciente);
-                            if (diagnosticosDeterminados != null) {//si es diferente de null tiene 4 elementos asi sean cadenas vacias
-                                nuevoregistroRipAC.setDxPpal(diagnosticosDeterminados.get(0));
-                                nuevoregistroRipAC.setDxRel1(diagnosticosDeterminados.get(1));
-                                nuevoregistroRipAC.setDxRel2(diagnosticosDeterminados.get(2));
-                                nuevoregistroRipAC.setDxRel3(diagnosticosDeterminados.get(3));
+                                if (servicioActual.getIdServicio().getCodigoCup() != null) {
+                                    nuevoregistroRipAC.setCodCon(servicioActual.getIdServicio().getCodigoCup());
+                                } else {
+                                    nuevoregistroRipAC.setCodCon("");
+                                }
+                                nuevoregistroRipAC.setFinCon("10");//por ahora es estatico pero deberia ser dinamico
+                                nuevoregistroRipAC.setCauExt("13");//por ahora es estatico pero deberia ser dinamico
+
+                                ArrayList<String> diagnosticosDeterminados = determinarDiagnosticos(facturaPaciente);
+                                if (diagnosticosDeterminados != null) {//si es diferente de null tiene 4 elementos asi sean cadenas vacias
+                                    nuevoregistroRipAC.setDxPpal(diagnosticosDeterminados.get(0));
+                                    nuevoregistroRipAC.setDxRel1(diagnosticosDeterminados.get(1));
+                                    nuevoregistroRipAC.setDxRel2(diagnosticosDeterminados.get(2));
+                                    nuevoregistroRipAC.setDxRel3(diagnosticosDeterminados.get(3));
+                                } else {
+                                    nuevoregistroRipAC.setDxPpal("");
+                                    nuevoregistroRipAC.setDxRel1("");
+                                    nuevoregistroRipAC.setDxRel2("");
+                                    nuevoregistroRipAC.setDxRel3("");
+                                }
+                                nuevoregistroRipAC.setTipoDxPpal("3");//por defecto 3
+                                nuevoregistroRipAC.setVlrCons(servicioActual.getValorServicio());
+                                if (!cuotaModeradoraCobrada && facturaPaciente.getCuotaModeradora() != 0) {
+                                    nuevoregistroRipAC.setVlrCuoMod(facturaPaciente.getCuotaModeradora());
+                                    cuotaModeradoraCobrada = true;
+                                } else {
+                                    nuevoregistroRipAC.setVlrCuoMod(Double.parseDouble("0"));
+                                }
+                                nuevoregistroRipAC.setVlrNeto(servicioActual.getValorEmpresa());
+                                ripsAcFacade.create(nuevoregistroRipAC);
                             }
-                            nuevoregistroRipAC.setTipoDxPpal("3");//por defecto 3
-                            nuevoregistroRipAC.setVlrCons(servicioActual.getValorServicio());
-                            nuevoregistroRipAC.setVlrCuoMod(facturaPaciente.getCuotaModeradora());
-                            nuevoregistroRipAC.setVlrNeto(servicioActual.getValorEmpresa());
-                            ripsAcFacade.create(nuevoregistroRipAC);
                         }
                     }
                 }
@@ -574,7 +721,7 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     RipsCt nuevoregistroRipCT = new RipsCt(llave);
                     nuevoregistroRipCT.setCodPres(empresaActual.getCodigoEmpresa());
                     nuevoregistroRipCT.setFecRem(new Date());
-                    nuevoregistroRipCT.setCodArc("AP" + "002259");
+                    nuevoregistroRipCT.setCodArc("AF" + nombreRIPS);
                     nuevoregistroRipCT.setTotalReg(contadorAP);
                     ripsCtFacade.create(nuevoregistroRipCT);
                 }
@@ -584,7 +731,7 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     RipsCt nuevoregistroRipCT = new RipsCt(llave);
                     nuevoregistroRipCT.setCodPres(empresaActual.getCodigoEmpresa());
                     nuevoregistroRipCT.setFecRem(new Date());
-                    nuevoregistroRipCT.setCodArc("US" + "002259");
+                    nuevoregistroRipCT.setCodArc("US" + nombreRIPS);
                     nuevoregistroRipCT.setTotalReg(contadorUS);
                     ripsCtFacade.create(nuevoregistroRipCT);
                 }
@@ -594,7 +741,7 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     RipsCt nuevoregistroRipCT = new RipsCt(llave);
                     nuevoregistroRipCT.setCodPres(empresaActual.getCodigoEmpresa());
                     nuevoregistroRipCT.setFecRem(new Date());
-                    nuevoregistroRipCT.setCodArc("AP" + "002259");
+                    nuevoregistroRipCT.setCodArc("AP" + nombreRIPS);
                     nuevoregistroRipCT.setTotalReg(contadorAP);
                     ripsCtFacade.create(nuevoregistroRipCT);
                 }
@@ -604,38 +751,54 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     RipsCt nuevoregistroRipCT = new RipsCt(llave);
                     nuevoregistroRipCT.setCodPres(empresaActual.getCodigoEmpresa());//Lo da el mimisterio, CONFIGURACION > EMPRESA
                     nuevoregistroRipCT.setFecRem(new Date());//fecha en que se creo cada uno de los archivo
-                    nuevoregistroRipCT.setCodArc("AC" + "002259");//< QUEDA PENDIENTE />
+                    nuevoregistroRipCT.setCodArc("AC" + nombreRIPS);//< QUEDA PENDIENTE />
                     nuevoregistroRipCT.setTotalReg(contadorAC);//Conteo de los registrso de cada archivo
                     ripsCtFacade.create(nuevoregistroRipCT);
                 }
             }
-
             listaRipsAlmacenados = ripsAlmacenadosFacade.buscarOrdenado();
             imprimirMensaje("Correcto", "Los RIPS han sido generados correctamente", FacesMessage.SEVERITY_INFO);
         } catch (Exception e) {
-            imprimirMensaje("Error", "No se pudo generar RIPS:" + e.getMessage() + " ------------ " + e.getCause(), FacesMessage.SEVERITY_INFO);
+            imprimirMensaje("Error", "No se pudo generar RIPS:" + e.getMessage(), FacesMessage.SEVERITY_INFO);
         }
     }
 
-    public void confirmarEliminarRips() {
-        if (ripSeleccionado == null) {
-            imprimirMensaje("Error", "Se debe seleccionar un registro de la tabla", FacesMessage.SEVERITY_ERROR);
+    public StreamedContent generarZipfacturaAdministradora() throws JRException, IOException {
+        //genearcion de RIPS desde facturarAdministradora.xhtml
+        generarRipsDesdeAdministradora = true;
+        if (facturarAdministradoraMB.getFacturaSeleccionadaTabla() != null) {
+            //imprimirMensaje("Correcto", "Se selecciono", FacesMessage.SEVERITY_INFO);
+            FacFacturaAdmi facturaAdmiSeleccionada = facturaAdmiFacade.find(Integer.parseInt(facturarAdministradoraMB.getFacturaSeleccionadaTabla().getColumna1()));
+            listaFacturasAdministradora = new ArrayList<>();
+            listaFacturasAdministradora.add(facturaAdmiSeleccionada);
+            nombreRIPS = facturaAdmiSeleccionada.getCodigoDocumento();
+            administradoraActual = facturaAdmiSeleccionada.getIdAdministradora();
+            generarRIPS();
+            ripSeleccionado = ripsAlmacenadosFacade.find(ripAlmacenado.getIdRipAlmacenado());
+            StreamedContent a = generarZip();
+            confirmarEliminarRips();
+            ripsAlmacenadosFacade.resetearSecuencia();//resetear la secuencia de rips
+            inicializar();
+            return a;
+        } else {
+            System.out.println("No hay seleccion");
+            imprimirMensaje("Error", "Se debe seleccionar una factura de la tabla", FacesMessage.SEVERITY_ERROR);
+            return null;
         }
-        ripsAlmacenadosFacade.remove(ripSeleccionado);
-        ripSeleccionado = null;
-        listaRipsAlmacenados = ripsAlmacenadosFacade.buscarOrdenado();
     }
 
     public StreamedContent generarZip() throws JRException, IOException {//genera un pdf de una historia seleccionada en el historial        
 
         if (ripSeleccionado == null) {
             imprimirMensaje("Error", "Se debe seleccionar un registro de la tabla", FacesMessage.SEVERITY_ERROR);
+            return null;
         }
         String nameAndPathFile;//System.out.println("RUTA: " + nameAndPathFile);
         FileWriter fichero = null;
         PrintWriter pw;
         String[] archivosGenerados = ripSeleccionado.getArchivos().split(",");
         ArrayList<String> listaArchivos = new ArrayList<>();
+        boolean imprimirCabeceras = true;
 
         for (Object elem : archivosGenerados) {
             //-------------------DIAGNOSTICOS------------------------------
@@ -650,19 +813,21 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     fichero = new FileWriter(nameAndPathFile);
                     pw = new PrintWriter(fichero);
                     List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
-                    pw.println("CODIGO, DESCRIPCION");
+                    if (imprimirCabeceras) {
+                        pw.println("CODIGO, DESCRIPCION");
+                    }
                     for (CfgDiagnostico diagnostico : listaDiagnosticos) {
                         pw.println(diagnostico.getCodigoDiagnostico() + "," + diagnostico.getNombreDiagnostico());
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } finally {
                     try {//Asegurarnos que se cierra el fichero.
                         if (null != fichero) {
                             fichero.close();
                         }
                     } catch (Exception e2) {
-                        e2.printStackTrace();
+                        System.out.println(e2.getMessage());
                     }
                 }
             }
@@ -677,8 +842,10 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                 try {
                     fichero = new FileWriter(nameAndPathFile);
                     pw = new PrintWriter(fichero);
-                    List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
-                    pw.println("cod_pre,fec_rem,cod_arc,total_reg");
+                    //List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
+                    if (imprimirCabeceras) {
+                        pw.println("cod_pre,fec_rem,cod_arc,total_reg");
+                    }
                     for (RipsCt ct : ripSeleccionado.getRipsCtList()) {
                         pw.println(
                                 ct.getCodPres() + ","
@@ -687,14 +854,14 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                                 + ct.getTotalReg().toString());
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } finally {
                     try {//Asegurarnos que se cierra el fichero.
                         if (null != fichero) {
                             fichero.close();
                         }
                     } catch (Exception e2) {
-                        e2.printStackTrace();
+                        System.out.println(e2.getMessage());
                     }
                 }
             }
@@ -710,7 +877,9 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     fichero = new FileWriter(nameAndPathFile);
                     pw = new PrintWriter(fichero);
                     List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
-                    pw.println("cod_pre,raz_soc,tip_ide,num_ide,num_fac,fec_exp,fec_inc,fec_fin,cod_ent,nom_ent,num_con,plan_ben,num_poli,val_copa,val_com,val_desc,val_net");
+                    if (imprimirCabeceras) {
+                        pw.println("cod_pre,raz_soc,tip_ide,num_ide,num_fac,fec_exp,fec_inc,fec_fin,cod_ent,nom_ent,num_con,plan_ben,num_poli,val_copa,val_com,val_desc,val_net");
+                    }
                     for (RipsAf af : ripSeleccionado.getRipsAfList()) {
                         pw.println(
                                 af.getCodPre() + ","
@@ -726,20 +895,20 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                                 + af.getNumCon() + ","
                                 + af.getPlanBen() + ","
                                 + af.getNumPoli() + ","
-                                + formateadorDecimal.format(af.getValCopa()) + ","
-                                + formateadorDecimal.format(af.getValCom()) + ","
-                                + formateadorDecimal.format(af.getValDesc()) + ","
-                                + formateadorDecimal.format(af.getValNet()));
+                                + formateadorDecimal.format(af.getValCopa()).replace(",", ".") + ","
+                                + formateadorDecimal.format(af.getValCom()).replace(",", ".") + ","
+                                + formateadorDecimal.format(af.getValDesc()).replace(",", ".") + ","
+                                + formateadorDecimal.format(af.getValNet()).replace(",", "."));
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } finally {
                     try {//Asegurarnos que se cierra el fichero.
                         if (null != fichero) {
                             fichero.close();
                         }
                     } catch (Exception e2) {
-                        e2.printStackTrace();
+                        System.out.println(e2.getMessage());
                     }
                 }
             }
@@ -755,7 +924,9 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                     fichero = new FileWriter(nameAndPathFile);
                     pw = new PrintWriter(fichero);
                     List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
-                    pw.println("tip_ide,num_ide,cod_ent_adm,tip_usu,apellido_a,apellido_b,nombre_a,nombre_b,edad,unid_med,,cod_dep_res,cod_mun_res,zona_res");
+                    if (imprimirCabeceras) {
+                        pw.println("tip_ide,num_ide,cod_ent_adm,tip_usu,apellido_a,apellido_b,nombre_a,nombre_b,edad,unid_med,,cod_dep_res,cod_mun_res,zona_res");
+                    }
                     for (RipsUs us : ripSeleccionado.getRipsUsList()) {
                         pw.println(
                                 us.getTipIde() + ","
@@ -774,14 +945,14 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                                 + us.getZonaRes());
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } finally {
                     try {//Asegurarnos que se cierra el fichero.
                         if (null != fichero) {
                             fichero.close();
                         }
                     } catch (Exception e2) {
-                        e2.printStackTrace();
+                        System.out.println(e2.getMessage());
                     }
                 }
             }
@@ -796,8 +967,9 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                 try {
                     fichero = new FileWriter(nameAndPathFile);
                     pw = new PrintWriter(fichero);
-                    List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
-                    pw.println("num_fac,cod_pre,tip_ide,num_ide,fec_proc,num_aut,cod_proced,ambito_pro,finali_pro,pers_atiend,diag_pri,diag_relac,complica,act_quirur,val_proced");
+                    if (imprimirCabeceras) {
+                        pw.println("num_fac,cod_pre,tip_ide,num_ide,fec_proc,num_aut,cod_proced,ambito_pro,finali_pro,pers_atiend,diag_pri,diag_relac,complica,act_quirur,val_proced");
+                    }
                     for (RipsAp ap : ripSeleccionado.getRipsApList()) {
                         pw.println(
                                 ap.getNumFac() + ","
@@ -816,14 +988,14 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                                 + ap.getActQuirur());
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } finally {
                     try {//Asegurarnos que se cierra el fichero.
                         if (null != fichero) {
                             fichero.close();
                         }
                     } catch (Exception e2) {
-                        e2.printStackTrace();
+                        System.out.println(e2.getMessage());
                     }
                 }
             }
@@ -838,8 +1010,10 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                 try {
                     fichero = new FileWriter(nameAndPathFile);
                     pw = new PrintWriter(fichero);
-                    List<CfgDiagnostico> listaDiagnosticos = diagnosticoFacade.findAll();
-                    pw.println("num_fac,cod_pre,tip_ide,num_ide,fec_cons,num_aut,cod_proced,finali_con,cau_ext,cdiag_pri,cdiag_r1,cdiag_r2,cdiag_r3,tip_diag_pri,val_cons,val_cuo_mod,val_net");
+
+                    if (imprimirCabeceras) {
+                        pw.println("num_fac,cod_pre,tip_ide,num_ide,fec_cons,num_aut,cod_proced,finali_con,cau_ext,cdiag_pri,cdiag_r1,cdiag_r2,cdiag_r3,tip_diag_pri,val_cons,val_cuo_mod,val_net");
+                    }
                     for (RipsAc ac : ripSeleccionado.getRipsAcList()) {
                         pw.println(
                                 ac.getNumFac() + ","
@@ -855,19 +1029,19 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                                 + ac.getDxRel1() + ","
                                 + ac.getDxRel2() + ","
                                 + ac.getDxRel3() + ","
-                                + formateadorDecimal.format(ac.getVlrCons()) + ","
-                                + formateadorDecimal.format(ac.getVlrCuoMod()) + ","
-                                + formateadorDecimal.format(ac.getVlrNeto()));
+                                + formateadorDecimal.format(ac.getVlrCons()).replace(",", ".") + ","
+                                + formateadorDecimal.format(ac.getVlrCuoMod()).replace(",", ".") + ","
+                                + formateadorDecimal.format(ac.getVlrNeto()).replace(",", "."));
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 } finally {
                     try {//Asegurarnos que se cierra el fichero.
                         if (null != fichero) {
                             fichero.close();
                         }
                     } catch (Exception e2) {
-                        e2.printStackTrace();
+                        System.out.println(e2.getMessage());
                     }
                 }
             }
@@ -890,119 +1064,16 @@ public class RipsMB extends MetodosGenerales implements Serializable {
             }
             zos.closeEntry();
             zos.close();//remember close it
-
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.toString());
         }
-        StreamedContent download = new DefaultStreamedContent();
+
         File file = new File(realPath + "comprimido.zip");
         InputStream input = new FileInputStream(file);
         ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-        download = new DefaultStreamedContent(input, externalContext.getMimeType(file.getName()), file.getName());
+        StreamedContent download = new DefaultStreamedContent(input, externalContext.getMimeType(file.getName()), file.getName());
         //System.out.println("PREP = " + download.getName());
         return download;
-    }
-
-    private String crearRipCT() {
-        //REGISTRO DE DATOS PARA EL ARCHIVO DE CONTROL
-        String nombreReturn = "";
-//    Código del Prestador    
-//    Fecha de remisión    
-//    Código del archivo    
-//    Total de Registros
-
-        return nombreReturn;
-    }
-
-    private String crearRipAF() {
-        //REGISTRO DE DATOS RELACIONADOS CON LA TRANSACCION DE LOS SERVICIOS FACTURADOS
-        String nombreReturn = "";
-//    Código del Prestador    
-//    Razón Social o Apellidos y nombres del prestador    
-//    Tipo de Identificación    
-//    Número de Identificación    
-//    Número de la factura    
-//    Fecha de expedición de la factura    
-//    Fecha de Inicio    
-//    Fecha final    
-//    Código entidad Administradora    
-//    Nombre entidad administradora    
-//    Número del Contrato    
-//    Plan de Beneficios    
-//    Número de la póliza    
-//    Valor total del pago compartido COPAGO    
-//    Valor de la comisión    
-//    Valor total de Descuentos    
-//    Valor Neto a Pagar por la entidad Contratante
-
-        return nombreReturn;
-    }
-
-    private String crearRipUS() {
-        //REGISTRO DE DATOS PARA EL ARCHIVO DE USUARIOS DE LOS SERVICIOS DE SALUD
-        String nombreReturn = "";
-//    Tipo de Identificación del Usuario    
-//    Número de Identifiación del Usuario en el Sistema    
-//    Código Entidad Administradora    
-//    Tipo de Usuario    
-//    Primer Apellido del usuario    
-//    Segundo apellido del usuario    
-//    Primer nombre del usuario    
-//    Segundo nombre del usuario    
-//    Edad    
-//    Unidad de medida de la Edad    
-//    Sexo    
-//    Código del departamento de residencia habitual    
-//    Código de municipios de residencia habitual    
-//    Zona de residencia habitual
-
-        return nombreReturn;
-    }
-
-    private String crearRipAP() {
-        //REGISTRO DE DATOS PARA EL ARCHIVO DE PROCEDIMIENTOS
-        String nombreReturn = "";
-//    Número de la factura    
-//    Código del prestador de servicios de salud    
-//    Tipo de identificación del usuario    
-//    Número de identificación del usuario en el sistema    
-//    Fecha del procedimiento    
-//    Número de Autorización    
-//    Código del procedimiento    
-//    Ambito de realización del procedimiento    
-//    Finalidad del procedimiento    
-//    Personal que atiende    
-//    Diagnóstico prinicipal    
-//    Código del diagnóstico relacionado    
-//    Complicación    
-//    Forma de realización del acto quirúrgico    
-//    Valor del Procedimiento
-
-        return nombreReturn;
-    }
-
-    private String crearRipAC() {
-        //REGISTRO DE DATOS PARA EL ARCHIVO DE CONSULTA
-        String nombreReturn = "";
-//    Número de la factura    
-//    Código del prestador de servicios de salud    
-//    Tipo de identificación del usuario    
-//    Número de identificación del usuario en el sistema    
-//    Fecha de la consulta    
-//    Número de Autorización    
-//    Código de consulta CuPS    
-//    Finalidad de la consulta    
-//    Causa externa    
-//    Código del Diagnóstico principal    
-//    Código del diagnóstico relacionado N° 1    
-//    Código del diagnóstico relacionado N° 2    
-//    Código del diagnóstico relacionado N° 3    
-//    Tipo de diagnóstico principal    
-//    Valor de la consulta    
-//    Valor de la cuota moderadora    
-//    Valor Neto a pagar
-
-        return nombreReturn;
     }
 
     //---------------------------------------------------

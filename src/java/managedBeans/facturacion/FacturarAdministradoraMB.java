@@ -148,6 +148,11 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
     private String idAdministradora = "";
     private String idContrato = "";
     private LoginMB loginMB;
+    private int facturasSinAutorizacionCerradaInt = 0;
+    private String notaFueraRango = "";//me dice si existen facturas sin autorizacion cerrada 
+    private String notaNoCerradas = "";//me dice si existen facturas fuera del rango
+    private String estiloNotas = "";//me dice si existen facturas fuera del rango
+    private int facturasFueraDeRangoInt = 0;
     //private boolean renderedTablaFacturas = false;
 
     //------- FACTURA --------------    
@@ -275,12 +280,12 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         nuevaFactura.setFechaSistema(new Date());
         nuevaFactura.setFacFacturaPacienteList(listaFacturasDePacientes);
         facturaAdmiFacade.create(nuevaFactura);
-        
+
         for (FacFacturaPaciente fac : listaFacturasDePacientes) {//se cambia el estado defacturadaUnAdmi a true
             fac.setFacturadaEnAdmi(true);
             facturaPacienteFacade.edit(fac);
         }
-        
+
         //ingresar detalles                
         limpiarFormularioFacturacion();
         recargarDatosFacturacion();
@@ -290,6 +295,11 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
     }
 
     private void buscarItems() {
+        notaFueraRango = "";
+        notaNoCerradas = "";
+        estiloNotas = "";
+        facturasSinAutorizacionCerradaInt = 0;
+        facturasFueraDeRangoInt = 0;
         //carga los todos los items de las facturas de pacientes en el rango dado
         FilaDataTable nuevaFila;
         listaServiciosFactura = new ArrayList<>();
@@ -336,103 +346,147 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
                 + "fecha_elaboracion <= to_date('" + formatoFechaSql.format(calendarFechaFinalMasUnDia.getTime()) + "','dd/MM/yyyy')";
         listaFacturasDePacientes = facturaPacienteFacade.consultaNativaFacturas(sql);
         if (listaFacturasDePacientes.isEmpty()) {
-            //imprimirMensaje("Informacion", "No se encontraron registros en este rango de fechas para la administradora seleccionada", FacesMessage.SEVERITY_WARN);
+            imprimirMensaje("Informacion", "No se encontraron registros en este rango de fechas para la administradora seleccionada", FacesMessage.SEVERITY_WARN);
             return;
         }
+        boolean facCerrada;
+        //for (FacFacturaPaciente factura : listaFacturasDePacientes) {//se debe agrupar por servicios,insumos,medicamentos,paquetes   
+        for (int i = 0; i < listaFacturasDePacientes.size(); i++) {
 
-        for (FacFacturaPaciente factura : listaFacturasDePacientes) {//se debe agrupar por servicios,insumos,medicamentos,paquetes   
-            acumuladoIva = acumuladoIva + (factura.getValorParcial() * (factura.getIva() / 100));
-            acumuladoCree = acumuladoCree + (factura.getValorParcial() * (factura.getCree() / 100));
-            acumuladoUsuario = acumuladoUsuario + factura.getValorUsuario();
-            acumuladoEmpresa = acumuladoEmpresa + factura.getValorEmpresa();
-            acumuladoParcial = acumuladoParcial + factura.getValorParcial();
-            acumuladoTotal = acumuladoTotal + factura.getValorTotal();
-            acumuladoCopago = acumuladoCopago + factura.getCopago();
-            acumuladoCuotaModeradora = acumuladoCuotaModeradora + factura.getCuotaModeradora();
-            //servicios---------------------------------------------------------------------------
-            for (FacFacturaServicio a : factura.getFacFacturaServicioList()) {
-                nuevaFila = new FilaDataTable();
-                nuevaFila.setColumna1(String.valueOf(listaServiciosFactura.size() + 1));//primer columna es identificador el item
-                nuevaFila.setColumna2(formateadorFecha.format(a.getFechaServicio()));
-                nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
-                nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
-                if (a.getIdServicio().getCodigoCup() != null) {
-                    nuevaFila.setColumna5(a.getIdServicio().getCodigoCup() + " - " + a.getIdServicio().getNombreServicio());//nombre servicio                                                    
-                } else {
-                    nuevaFila.setColumna5(" - " + a.getIdServicio().getNombreServicio());//nombre servicio                                                    
+            FacFacturaPaciente factura = listaFacturasDePacientes.get(i);
+            facCerrada = false;
+            List<FacFacturaPaciente> listaFacturasPorAutorizacion = new ArrayList<>();
+            if (factura.getIdCita() != null) {//si factura no esta cerrada no se agrega
+                if (factura.getIdCita().getIdAutorizacion() != null) {
+                    if (!factura.getIdCita().getIdAutorizacion().getCerrada()) {
+                        facturasSinAutorizacionCerradaInt++;
+                        facCerrada = true;
+                    } else {
+                        listaFacturasPorAutorizacion = facturaPacienteFacade.buscarPorAutorizacion(factura.getIdCita().getIdAutorizacion().getIdAutorizacion().toString());
+                    }
                 }
-                nuevaFila.setColumna6(a.getCantidadServicio().toString());//quinta cantidad
-                nuevaFila.setColumna7(a.getValorServicio().toString());//valor servicio                
-
-                nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
-                nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
-                nuevaFila.setColumna22(a.getIdServicio().getIdServicio().toString());
-
-                nuevaFila.setColumna30(String.valueOf(a.getFacFacturaServicioPK().getIdDetalle()));//id_detalle (parte llave primaria)
-                nuevaFila.setColumna31(String.valueOf(a.getFacFacturaServicioPK().getIdFactura()));//id_factura (parte llave primaria)
-
-                listaServiciosFactura.add(nuevaFila);
             }
-            //insumos---------------------------------------------------------------------------
-            for (FacFacturaInsumo a : factura.getFacFacturaInsumoList()) {//buscar si el insumo ya fue aagregado a la lista de items                
-                nuevaFila = new FilaDataTable();
-                nuevaFila.setColumna1(String.valueOf(listaInsumosFactura.size() + 1));//primer columna es identificador el item
-                nuevaFila.setColumna2(formateadorFecha.format(a.getFechaInsumo()));
-                nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
-                nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
-                nuevaFila.setColumna5(a.getIdInsumo().getCodigoInsumo() + " - " + a.getIdInsumo().getNombreInsumo());//nombre servicio                                                    
-                nuevaFila.setColumna6(a.getCantidadInsumo().toString());//cantidad
-                nuevaFila.setColumna7(a.getValorInsumo().toString());//valor servicio
-
-                nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
-                nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
-                nuevaFila.setColumna22(a.getIdInsumo().getIdInsumo().toString());
-
-                nuevaFila.setColumna30(String.valueOf(a.getFacFacturaInsumoPK().getIdDetalle()));//id_detalle (parte llave primaria)
-                nuevaFila.setColumna31(String.valueOf(a.getFacFacturaInsumoPK().getIdFactura()));//id_factura (parte llave primaria)
-
-                listaInsumosFactura.add(nuevaFila);
+            if (!listaFacturasPorAutorizacion.isEmpty()) {
+                //se agregan las que no esten agregadas inicialmente
+                boolean encontrada;
+                for (FacFacturaPaciente fA : listaFacturasPorAutorizacion) {
+                    encontrada = false;
+                    for (FacFacturaPaciente fP : listaFacturasDePacientes) {
+                        if (Objects.equals(fA.getIdFacturaPaciente(), fP.getIdFacturaPaciente())) {
+                            encontrada = true;
+                            break;
+                        }
+                    }
+                    if (!encontrada) {
+                        facturasFueraDeRangoInt++;
+                        listaFacturasDePacientes.add(fA);
+                    }
+                }
             }
-            // medicamentos---------------------------------------------------------------------------
-            for (FacFacturaMedicamento a : factura.getFacFacturaMedicamentoList()) {
-                nuevaFila = new FilaDataTable();
-                nuevaFila.setColumna1(String.valueOf(listaMedicamentosFactura.size() + 1));//es identificador el item
-                nuevaFila.setColumna2(formateadorFecha.format(a.getFechaMedicamento()));
-                nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
-                nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
-                nuevaFila.setColumna5(a.getIdMedicamento().getCodigoMedicamento() + " - " + a.getIdMedicamento().getNombreMedicamento());//nombre servicio                                                    
-                nuevaFila.setColumna6(a.getCantidadMedicamento().toString());// cantidad
-                nuevaFila.setColumna7(a.getValorMedicamento().toString());//valor servicio
 
-                nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
-                nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
-                nuevaFila.setColumna22(a.getIdMedicamento().getIdMedicamento().toString());
+            if (!facCerrada) {//si la factura no esta cerrada se agrega 
 
-                nuevaFila.setColumna30(String.valueOf(a.getFacFacturaMedicamentoPK().getIdDetalle()));//id_detalle (parte llave primaria)
-                nuevaFila.setColumna31(String.valueOf(a.getFacFacturaMedicamentoPK().getIdFactura()));//id_factura (parte llave primaria)
+                acumuladoIva = acumuladoIva + (factura.getValorParcial() * (factura.getIva() / 100));
+                acumuladoCree = acumuladoCree + (factura.getValorParcial() * (factura.getCree() / 100));
+                acumuladoUsuario = acumuladoUsuario + factura.getValorUsuario();
+                acumuladoEmpresa = acumuladoEmpresa + factura.getValorEmpresa();
+                acumuladoParcial = acumuladoParcial + factura.getValorParcial();
+                acumuladoTotal = acumuladoTotal + factura.getValorTotal();
+                acumuladoCopago = acumuladoCopago + factura.getCopago();
+                acumuladoCuotaModeradora = acumuladoCuotaModeradora + factura.getCuotaModeradora();
+                //servicios---------------------------------------------------------------------------
+                for (FacFacturaServicio a : factura.getFacFacturaServicioList()) {
+                    nuevaFila = new FilaDataTable();
+                    nuevaFila.setColumna1(String.valueOf(listaServiciosFactura.size() + 1));//primer columna es identificador el item
+                    nuevaFila.setColumna2(formateadorFecha.format(a.getFechaServicio()));
+                    nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
+                    nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
+                    if (a.getIdServicio().getCodigoCup() != null) {
+                        nuevaFila.setColumna5(a.getIdServicio().getCodigoCup() + " - " + a.getIdServicio().getNombreServicio());//nombre servicio                                                    
+                    } else {
+                        nuevaFila.setColumna5(" - " + a.getIdServicio().getNombreServicio());//nombre servicio                                                    
+                    }
+                    nuevaFila.setColumna6(a.getCantidadServicio().toString());//quinta cantidad
+                    nuevaFila.setColumna7(a.getValorServicio().toString());//valor servicio                
 
-                listaMedicamentosFactura.add(nuevaFila);
+                    nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
+                    nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
+                    nuevaFila.setColumna22(a.getIdServicio().getIdServicio().toString());
+
+                    nuevaFila.setColumna30(String.valueOf(a.getFacFacturaServicioPK().getIdDetalle()));//id_detalle (parte llave primaria)
+                    nuevaFila.setColumna31(String.valueOf(a.getFacFacturaServicioPK().getIdFactura()));//id_factura (parte llave primaria)
+
+                    listaServiciosFactura.add(nuevaFila);
+                }
+                //insumos---------------------------------------------------------------------------
+                for (FacFacturaInsumo a : factura.getFacFacturaInsumoList()) {//buscar si el insumo ya fue aagregado a la lista de items                
+                    nuevaFila = new FilaDataTable();
+                    nuevaFila.setColumna1(String.valueOf(listaInsumosFactura.size() + 1));//primer columna es identificador el item
+                    nuevaFila.setColumna2(formateadorFecha.format(a.getFechaInsumo()));
+                    nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
+                    nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
+                    nuevaFila.setColumna5(a.getIdInsumo().getCodigoInsumo() + " - " + a.getIdInsumo().getNombreInsumo());//nombre servicio                                                    
+                    nuevaFila.setColumna6(a.getCantidadInsumo().toString());//cantidad
+                    nuevaFila.setColumna7(a.getValorInsumo().toString());//valor servicio
+
+                    nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
+                    nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
+                    nuevaFila.setColumna22(a.getIdInsumo().getIdInsumo().toString());
+
+                    nuevaFila.setColumna30(String.valueOf(a.getFacFacturaInsumoPK().getIdDetalle()));//id_detalle (parte llave primaria)
+                    nuevaFila.setColumna31(String.valueOf(a.getFacFacturaInsumoPK().getIdFactura()));//id_factura (parte llave primaria)
+
+                    listaInsumosFactura.add(nuevaFila);
+                }
+                // medicamentos---------------------------------------------------------------------------
+                for (FacFacturaMedicamento a : factura.getFacFacturaMedicamentoList()) {
+                    nuevaFila = new FilaDataTable();
+                    nuevaFila.setColumna1(String.valueOf(listaMedicamentosFactura.size() + 1));//es identificador el item
+                    nuevaFila.setColumna2(formateadorFecha.format(a.getFechaMedicamento()));
+                    nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
+                    nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
+                    nuevaFila.setColumna5(a.getIdMedicamento().getCodigoMedicamento() + " - " + a.getIdMedicamento().getNombreMedicamento());//nombre servicio                                                    
+                    nuevaFila.setColumna6(a.getCantidadMedicamento().toString());// cantidad
+                    nuevaFila.setColumna7(a.getValorMedicamento().toString());//valor servicio
+
+                    nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
+                    nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
+                    nuevaFila.setColumna22(a.getIdMedicamento().getIdMedicamento().toString());
+
+                    nuevaFila.setColumna30(String.valueOf(a.getFacFacturaMedicamentoPK().getIdDetalle()));//id_detalle (parte llave primaria)
+                    nuevaFila.setColumna31(String.valueOf(a.getFacFacturaMedicamentoPK().getIdFactura()));//id_factura (parte llave primaria)
+
+                    listaMedicamentosFactura.add(nuevaFila);
+                }
+                //paquetes---------------------------------------------------------------------------
+                for (FacFacturaPaquete a : factura.getFacFacturaPaqueteList()) {
+                    nuevaFila = new FilaDataTable();
+                    nuevaFila.setColumna1(String.valueOf(listaPaquetesFactura.size() + 1));//es identificador el item
+                    nuevaFila.setColumna2(formateadorFecha.format(a.getFechaPaquete()));
+                    nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
+                    nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
+                    nuevaFila.setColumna5(a.getIdPaquete().getCodigoPaquete() + " - " + a.getIdPaquete().getNombrePaquete());//nombre servicio                                                    
+                    nuevaFila.setColumna6(a.getCantidadPaquete().toString());//quinta cantidad
+                    nuevaFila.setColumna7(a.getValorPaquete().toString());//servicio
+
+                    nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
+                    nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
+                    nuevaFila.setColumna22(a.getIdPaquete().getIdPaquete().toString());
+
+                    nuevaFila.setColumna30(String.valueOf(a.getFacFacturaPaquetePK().getIdDetalle()));//id_detalle (parte llave primaria)
+                    nuevaFila.setColumna31(String.valueOf(a.getFacFacturaPaquetePK().getIdFactura()));//id_factura (parte llave primaria)
+
+                    listaPaquetesFactura.add(nuevaFila);
+                }
             }
-            //paquetes---------------------------------------------------------------------------
-            for (FacFacturaPaquete a : factura.getFacFacturaPaqueteList()) {
-                nuevaFila = new FilaDataTable();
-                nuevaFila.setColumna1(String.valueOf(listaPaquetesFactura.size() + 1));//es identificador el item
-                nuevaFila.setColumna2(formateadorFecha.format(a.getFechaPaquete()));
-                nuevaFila.setColumna3(factura.getIdPaciente().getTipoIdentificacion().getDescripcion() + " - " + factura.getIdPaciente().getIdentificacion());//Paciente
-                nuevaFila.setColumna4(factura.getIdPaciente().nombreCompleto());//Paciente                
-                nuevaFila.setColumna5(a.getIdPaquete().getCodigoPaquete() + " - " + a.getIdPaquete().getNombrePaquete());//nombre servicio                                                    
-                nuevaFila.setColumna6(a.getCantidadPaquete().toString());//quinta cantidad
-                nuevaFila.setColumna7(a.getValorPaquete().toString());//servicio
-
-                nuevaFila.setColumna20(factura.getIdPaciente().getIdPaciente().toString());
-                nuevaFila.setColumna21(a.getIdMedico().getIdUsuario().toString());
-                nuevaFila.setColumna22(a.getIdPaquete().getIdPaquete().toString());
-
-                nuevaFila.setColumna30(String.valueOf(a.getFacFacturaPaquetePK().getIdDetalle()));//id_detalle (parte llave primaria)
-                nuevaFila.setColumna31(String.valueOf(a.getFacFacturaPaquetePK().getIdFactura()));//id_factura (parte llave primaria)
-
-                listaPaquetesFactura.add(nuevaFila);
-            }
+        }
+        if (facturasFueraDeRangoInt != 0) {
+            estiloNotas="color: blue; border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+            notaFueraRango = "Se agregaron: " + facturasFueraDeRangoInt + " facturas(estaban fuera de rango)";
+        }
+        if (facturasSinAutorizacionCerradaInt != 0) {
+            estiloNotas="color: blue; border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+            notaNoCerradas = "Existen: " + facturasSinAutorizacionCerradaInt + " facturas sin autorización cerrada";
         }
         listaServiciosFacturaFiltro.addAll(listaServiciosFactura);
         tituloTabServiciosFactura = "Servicios (" + listaServiciosFactura.size() + ")";
@@ -537,7 +591,7 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         estiloPeriodo = "";
         msjHtmlDocumento = "No hay documento"; //me dice si el periodo esta: Abierto, Cerrado, Sin Crear
         estiloDocumento = "";
-        
+
         observaciones = "";//observaciones de la factura
         observacionAnulacion = "";
         acumuladoIva = 0;//sumatoria de los ivas cobrados por cada item
@@ -562,7 +616,7 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         listaInsumosFacturaFiltro = new ArrayList<>();
         listaMedicamentosFacturaFiltro = new ArrayList<>();
         listaPaquetesFacturaFiltro = new ArrayList<>();
-        
+
     }
 
     public void cambiaAdministradora() {
@@ -580,7 +634,7 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
             contratoActual = null;
             idContrato = "";
         }
-        recalcularValorFactura();
+        //recalcularValorFactura();
         buscarItems();
         RequestContext.getCurrentInstance().execute("remoteCommand();");
     }
@@ -1189,4 +1243,29 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         this.acumuladoCuotaModeradora = acumuladoCuotaModeradora;
     }
 
+    public String getNotaFueraRango() {
+        return notaFueraRango;
+    }
+
+    public void setNotaFueraRango(String notaFueraRango) {
+        this.notaFueraRango = notaFueraRango;
+    }
+
+    public String getNotaNoCerradas() {
+        return notaNoCerradas;
+    }
+
+    public void setNotaNoCerradas(String notaNoCerradas) {
+        this.notaNoCerradas = notaNoCerradas;
+    }
+
+    public String getEstiloNotas() {
+        return estiloNotas;
+    }
+
+    public void setEstiloNotas(String estiloNotas) {
+        this.estiloNotas = estiloNotas;
+    }
+    
+    
 }

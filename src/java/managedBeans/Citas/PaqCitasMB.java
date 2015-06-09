@@ -41,6 +41,7 @@ public class PaqCitasMB extends MetodosGenerales implements Serializable {
     private List<SelectItem> ItemsDias;
     private CitPaqMaestro paqMaestroSeleccionado;
     private int idServicio;
+    private int idPaqueteAuxiliar;
     private String codPaquete;
     private String nomPaquete;
     private String metodo;
@@ -124,6 +125,7 @@ public class PaqCitasMB extends MetodosGenerales implements Serializable {
                 metodo = "actualizar";
                 cargarPaquete();
             } else {
+                idPaqueteAuxiliar = 1;
                 setRendBotonEliminarPaquete(false);
                 setNomPaquete(null);
                 metodo = "crear";
@@ -143,10 +145,12 @@ public class PaqCitasMB extends MetodosGenerales implements Serializable {
                 CitPaqDetalle paqDetalle = new CitPaqDetalle();
                 paqDetalle.setIdPrestador(prestadorFacade.find(idPrestador));
                 paqDetalle.setIdServicio(servicioFacade.find(idServicio));
+                paqDetalle.setIdPaqDetalle(idPaqueteAuxiliar);
                 if (paqMaestroSeleccionado != null) {//comprueba si el item a insertar es para un paquete creado (se va modificar)
                     paqDetalle.setIdPaqMaestro(paqMaestroSeleccionado);
                     listaAuxiliarDetallePaqueteInsertar.add(paqDetalle);//nuevo item para el paquete ya creado
                 }
+                idPaqueteAuxiliar++;
                 getListaDetallePaquete().add(paqDetalle);
 
                 RequestContext.getCurrentInstance().update("idFormPaquetesCitas:idTableDetalle");
@@ -228,6 +232,7 @@ public class PaqCitasMB extends MetodosGenerales implements Serializable {
             }
 //            listaDetallePaquete = paqMaestroSeleccionado.getCitPaqDetalleList();
             listaDetallePaquete = paqDetalleFacade.buscarPorMaestro(paqMaestroSeleccionado.getIdPaqMaestro());
+            idPaqueteAuxiliar = listaDetallePaquete.get(listaDetallePaquete.size() - 1).getIdPaqDetalle() + 1;
         } else {
             metodo = "vacio";
             setRendBotones(false);
@@ -279,6 +284,7 @@ public class PaqCitasMB extends MetodosGenerales implements Serializable {
         listaPaquetesMaestro.add(paqMaestro);
         for (CitPaqDetalle paqDetalle : listaDetallePaquete) {
             paqDetalle.setIdPaqMaestro(paqMaestro);
+            paqDetalle.setIdPaqDetalle(null);
             paqDetalleFacade.create(paqDetalle);
         }
         liberarVariables();
@@ -310,6 +316,7 @@ public class PaqCitasMB extends MetodosGenerales implements Serializable {
         }
 //        creando los nuevos items
         for (CitPaqDetalle cpd : listaAuxiliarDetallePaqueteInsertar) {
+            cpd.setIdPaqDetalle(null);
             paqDetalleFacade.create(cpd);
         }
         paqMaestroSeleccionado.setNomPaquete(nomPaquete);

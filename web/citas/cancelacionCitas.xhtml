@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>Facelet Title</title>
         <link href="../recursos/css/estilos.css" rel="stylesheet"/>
@@ -39,51 +40,64 @@
         </h:form>
         <p:sticky target="menuForm" />
         <br/><br/><br/>
-        <p:dataTable
-            id="tableCitasCancelar"
-            var="cita"
-            value="#{cancelarCitasMB.listaCitas}"
-            rowKey="#{cita.idCita}"
-            paginator="true"
-            rows="10"
-            paginatorPosition="bottom"                                
-            scrollable="true" 
-            pageLinks="5"
-            emptyMessage="No hay citas."
-            widgetVar="citasTable"
-            resizableColumns="false">
-            <f:facet name="header">
-                CITAS AGENDADAS
-            </f:facet>
+        <h:form id="formTablaCitas">
+            <h2 align="center">
+            <c:choose>
+                <c:when test="#{cancelarCitasMB.prestadorSeleccionado != null}">
+                    Dr(a) #{cancelarCitasMB.prestadorSeleccionado.nombreCompleto().toUpperCase()}
+                </c:when>
+                <c:when test="#{cancelarCitasMB.pacienteSeleccionado != null}">
+                    #{cancelarCitasMB.pacienteSeleccionado.nombreCompleto().toUpperCase()}
+                </c:when>                
+            </c:choose>
+        </h2>            
+            <p:dataTable
+                id="tableCitasCancelar"
+                var="cita"
+                value="#{cancelarCitasMB.listaCitas}"
+                rowKey="#{cita.idCita}"
+                paginator="true"
+                rows="10"
+                paginatorPosition="bottom"                                
+                scrollable="true" 
+                pageLinks="5"
+                lazy="true"
+                emptyMessage="No se econtraron citas."
+                widgetVar="citasTable"
+                resizableColumns="false">
+                <f:facet name="header">
+                    Listado de Citas Agendadas
+                </f:facet>
 
-            <p:column style="width: 5%;">
-                <p:commandButton  disabled="#{cita.cancelada}" style="font-size: 15px; width: 15px; height: 15px;" styleClass="icon-cancel fg-lightBlue bg-white no-border" title="Cancelar cita" value="&nbsp;" actionListener="#{cancelarCitasMB.buscarCita}" update=":cancelar" onclick="PF('dlgcancelar').show();">
-                    <f:attribute name="id_cita" value="#{cita.idCita}"/>
-                </p:commandButton>
-            </p:column>
-            <p:column headerText="Fecha">
-                <h:outputText value="#{cita.idTurno.fecha}">
-                    <f:convertDateTime locale="es_CO" pattern="EEE, MMM d, yyyy"/>                       
-                </h:outputText>     
-            </p:column>
-            <p:column headerText="Hora">
-                <h:outputText value="#{cita.idTurno.horaIni}">
-                    <f:convertDateTime pattern="h:mm a" timeZone="America/Bogota"/>
-                </h:outputText>                    
-            </p:column>
-            <p:column headerText="Prestador">
-                <h:outputText value="#{cita.idPrestador.primerNombre} #{cita.idPrestador.primerApellido}"/>                    
-            </p:column>
-            <p:column headerText="Paciente">
-                <h:outputText value="#{cita.idPaciente.primerNombre} #{cita.idPaciente.primerApellido}"/>
-            </p:column>
-            <p:column headerText="Administradora">
-                <h:outputText value="#{cita.idAdministradora.razonSocial}"  />
-            </p:column>
-            <p:column headerText="Motivo Consulta">
-                <h:outputText value="#{cita.tipoCita.descripcion}"  />
-            </p:column>
-        </p:dataTable>
+                <p:column style="width: 5%;">
+                    <p:commandButton  disabled="#{cita.cancelada}" style="font-size: 15px; width: 15px; height: 15px;" styleClass="icon-cancel fg-lightBlue bg-white no-border" title="Cancelar cita" value="&nbsp;" actionListener="#{cancelarCitasMB.buscarCita}" update=":cancelar" onclick="PF('dlgcancelar').show();">
+                        <f:attribute name="id_cita" value="#{cita.idCita}"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column headerText="Fecha">
+                    <h:outputText value="#{cita.idTurno.fecha}">
+                        <f:convertDateTime locale="es_CO" pattern="EEE, MMM d, yyyy"/>                       
+                    </h:outputText>     
+                </p:column>
+                <p:column headerText="Hora">
+                    <h:outputText value="#{cita.idTurno.horaIni}">
+                        <f:convertDateTime pattern="h:mm a" timeZone="America/Bogota"/>
+                    </h:outputText>                    
+                </p:column>
+                <p:column headerText="Prestador" rendered="#{cancelarCitasMB.prestadorSeleccionado == null}" style="width: 23%">
+                    <h:outputText value="#{cita.idPrestador.nombreCompleto()}"/>                    
+                </p:column>
+                <p:column headerText="Paciente" rendered="#{cancelarCitasMB.pacienteSeleccionado == null}" style="width: 23%">
+                    <h:outputText value="#{cita.idPaciente.nombreCompleto()}"/>
+                </p:column>
+                <p:column headerText="Administradora" style="width: 23%">
+                    <h:outputText value="#{cita.idAdministradora.razonSocial}"  />
+                </p:column>
+                <p:column headerText="Servicio" style="width: 23%">
+                    <h:outputText value="#{cita.idServicio.nombreServicio}"  />
+                </p:column>
+            </p:dataTable>
+        </h:form>
 
         <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
             <h:form id="formFindPaciente">
@@ -122,7 +136,7 @@
                             <p:commandButton
                                 id="cbtnPaciente"
                                 value="Cargar Paciente"
-                                update = ":tableCitasCancelar"
+                                update = ":formTablaCitas"
                                 action="#{cancelarCitasMB.cargarListaCitas}"
                                 actionListener="#{cancelarCitasMB.opcionCancelacion}"
                                 oncomplete = "PF('dlgPaciente').hide();">
@@ -184,7 +198,7 @@
                                 value = "Cargar Prestador"
                                 actionListener="#{cancelarCitasMB.opcionCancelacion}"
                                 action="#{cancelarCitasMB.cargarListaCitas}"
-                                update=":tableCitasCancelar"
+                                update=":formTablaCitas"
                                 oncomplete = "PF('dlgfindPrestador').hide();">
                                 <f:attribute name="opcion" value="prestador"/>
                             </p:commandButton>
@@ -208,7 +222,7 @@
                     <p:inputTextarea rows="6" cols="33" value="#{cancelarCitasMB.descripcionCancelacion}" />
                 </h:panelGrid>
                 <br/>
-                <p:commandButton value="Cancelar Cita" actionListener="#{cancelarCitasMB.cancelarCita}" action="#{cancelarCitasMB.cargarListaCitas}" oncomplete = "PF('dlgcancelar').hide();" update=":tableCitasCancelar"/>
+                <p:commandButton value="Cancelar Cita" actionListener="#{cancelarCitasMB.cancelarCita}" action="#{cancelarCitasMB.cargarListaCitas}" oncomplete = "PF('dlgcancelar').hide();" update=":formTablaCitas"/>
             </h:form>
         </p:dialog>
     </h:body>

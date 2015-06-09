@@ -32,7 +32,7 @@ public class CitCitasFacade extends AbstractFacade<CitCitas> {
         //listado de citas que no tienen registro asociado (todos los prestadores)
         try {
             //String hql = "SELECT a FROM CitCitas a WHERE a.tieneRegAsociado = false AND a.cancelada=false AND a.atendida=true";
-            String hql = "SELECT a FROM CitCitas a WHERE a.tieneRegAsociado = false AND a.cancelada=false";
+            String hql = "SELECT a FROM CitCitas a WHERE a.tieneRegAsociado = false AND a.cancelada=false AND a.idTurno.estado like 'en_espera'";
             return getEntityManager().createQuery(hql).getResultList();
         } catch (Exception e) {
             System.err.println("" + e.toString());
@@ -44,7 +44,7 @@ public class CitCitasFacade extends AbstractFacade<CitCitas> {
         //listado de citas que no tienen registro asociado (solo para un prestador)
         try {
             //String hql = "SELECT a FROM CitCitas a WHERE a.tieneRegAsociado = false AND a.cancelada=false AND a.atendida=true";
-            String hql = "SELECT a FROM CitCitas a WHERE a.tieneRegAsociado = false AND a.cancelada=false AND a.idPrestador.idUsuario = " + idprestador;
+            String hql = "SELECT a FROM CitCitas a WHERE a.tieneRegAsociado = false AND a.cancelada=false AND a.idPrestador.idUsuario = " + idprestador +" AND a.idTurno.estado like 'en_espera'";
             return getEntityManager().createQuery(hql).getResultList();
         } catch (Exception e) {
             System.err.println("" + e.toString());

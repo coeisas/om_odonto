@@ -52,7 +52,7 @@
                             <tr>
                                 <td>
                                     <p:outputLabel styleClass="campoObligatorio" value="Código interno"/>
-                                    <p:inputText   styleClass="campoFormulario"  size="55" disabled="false" value="#{serviciosMB.codigoServicio}"/>
+                                    <p:inputText   styleClass="campoFormulario"  size="55" disabled="false" value="#{serviciosMB.codigoServicio}" maxlength="5"/>
                                     <p:outputLabel  styleClass="campoNoObligatorio" value="Valor Particular" />                                
                                     <pe:inputNumber styleClass="campoFormulario"    decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{serviciosMB.factorSOAT}"/>
                                 </td>
@@ -103,22 +103,23 @@
                             </tr>
                             <tr> 
                                 <td >                                     
-                                    <p:outputLabel styleClass="campoNoObligatorio" value="Agrupación"/>                                
+                                    <!-- p:outputLabel styleClass="campoNoObligatorio" value="Agrupación"/>                                
                                     <p:selectOneMenu styleClass="campoFormulario"  style="width: 240px;">
                                         <f:selectItem itemLabel="05 - Procedimiento de promocion" itemValue="05 - Procedimiento de promocion"/>
-                                    </p:selectOneMenu>
+                                    </p:selectOneMenu -->
                                     <p:outputLabel styleClass="campoNoObligatorio" value="Finalidad"/>                                
-                                    <p:selectOneMenu styleClass="campoFormulario"  style="width: 250px;" value="#{serviciosMB.finalidad}">
+                                    <p:selectOneMenu styleClass="campoFormulario"  style="width: 360px;" value="#{serviciosMB.finalidad}">
                                         <f:selectItems value="#{aplicacionGeneralMB.listaFinalidadProcedimiento}"/>
                                     </p:selectOneMenu>
-                                </td>
-                            </tr>
-                            <tr> 
-                                <td >                                     
+
                                     <p:outputLabel styleClass="campoNoObligatorio" value="Ambito"/>                                
                                     <p:selectOneMenu styleClass="campoFormulario"   style="width: 150px;" value="#{serviciosMB.codigoAmbito}">
                                         <f:selectItems value="#{aplicacionGeneralMB.listaAmbito}"/>
                                     </p:selectOneMenu>
+                                </td>
+                            </tr>
+                            <tr> 
+                                <td colspan="2">                                     
                                     <p:outputLabel styleClass="campoNoObligatorio" value="Acto Qtx"/>                                
                                     <p:selectOneMenu styleClass="campoFormulario"  style="width: 365px;" value="#{serviciosMB.codigoActQtx}">
                                         <f:selectItems value="#{aplicacionGeneralMB.listaActoQuirurgico}"/>

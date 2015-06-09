@@ -26,23 +26,25 @@
                             </tr>   
                             <tr>                            
                                 <td>
-                                    <p:outputLabel styleClass="campoObligatorio" value="Nombre RIPS" style="width: 110px;"/>
-                                    <p:inputText value="#{ripsMB.nombreRIPS}" size="63"/>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Código del Archivo:" style="width: 130px;"/>
+                                    <p:inputText value="#{ripsMB.nombreRIPS}" size="63">
+                                        <p:ajax event="blur" listener="#{ripsMB.cambiaNombreRip}"/>
+                                    </p:inputText>
                                 </td>                        
                             </tr>   
                             <tr>
                                 <td>
-                                    <p:outputLabel styleClass="campoObligatorio" value="Administradora" style="width: 110px;"/>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Administradora" style="width: 130px;"/>
                                     <p:selectOneMenu styleClass="campoFormulario" value="#{ripsMB.idAdministradora}" style="width: 340px;" filter="true" filterMatchMode="contains">                            
-                                        <f:ajax event="change" listener="#{ripsMB.cambiaAdministradora}" render=":IdFormRips"/>
-                                        <f:selectItem itemLabel=""/>
+                                        <f:ajax event="change" listener="#{ripsMB.cambiaAdministradora}" render="IdListaContratos"/>
+                                        <!-- f:selectItem itemLabel=""/ -->
                                         <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemValue="#{administradora.idAdministradora}" itemLabel="#{administradora.razonSocial}"/>
                                     </p:selectOneMenu>                        
                                 </td>                        
                             </tr>   
                             <tr>
                                 <td>
-                                    <p:outputLabel styleClass="campoObligatorio" value="Contrato" style="width: 110px;"/>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Contrato" style="width: 130px;"/>
                                     <p:selectOneMenu id="IdListaContratos" styleClass="campoFormulario" value="#{ripsMB.idContrato}" style="width: 340px;" filter="true" filterMatchMode="contains">
                                         <f:ajax event="change" listener="#{ripsMB.cambiaContrato}"/>
                                         <f:selectItem itemValue="-1" itemLabel="Todos"/>
@@ -52,7 +54,7 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p:outputLabel styleClass="campoObligatorio" value="Fecha inicial" style="width: 110px;"/>
+                                    <p:outputLabel styleClass="campoObligatorio" value="Fecha inicial" style="width: 130px;"/>
                                     <p:calendar navigator="true" styleClass="campoFormulario" locale="es" pattern="dd/MM/yyyy" mask="99/99/9999" size="16" maxlength="10" value="#{ripsMB.fechaInicial}"/>
                                     <p:outputLabel styleClass="campoObligatorio" value="Fecha final" style="width: 110px;"/>
                                     <p:calendar navigator="true" styleClass="campoFormulario" locale="es" pattern="dd/MM/yyyy" mask="99/99/9999" size="16" maxlength="10" value="#{ripsMB.fechaFinal}"/>                                
@@ -101,7 +103,7 @@
                                         title="Generar RIPS" value="&nbsp;"
                                         styleClass="icon-floppy fg-lightBlue bg-white no-border" 
                                         update=":IdFormRips:IdMensajeRips"
-                                        actionListener="#{ripsMB.generarRIPS}"
+                                        actionListener="#{ripsMB.clickBtnGenerarRIPS}"
                                         style="font-size: 20px; width: 20px; height: 20px;"/>                                                    
                                 </td>                        
                             </tr>                           

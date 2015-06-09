@@ -53,8 +53,8 @@ public class RipsAc implements Serializable {
     @Size(max = 20)
     @Column(name = "num_fac", length = 20)
     private String numFac;
-    @Size(max = 10)
-    @Column(name = "cod_pre", length = 10)
+    @Size(max = 12)
+    @Column(name = "cod_pre", length = 12)
     private String codPre;
     @Size(max = 2)
     @Column(name = "tip_ide", length = 2)

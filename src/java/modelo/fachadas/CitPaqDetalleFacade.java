@@ -22,7 +22,7 @@ public class CitPaqDetalleFacade extends AbstractFacade<CitPaqDetalle> {
     }
     
     public List<CitPaqDetalle> buscarPorMaestro(int id_maestro){
-        Query query = getEntityManager().createQuery("SELECT p FROM CitPaqDetalle p WHERE p.idPaqMaestro.idPaqMaestro = ?1");
+        Query query = getEntityManager().createQuery("SELECT p FROM CitPaqDetalle p WHERE p.idPaqMaestro.idPaqMaestro = ?1 ORDER BY p.idPaqDetalle");
         query.setParameter(1, id_maestro);
         return query.getResultList();
     }

@@ -14,11 +14,12 @@
     <h:body>     
         <h:form id="IdFormConsecutivos">              
             <p:growl id="IdMensajeConsecutivos"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                                    
+            <br/>
             <div>
                 <p:commandButton 
                     title="Nuevo consecutivo" value="&nbsp;"                                        
                     styleClass="icon-new fg-lightBlue bg-white no-border"
-                    actionListener="#{consecutivosMB.limpiarFormularioConsecutivos}"
+                    actionListener="#{consecutivosMB.clickBtnNuevoConsecutivo}"
                     update=":IdFormConsecutivos"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
@@ -41,7 +42,7 @@
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>  
             </div>
             <br/>
-            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" rendered="#{consecutivosMB.mostrarTabView}">                 
                 <p:tab title="#{consecutivosMB.tituloTabConsecutivos}">                    
                     <br/>
                     <p:panelGrid id="IdPanelEditarConsecutivo" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;">                    
@@ -58,9 +59,10 @@
                         <p:outputLabel styleClass="campoNoObligatorio" value="Actual"/>
                         <p:inputText   value="#{consecutivosMB.actual}" size="13" maxlength="10" disabled="true"/>                    
                         <p:outputLabel styleClass="campoNoObligatorio" value="Prefijo"/>
-                        <p:inputText   value="#{consecutivosMB.prefijo}" size="5" maxlength="10" />                    
-                        <p:outputLabel styleClass="campoNoObligatorio" value="Texto"/>                        
-                        <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{consecutivosMB.texto}"/>
+                        <p:inputText   value="#{consecutivosMB.prefijo}" size="5" maxlength="5" />                    
+                        <p:outputLabel styleClass="campoNoObligatorio" value="Observaciones"/>                        
+                        <p:inputTextarea id="IdObservaciones" styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{consecutivosMB.texto}"/>
+                        <p:watermark for="IdObservaciones" value="Ingrese aqui el texto que aparecerá en la sección de observaciones del documento (factura, orden, recibo...) si lo requiere"/>
                     </p:panelGrid>
                     <br/>
                 </p:tab>                

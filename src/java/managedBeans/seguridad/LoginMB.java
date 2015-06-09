@@ -368,7 +368,7 @@ public class LoginMB extends MetodosGenerales implements Serializable {
             case "Facturar Paciente":
                 facturarPacienteMB.cargarDesdeTab(id);
                 break;
-            case "Historias Clinicas"://Cargar historia clinica desde agenda del prestador
+            case "Historias Clinicas"://Cargar historia clinica desde agenda del prestador o desde home
                 historiasMB.cargarDesdeTab(id);
                 break;
             case "Autorizaciones":

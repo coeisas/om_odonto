@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
         <title>Facelet Title</title>
         <script src="../recursos/js/calendario.js"/>
@@ -17,13 +18,13 @@
             <p:panelGrid style="margin: 0 auto">
                 <f:facet name="header">
                     <p:row>
-                        <p:column colspan="2" style="width: 25%">No Identificacion</p:column>
+                        <p:column style="width: 25%">No Identificacion</p:column>
                         <p:column>Paciente</p:column>
                         <p:column style="width: 25%">Administradora</p:column>
                     </p:row>
                 </f:facet>
                 <p:row>
-                    <p:column colspan="2">
+                    <p:column>
                         <p:inputText value="#{autorizacionMB.numDocumento}" size="15">
                             <p:ajax event="blur" listener="#{autorizacionMB.buscarPaciente()}" update="nombrePaciente nombreAdministradora selectipocita cantidad"/>
                         </p:inputText>
@@ -36,30 +37,46 @@
 
                     </p:column>
                     <p:column>
-                        <h:outputText id="nombrePaciente" value="#{autorizacionMB.paciente.primerNombre} #{autorizacionMB.paciente.segundoNombre} #{autorizacionMB.paciente.primerApellido} #{autorizacionMB.paciente.segundoApellido}"/>
+                        <h:outputText id="nombrePaciente" value="#{autorizacionMB.paciente.nombreCompleto()}"/>
                     </p:column>
                     <p:column>
                         <h:outputText id="nombreAdministradora" value="#{autorizacionMB.paciente.idAdministradora.razonSocial}"/>
                     </p:column>
                 </p:row>
                 <p:row>
-                    
+
                 </p:row>
                 <p:row>
                     <p:column style="text-align: center;" styleClass="ui-widget-header">Numero autorizacion</p:column>
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Fecha Autorizacion</p:column>
                     <p:column style="text-align: center;" styleClass="ui-widget-header">Cerrada</p:column>
-                    <p:column style="text-align: center;" styleClass="ui-widget-header">Servicio</p:column>
-                    <p:column style="text-align: center;" styleClass="ui-widget-header">Sesiones</p:column>                    
                 </p:row>
                 <p:row>
                     <p:column>
                         <p:inputText id="numauto" value="#{autorizacionMB.numAutorizacion}" size="12" maxlength="10">
                             <p:ajax event="blur" listener="#{autorizacionMB.buscarAutorizacion()}"/>
                         </p:inputText>
+                        <p:commandButton
+                            id="btnAutorizacion"
+                            title="Autorizacion"
+                            onclick="PF('dlgAutorizaciones').show();"
+                            icon="ui-icon-search"
+                            style="width: 23px; height: 23px;"/>                        
                     </p:column>
                     <p:column>
-                        <p:selectBooleanCheckbox value="#{autorizacionMB.cerrada}" disabled="#{autorizacionMB.deshabilitarComboBox}"/>
+                        <p:calendar value="#{autorizacionMB.fechaAutorizacion}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="10">                            
+                        </p:calendar>
                     </p:column>
+                    <p:column style="text-align: center">
+                        <p:selectBooleanCheckbox value="#{autorizacionMB.cerrada}" disabled="#{autorizacionMB.deshabilitarComboBox}"/>
+                    </p:column>                    
+                </p:row>
+                <p:row>                                        
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Servicio</p:column>
+                    <p:column style="text-align: center;" styleClass="ui-widget-header">Sesiones</p:column>
+                    <p:column rowspan="2"><p:commandButton value="Adicionar Servicio a la Autorizacion" icon="ui-icon-plus" actionListener="#{autorizacionMB.adicionarAutorizacionAlaLista()}" rendered="#{autorizacionMB.renderizarBtnAdicionarServicio}" /></p:column>
+                </p:row>
+                <p:row>
                     <p:column>
                         <p:selectOneMenu id="selectipocita" value="#{autorizacionMB.idServicio}" style="width: 430px;">
                             <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
@@ -69,13 +86,10 @@
                     </p:column>
                     <p:column>
                         <p:spinner id="cantidad" value="#{autorizacionMB.sesionesAutorizadas}" min="1" max="300" size="3" />
-                    </p:column>
+                    </p:column>                    
                 </p:row>
                 <p:row>
-                    <p:column colspan="4" style="text-align: center;padding: .5em 0"><p:commandButton value="Adicionar Servicio a la Autorizacion" icon="ui-icon-plus" actionListener="#{autorizacionMB.adicionarAutorizacionAlaLista()}" rendered="#{autorizacionMB.renderizarBtnAdicionarServicio}" /></p:column>
-                </p:row>
-                <p:row>
-                    <p:column colspan="4">
+                    <p:column colspan="3">
                         <p:dataTable
                             id="idTable"
                             var="autorizacionServicio"
@@ -104,14 +118,74 @@
                         <p:commandButton value="Limpiar Tabla Autorizaciones" icon="ui-icon-circlesmall-minus" actionListener="#{autorizacionMB.borrarListaAutorizaciones()}" rendered="#{autorizacionMB.renderizarBtnRemoverServicios}"/>
                     </p:column>
                 </p:row>
-                
+
                 <p:row>
                     <p:column colspan="4" style="text-align: center;padding: 1em 0" ><p:commandButton value="Guardar Autorizacion" icon="ui-icon-disk"  actionListener="#{autorizacionMB.controladorAccion()}" update="@form" /></p:column>
                 </p:row>
             </p:panelGrid>
         </h:form>
+
+        <p:dialog header="Buscar Autorizacion" widgetVar="dlgAutorizaciones" resizable="false" modal="true">
+            <h:form id="formListaAutoriaciones">
+                <p:contextMenu for="tablaAutorizacion">
+                    <p:menuitem value="Detalle"  update=":dialogo" icon="ui-icon-circle-zoomin" oncomplete="PF('dlgDetalle').show()"/>
+                </p:contextMenu>
+                <p:dataTable 
+                    id="tablaAutorizacion"
+                    value="#{autorizacionMB.listaAutorizaciones}" 
+                    var="autorizacion" lazy="true" rows="10" 
+                    style="width: 700px"
+                    rowKey="#{autorizacion.idAutorizacion}" 
+                    emptyMessage="No se encontraron Autorizaciones"
+                    selection="#{autorizacionMB.autorizacionSeleccionada}" 
+                    selectionMode="single" paginator="true" paginatorPosition="bottom">
+                    <p:column headerText="Num Autorizacion">
+                        <h:outputText value="#{autorizacion.numAutorizacion}"/>
+                    </p:column>
+                    <p:column headerText="Paciente" rendered="#{autorizacionMB.paciente == null}">
+                        <h:outputText value="#{autorizacion.paciente.nombreCompleto().toUpperCase()}"/>
+                    </p:column>
+                    <p:column headerText="Servicios Autorizados">
+                        <h:outputText value="#{autorizacion.citAutorizacionesServiciosList.size()}" />
+                    </p:column>
+                </p:dataTable> 
+                <br/>
+                <p:commandButton value="Cargar Autorizacion" actionListener="#{autorizacionMB.cargarAutorizacion}" oncomplete="PF('dlgAutorizaciones').hide()"/>
+            </h:form>
+        </p:dialog>
         
-         <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
+        <p:dialog id="dialogo" header="Detalle Autorizacion" modal="true" resizable="false" widgetVar="dlgDetalle">
+            <p:dataTable
+                value="#{autorizacionMB.autorizacionSeleccionada.citAutorizacionesServiciosList}"
+                style="width: 500px"
+                var="detalle" disabledSelection="true">
+                <p:columnGroup type="header">
+                    <p:row>
+                        <p:column rowspan="2" headerText="Servicio" style="width: 50%"/>
+                        <p:column colspan="3" headerText="Sesiones"/>
+                    </p:row>
+                    <p:row>
+                        <p:column headerText="Autorizadas"/>
+                        <p:column headerText="Atendidas"/>
+                        <p:column headerText="Pendientes"/>
+                    </p:row>
+                </p:columnGroup>
+                <p:column>
+                    <h:outputText value="#{detalle.facServicio.nombreServicio}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{detalle.sesionesAutorizadas}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{detalle.sesionesRealizadas}"/>
+                </p:column>
+                <p:column>
+                    <h:outputText value="#{detalle.sesionesPendientes}"/>
+                </p:column>                
+            </p:dataTable>
+        </p:dialog>
+
+        <p:dialog header="Buscar Paciente" widgetVar="dlgPaciente" resizable="false" modal="true">
             <h:form id="formFindPaciente">
                 <table>
                     <tr>

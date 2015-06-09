@@ -13,16 +13,16 @@
         <script type="text/javascript" src="../recursos/js/calendario.js"/>
     </h:head>
 
-    <h:body>     
-        <h:form id="IdFormContratos">     
-            #{contratosMB.recargarSiHaySeleccionado()}            
+    <h:body>
+        #{contratosMB.inicializar()}
+        <h:form id="IdFormContratos">                             
             <p:growl id="IdMensajeContratos" showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
             <br/>            
             <div>
                 <p:commandButton 
                     title="Nuevo Contrato" value="&nbsp;"                                        
                     styleClass="icon-new fg-lightBlue bg-white no-border"
-                    actionListener="#{contratosMB.limpiarFormularioContratos}"  
+                    actionListener="#{contratosMB.btnNuevoContrato}"  
                     oncomplete="PF('wvTabView').select(0);"
                     update=":IdFormContratos"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 

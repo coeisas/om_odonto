@@ -97,12 +97,14 @@
                                 <f:selectItems  value="#{aplicacionGeneralMB.listaMotivoConsulta}" /> 
                                 <p:ajax event="change" update="@form"/>
                             </p:selectOneMenu>                                
-                            <p:outputLabel styleClass="labelFormularioBold" value="No Autorizacion:"/>
+                            <p:outputLabel styleClass="labelFormularioBold" value="No Autorizacion:" rendered="#{!citasMB.rendBtnAutorizacion}"/>
                             <p:outputLabel styleClass="labelFormulario" id="campoautorizacion" value="#{citasMB.autorizacionSeleccionada.numAutorizacion}"/>
 
                             <p:commandButton 
+                                id="idBtnAutorizacion"
                                 title="Autorizaciones"                                        
                                 styleClass="icon-clipboard-2 fg-lightBlue bg-white no-border campoFormulario"
+                                rendered="#{citasMB.rendBtnAutorizacion}"
                                 actionListener="#{citasMB.abrirTabAutorizaciones()}"
                                 value="&nbsp;"
                                 style="font-size: 20px; width: 20px; height: 20px;"/>                                      

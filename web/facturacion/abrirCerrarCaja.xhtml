@@ -11,11 +11,12 @@
         <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
         <script type="text/javascript" src="../recursos/js/calendario.js"></script>          
     </h:head>
-    <h:body>     
+    <h:body>
+        #{abrirCerrarCajasMB.inicializar()}
         <h:form id="IdFormCajas">              
             <p:growl id="IdMensajeCajas"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
             <br/>
-            #{abrirCerrarCajasMB.inicializar()}
+            
             <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
                 <p:tab title="#{abrirCerrarCajasMB.tituloTab}">   
                     <br/>

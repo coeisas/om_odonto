@@ -15,6 +15,7 @@
     <h:body>     
         <h:form id="IdFormMedicamentos">              
             <p:growl id="IdMensajeMedicamentos"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                        
+            <br/>
             <div>
                 <p:commandButton 
                     title="Nuevo medicamento" value="&nbsp;"                                        
@@ -49,7 +50,7 @@
                         <tr>
                             <td>
                                 <p:outputLabel  styleClass="campoObligatorio" value="Código Medicamento"/>
-                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.codigoMedicamento}" size="10" maxlength="10" />                    
+                                <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.codigoMedicamento}" size="10" maxlength="20" />                    
                                 <p:outputLabel  styleClass="campoObligatorio" value="Nombre Medicamento"/>
                                 <p:inputText    styleClass="campoFormulario" value="#{medicamentosMB.nombreMedicamento}" size="55" maxlength="100" />
                             </td>

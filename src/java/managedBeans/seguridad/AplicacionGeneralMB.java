@@ -795,7 +795,7 @@ public class AplicacionGeneralMB {
 
     public List<SelectItem> getListaClasificacionEvento() {
         return listaClasificacionEvento;
-    }
+}
 
     public void setListaClasificacionEvento(List<SelectItem> listaClasificacionEvento) {
         this.listaClasificacionEvento = listaClasificacionEvento;

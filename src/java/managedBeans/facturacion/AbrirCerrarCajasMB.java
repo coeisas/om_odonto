@@ -51,7 +51,8 @@ public class AbrirCerrarCajasMB extends MetodosGenerales implements Serializable
     //@PostConstruct
     public void inicializar() {
         //busco si el usuario actual tiene caja asociada
-        usuarioActual = loginMB.getUsuarioActual();
+        cajaSeleccionada=null;
+        usuarioActual = usuariosFacade.find(loginMB.getUsuarioActual().getIdUsuario());
         tituloTab = "Sin caja asignada";
         if (usuarioActual.getFacCajaList() != null) {
             if (usuarioActual.getFacCajaList().isEmpty()) {//no tiene caja asignada

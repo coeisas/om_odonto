@@ -240,10 +240,19 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     private String nombrePaciente = "Paciente";
     private String generoPaciente = "";
     private String edadPaciente = "";
+
     private String administradoraPaciente = "";
+    private String msjHtmlAdministradoraPaciente = "";//mensaje informativo sobre estado de la caja
+    private String estiloAdministradoraPaciente = "";
+
+    private String msjHtmlBtnConsumos = "";//mensaje informativo sobre estado de la caja
+    private String estiloBtnConsumos = "";
 
     //------- FACTURA --------------
     private String turnoCita = "";//turno al cual corresponde la cita
+    private String msjHtmlTurnoCita = "";//mensaje informativo sobre estado de la caja
+    private String estiloTurnoCita = "";
+
     private CitCitas citaActual = null;
     private CitTurnos turnoActual = null;
 
@@ -603,10 +612,10 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         }
         //DETERMINAR SI SE HA FACTURADO ANTERIORMENTE(SEGUN LA AUTORIZACION)
         boolean facturadoAnteriormente = false;
-        if (citaActual != null) {            
+        if (citaActual != null) {
             if (citaActual.getCancelada() == false) {//no esta cancelada
                 if (citaActual.getIdAutorizacion() != null) {//tiene autorizacion
-                    if (citaActual.getIdAutorizacion().getFacturada()!=null && citaActual.getIdAutorizacion().getFacturada() == true) {//tiene autorizacion
+                    if (citaActual.getIdAutorizacion().getFacturada() != null && citaActual.getIdAutorizacion().getFacturada() == true) {//tiene autorizacion
                         facturadoAnteriormente = true;
 
                     }
@@ -772,8 +781,9 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
 
     public void validaPeriodoImpuestos() {
         //System.out.println("validarImpuestos");
-        //usado cuando se cambia la fecha determinar estado de periodo e impuestos
+        //usado cuando se cambia la fecha determinar estado de periodo e impuestos    
         validarPeriodo();
+        validarContrato();
         determinarImpuestos();
         recalcularValorFactura();
     }
@@ -794,7 +804,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
                                 + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
                                 + "Administradora: " + administradoraParticular.getRazonSocial() + " \n"
                                 + "Contrato: " + contratoParticular.getDescripcion() + " \n"
-                                + "Razón: El contrto no tiene manual tarifario";
+                                + "Razón: El contrato no tiene manual tarifario";
                         return false;
                     }
                 } else {
@@ -863,6 +873,48 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         }
     }
 
+    public void validarContrato() {
+        //validar si el contrato actual esta vigente
+        if (fechaDentroDeRangoMas1Dia(contratoActual.getFechaInicio(), contratoActual.getFechaFinal(), fecha)) {
+            msjHtmlAdministradoraPaciente = "Correcto <br/>contrato vigente";
+            estiloAdministradoraPaciente = "";
+        } else {
+            msjHtmlAdministradoraPaciente
+                    = "Contrato no vigente: "
+                    + "<br/>Inicia: " + formateadorFecha.format(contratoActual.getFechaInicio())
+                    + "<br/>Finaliza: " + formateadorFecha.format(contratoActual.getFechaFinal());
+            estiloAdministradoraPaciente = "border-color: orange; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+        }
+    }
+
+    public void validarTurno() {
+        //si no hay turno informar que al generar rips pueden haber datos faltantes
+        if (turnoActual != null) {
+            msjHtmlTurnoCita = "Correcto se <br/>asociará este turno";
+            estiloTurnoCita = "";
+        } else {
+            msjHtmlTurnoCita = "Se puede facturar <br/>pero tener en cuenta <br/>que al no asociar un turno <br/>la generacion de RIPS <br/>podría salir incompleta.";
+            estiloTurnoCita = "border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+        }
+    }
+
+    public void validarConsumos() {
+        //informar si existen o no consumos para el paciente
+        int consumos = 0;
+        consumos = consumos + pacienteSeleccionado.getFacConsumoServicioList().size();
+        consumos = consumos + pacienteSeleccionado.getFacConsumoMedicamentoList().size();
+        consumos = consumos + pacienteSeleccionado.getFacConsumoPaqueteList().size();
+        consumos = consumos + pacienteSeleccionado.getFacConsumoInsumoList().size();
+        if (consumos == 0) {
+            msjHtmlBtnConsumos = "No tiene <br/>consumos pendientes";
+            estiloBtnConsumos = "";
+        } else {
+            msjHtmlBtnConsumos = "Se puede facturar <br/>pero tener en cuenta <br/>que el paciente<br/> tiene " + consumos + " consumos <br/>pendientes por facturar.";
+            estiloBtnConsumos = "border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+        }
+
+    }
+
     public void cargarDatosPaciente() {//System.out.println("cargarDatosPaciente");
         //se separa esta funcion de cargar paciente por que 'Facturar como particular' no de debe modificar ese boton(value,render,disable)                
         if (pacienteSeleccionadoTabla == null) {//esta instruccion se usa cuando se regresa a Tab 'Facturar Paciente', y en otra tab se produjeron cambios que afectan facturarPacienteMB (y no se tiene que limpiar las listas de items(serv,medicam,insum,paq) agregados a la factura)
@@ -881,6 +933,11 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
             return;
         }
         validarPeriodo();
+
+        validarContrato();
+        validarTurno();
+        validarConsumos();
+
         nombrePaciente = "Paciente";
         identificacionPaciente = pacienteSeleccionado.getIdentificacion();
         if (pacienteSeleccionado.getTipoIdentificacion() != null) {
@@ -1000,6 +1057,14 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         valorCreeStr = "--% (--)";
         msjHtmlCree = "Se debe configurar <br/>el impuesto CREE <br/>para la fecha seleccionada ";
         estiloCree = "";
+
+        msjHtmlAdministradoraPaciente = "";
+        msjHtmlBtnConsumos = "";
+        msjHtmlTurnoCita = "";
+
+        estiloAdministradoraPaciente = "";
+        estiloBtnConsumos = "";
+        estiloTurnoCita = "";
 
         mensajeConfiguracion = null;//permite informar problemas al querer facturar
         documento = "";//factura, cuenta cobro, recibo.
@@ -1252,13 +1317,13 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         //nuevaFactura.setTipoIngreso(clasificacionesFachada.buscarPorMaestroObservacion("TipoIngreso", "Ambulatorio").get(0));
         nuevaFactura.setIdPaciente(pacienteSeleccionado);
         nuevaFactura.setIdContrato(contratoActual);
-        if(citaActual!=null){
-            if(citaActual.getIdAutorizacion()!=null){//numero y fecha autorizacion                
+        if (citaActual != null) {
+            if (citaActual.getIdAutorizacion() != null) {//numero y fecha autorizacion                
                 nuevaFactura.setNumeroAutorizacion(citaActual.getIdAutorizacion().getNumAutorizacion());
                 nuevaFactura.setFechaAutorizacion(citaActual.getIdAutorizacion().getFechaAutorizacion());
             }
-        }       
-        
+        }
+
         nuevaFactura.setObservacion(observaciones);
         nuevaFactura.setResolucionDian(consecutivoSeleccionado.getResolucionDian());
         nuevaFactura.setIdAdministradora(administradoraActual);
@@ -1281,11 +1346,11 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
             citaActual = citasFacade.find(citaActual.getIdCita());
             citaActual.setFacturada(true);
             citasFacade.edit(citaActual);
-            if (citaActual.getIdAutorizacion()!=null) {//ya se facturo la auorizacion(solo cobrar una cuota moderadora y copago)
-                CitAutorizaciones autorizacionActual=citaActual.getIdAutorizacion();
+            if (citaActual.getIdAutorizacion() != null) {//ya se facturo la auorizacion(solo cobrar una cuota moderadora y copago)
+                CitAutorizaciones autorizacionActual = citaActual.getIdAutorizacion();
                 autorizacionActual.setFacturada(true);
                 autorizacionesFacade.edit(autorizacionActual);
-            }            
+            }
             citaActual = null;
         }
         if (turnoActual != null) {
@@ -1361,7 +1426,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
                 }
 
                 if (medicamentoFactura.getColumna30().compareTo("-1") != 0) {//ELIMINAR SI FORMABA PARTE DE CONSUMOS
-                    consumoServicioFacade.remove(consumoServicioFacade.find(Integer.parseInt(medicamentoFactura.getColumna30())));//            nuevaFila.setColumna30("-1");//COLUMNA 30 CONTIENE EL IDENTIFICADOR EN TABLA fac_consumo_servicio //como fue agreado desde la misma fatura no refiere a la tabla fac_consumo_servicio                    
+                    consumoMedicamentoFacade.remove(consumoMedicamentoFacade.find(Integer.parseInt(medicamentoFactura.getColumna30())));//            nuevaFila.setColumna30("-1");//COLUMNA 30 CONTIENE EL IDENTIFICADOR EN TABLA fac_consumo_servicio //como fue agreado desde la misma fatura no refiere a la tabla fac_consumo_servicio                    
                 }
                 facturaMedicamentoFacade.create(nuevoMedicamentoFactura);
             } catch (ParseException ex) {
@@ -1395,7 +1460,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
                 }
 
                 if (paqueteFactura.getColumna30().compareTo("-1") != 0) {//ELIMINAR SI FORMABA PARTE DE CONSUMOS
-                    consumoServicioFacade.remove(consumoServicioFacade.find(Integer.parseInt(paqueteFactura.getColumna30())));//            nuevaFila.setColumna30("-1");//COLUMNA 30 CONTIENE EL IDENTIFICADOR EN TABLA fac_consumo_servicio //como fue agreado desde la misma fatura no refiere a la tabla fac_consumo_servicio                    
+                    consumoPaqueteFacade.remove(consumoPaqueteFacade.find(Integer.parseInt(paqueteFactura.getColumna30())));//            nuevaFila.setColumna30("-1");//COLUMNA 30 CONTIENE EL IDENTIFICADOR EN TABLA fac_consumo_servicio //como fue agreado desde la misma fatura no refiere a la tabla fac_consumo_servicio                    
                 }
                 facturaPaqueteFacade.create(nuevoPaqueteFactura);
             } catch (ParseException ex) {
@@ -1428,7 +1493,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
                 }
 
                 if (insumoFactura.getColumna30().length() != 0 && insumoFactura.getColumna30().compareTo("-1") != 0) {//ELIMINAR SI FORMABA PARTE DE CONSUMOS
-                    consumoServicioFacade.remove(consumoServicioFacade.find(Integer.parseInt(insumoFactura.getColumna30())));//            nuevaFila.setColumna30("-1");//COLUMNA 30 CONTIENE EL IDENTIFICADOR EN TABLA fac_consumo_servicio //como fue agreado desde la misma fatura no refiere a la tabla fac_consumo_servicio                    
+                    consumoInsumoFacade.remove(consumoInsumoFacade.find(Integer.parseInt(insumoFactura.getColumna30())));//            nuevaFila.setColumna30("-1");//COLUMNA 30 CONTIENE EL IDENTIFICADOR EN TABLA fac_consumo_servicio //como fue agreado desde la misma fatura no refiere a la tabla fac_consumo_servicio                    
                 }
                 facturaInsumoFacade.create(nuevoInsumoFactura);
             } catch (ParseException ex) {
@@ -3181,6 +3246,54 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
 
     public void setMsjHtmlCuotaModeradora(String msjHtmlCuotaModeradora) {
         this.msjHtmlCuotaModeradora = msjHtmlCuotaModeradora;
+    }
+
+    public String getMsjHtmlAdministradoraPaciente() {
+        return msjHtmlAdministradoraPaciente;
+    }
+
+    public void setMsjHtmlAdministradoraPaciente(String msjHtmlAdministradoraPaciente) {
+        this.msjHtmlAdministradoraPaciente = msjHtmlAdministradoraPaciente;
+    }
+
+    public String getEstiloAdministradoraPaciente() {
+        return estiloAdministradoraPaciente;
+    }
+
+    public void setEstiloAdministradoraPaciente(String estiloAdministradoraPaciente) {
+        this.estiloAdministradoraPaciente = estiloAdministradoraPaciente;
+    }
+
+    public String getMsjHtmlBtnConsumos() {
+        return msjHtmlBtnConsumos;
+    }
+
+    public void setMsjHtmlBtnConsumos(String msjHtmlBtnConsumos) {
+        this.msjHtmlBtnConsumos = msjHtmlBtnConsumos;
+    }
+
+    public String getEstiloBtnConsumos() {
+        return estiloBtnConsumos;
+    }
+
+    public void setEstiloBtnConsumos(String estiloBtnConsumos) {
+        this.estiloBtnConsumos = estiloBtnConsumos;
+    }
+
+    public String getMsjHtmlTurnoCita() {
+        return msjHtmlTurnoCita;
+    }
+
+    public void setMsjHtmlTurnoCita(String msjHtmlTurnoCita) {
+        this.msjHtmlTurnoCita = msjHtmlTurnoCita;
+    }
+
+    public String getEstiloTurnoCita() {
+        return estiloTurnoCita;
+    }
+
+    public void setEstiloTurnoCita(String estiloTurnoCita) {
+        this.estiloTurnoCita = estiloTurnoCita;
     }
 
 }
