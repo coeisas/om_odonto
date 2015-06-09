@@ -4,6 +4,8 @@
 <NOTAS>
     SERVIDOR 431 038 342    
     
+    GIT     santosvaldesm@gmail.com
+            openmedical2015
     UPDATE    1) git > commit     2)git > Remote > pull     3)mergue     4)resolve conflicts si aparecen
     CONFIRM   1) git > commit     2)git > Remote > Push (seleccionar: Specify Git repository location) 3)Cuando aparece el mensaje: Remote repository contains commits..... Es por que otro usuario subio cambios por lo cual primero se debe actualizar       
 </NOTAS>

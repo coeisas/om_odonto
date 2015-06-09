@@ -92,6 +92,7 @@ public class AplicacionGeneralMB {
     private List<SelectItem> listaActoQuirurgico;
     private List<SelectItem> listaPersonalAtiende;
     private List<SelectItem> listaCausaExterna;
+    private List<SelectItem> listaClasificacionEvento;
     private List<SelectItem> listaMotivoConsulta;
     private List<SelectItem> listaMotivoCancelacionCitas;
     private List<CfgPerfilesUsuario> listaPerfilesUsuario;
@@ -134,6 +135,7 @@ public class AplicacionGeneralMB {
             cargarClasificacion(ClasificacionesEnum.Ambito);
             cargarClasificacion(ClasificacionesEnum.CategoriaPaciente);
             cargarClasificacion(ClasificacionesEnum.CausaExterna);
+            cargarClasificacion(ClasificacionesEnum.ClasificacionEvento);
             cargarClasificacion(ClasificacionesEnum.DPTO);
             cargarClasificacion(ClasificacionesEnum.Escolaridad);
             cargarClasificacion(ClasificacionesEnum.Etnia);
@@ -196,6 +198,9 @@ public class AplicacionGeneralMB {
                 break;
             case CausaExterna:
                 listaCausaExterna = cargarClasificacion(maestro.toString());
+                break;
+            case ClasificacionEvento:
+                listaClasificacionEvento = cargarClasificacion(maestro.toString());
                 break;
             case DPTO:
                 listaDepartamentos = cargarClasificacion(maestro.toString());
@@ -786,6 +791,14 @@ public class AplicacionGeneralMB {
 
     public void setListaCausaExterna(List<SelectItem> listaCausaExterna) {
         this.listaCausaExterna = listaCausaExterna;
+    }
+
+    public List<SelectItem> getListaClasificacionEvento() {
+        return listaClasificacionEvento;
+}
+
+    public void setListaClasificacionEvento(List<SelectItem> listaClasificacionEvento) {
+        this.listaClasificacionEvento = listaClasificacionEvento;
     }
 
 }
