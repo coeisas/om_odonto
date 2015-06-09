@@ -507,7 +507,7 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto", "La agenda fue creada"));
             RequestContext.getCurrentInstance().update(componentes);
 //            RequestContext.getCurrentInstance().execute("PF('dlgCrearTurno').hide()");
-            
+
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se crearon los turnos es posible que el rango de fecha corresponda a dias no laborales"));
         }
@@ -643,7 +643,7 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
         if (fechaFin.before(fechaIni)) {
             imprimirMensaje("Error", "La fecha final corresponde a una fecha anterior a la inicial", FacesMessage.SEVERITY_ERROR);
             return;
-        }        
+        }
         List estados = new ArrayList();//listado de los estados de los turnos de no eliminacion
         estados.add("asignado");
         estados.add("reservado");
@@ -657,9 +657,12 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
                     RequestContext.getCurrentInstance().update(listaComponentesActualizar);
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto", "Agenda eliminada"));
                     imprimirMensaje("Correcto", "Turnos eliminados", FacesMessage.SEVERITY_INFO);
-                } else {
+                } else if (result > 0) {
 //                    RequestContext.getCurrentInstance().update("formCrearAgenda:idCBeliminarAgenda");
-                    imprimirMensaje("Informacion", "Se eliminaron unicamente los turnos con estado disponible", FacesMessage.SEVERITY_WARN);
+                    imprimirMensaje("Informacion", "Se eliminaron unicamente los turnos que nunca han sido asignados a una cita", FacesMessage.SEVERITY_WARN);
+                } else {
+                    imprimirMensaje("Error", "Al menos un turno esta relacionado con una cita cancelada", FacesMessage.SEVERITY_ERROR);
+                    return;
                 }
                 loadEvents();
             } else {

@@ -40,4 +40,13 @@ public class FacAdministradoraFacade extends AbstractFacade<FacAdministradora> {
         }
     }
 
+    public List<FacAdministradora> buscarAdmiFaltanFacturar() {
+        try {
+            String hql = "SELECT a FROM FacAdministradora a WHERE a.anulada = FALSE and facturadaEnAmi = FALSE AND a.idAdministradora != 1";
+            return getEntityManager().createQuery(hql).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

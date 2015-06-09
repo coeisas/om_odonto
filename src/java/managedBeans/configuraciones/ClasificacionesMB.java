@@ -233,6 +233,9 @@ public class ClasificacionesMB extends MetodosGenerales implements Serializable 
         codigoCategoria = categoriaSeleccionada.getCodigo();
         descripcionCategoria = categoriaSeleccionada.getDescripcion();
         observacionCategoria = categoriaSeleccionada.getObservacion();
+        if (ClasificacionesEnum.convert(clasificacionSeleccionada.getMaestro()) != ClasificacionesEnum.NOVALUE) {//se recarga la categoria en aplicacionGeneralMB
+            aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.convert(clasificacionSeleccionada.getMaestro()));
+        }
         RequestContext.getCurrentInstance().update("IdFormDialogoEditarCategoria:IdPanelEditarCategoria");
         RequestContext.getCurrentInstance().execute("PF('dialogoEditarCategoria').show();");
     }
@@ -261,6 +264,9 @@ public class ClasificacionesMB extends MetodosGenerales implements Serializable 
             return;
         }
         categoriasFacade.remove(categoriaSeleccionada);
+        if (ClasificacionesEnum.convert(clasificacionSeleccionada.getMaestro()) != ClasificacionesEnum.NOVALUE) {//se recarga la categoria en aplicacionGeneralMB
+            aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.convert(clasificacionSeleccionada.getMaestro()));
+        }
         cargarListaCategorias();
         limpiarCategoria();
         imprimirMensaje("Correcto", "La categoría ha sido eliminada", FacesMessage.SEVERITY_INFO);

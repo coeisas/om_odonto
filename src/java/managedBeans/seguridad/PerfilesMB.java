@@ -1,5 +1,6 @@
 package managedBeans.seguridad;
 
+import beans.enumeradores.ClasificacionesEnum;
 import modelo.entidades.CfgOpcionesMenu;
 import modelo.entidades.CfgPerfilesUsuario;
 import modelo.entidades.CfgUsuarios;
@@ -18,6 +19,7 @@ import javax.faces.bean.SessionScoped;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import beans.utilidades.MetodosGenerales;
+import javax.faces.context.FacesContext;
 
 @ManagedBean(name = "perfilesMB")
 @SessionScoped
@@ -48,11 +50,13 @@ public class PerfilesMB extends MetodosGenerales implements Serializable {
     private TreeNode[] nodosSeleccionadosArbol;
     private ArrayList<DefaultTreeNode> nodosDelArbol = new ArrayList<>();
     private String nombreNuevoPerfil = "";
+    private AplicacionGeneralMB aplicacionGeneralMB;
 
     //---------------------------------------------------
     //----------------- FUNCIONES -------------------------
     //---------------------------------------------------    
     public PerfilesMB() {
+        aplicacionGeneralMB=FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{aplicacionGeneralMB}", AplicacionGeneralMB.class);
     }
 
     @PostConstruct
@@ -73,6 +77,7 @@ public class PerfilesMB extends MetodosGenerales implements Serializable {
         CfgPerfilesUsuario nuevoPerfil = new CfgPerfilesUsuario();
         nuevoPerfil.setNombrePerfil(nombreNuevoPerfil);
         perfilesFachada.create(nuevoPerfil);
+        aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.PerfilesUsuario);
         listaPerfilesEntidad = perfilesFachada.findAll();
         imprimirMensaje("Correcto", "Perfil creado correctamente", FacesMessage.SEVERITY_INFO);
         return 0;
@@ -170,6 +175,7 @@ public class PerfilesMB extends MetodosGenerales implements Serializable {
         }
         perfilEntidadSeleccionado.setCfgOpcionesMenuList(opcionesDelPerfil);//SE AGREGA EL LISTADO DE OPCIONES AL PERFIL SELECCIONADO        
         perfilesFachada.edit(perfilEntidadSeleccionado);//SE PERSISTE EL PERFIL
+        aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.PerfilesUsuario);
         imprimirMensaje("Correcto", "El perfil: " + nombrePerfilSeleccionado + " se ha actualizado correctamente", FacesMessage.SEVERITY_INFO);
         return 0;
     }
@@ -201,11 +207,12 @@ public class PerfilesMB extends MetodosGenerales implements Serializable {
         }
 
         perfilesFachada.remove(perfilEntidadSeleccionado);
+        aplicacionGeneralMB.cargarClasificacion(ClasificacionesEnum.PerfilesUsuario);
         nombrePerfilSeleccionado = "";
         perfilCargado = false;
         perfilEntidadSeleccionado = null;
         listaPerfilesEntidad = perfilesFachada.findAll();
-        imprimirMensaje("Correcto", "El perfil " + nombrePerfilSeleccionado + " se ha eliminado", FacesMessage.SEVERITY_ERROR);
+        imprimirMensaje("Correcto", "El perfil " + nombrePerfilSeleccionado + " se ha eliminado", FacesMessage.SEVERITY_INFO);
         return 0;
     }
 

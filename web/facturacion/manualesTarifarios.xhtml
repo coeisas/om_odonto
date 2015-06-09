@@ -20,7 +20,7 @@
                 <p:commandButton 
                     title="Nuevo Manual Tarifario" value="&nbsp;"
                     styleClass="icon-new fg-lightBlue bg-white no-border"
-                    actionListener="#{manualesTarifariosMB.limpiarFormularioManualesTarifarios}"
+                    actionListener="#{manualesTarifariosMB.clickBtnNuevoManual}"
                     oncomplete="PF('wvTabView').select(0);"
                     update=":IdFormManuales"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
@@ -40,7 +40,6 @@
                 <p:commandButton 
                     title="Guardar Manual Tarifario" value="&nbsp;"
                     styleClass="icon-floppy fg-lightBlue bg-white no-border" 
-                    oncomplete="PF('wvTabView').select(0);"
                     update=":IdFormManuales"
                     actionListener="#{manualesTarifariosMB.guardarManualTarifario}"                    
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>
@@ -48,7 +47,7 @@
                 <p:remoteCommand name="remoteCommand"  update=":IdFormManuales" />
             </div>
             <br/>            
-            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView" dynamic="true">  
+            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView" dynamic="true" rendered="#{manualesTarifariosMB.mostrarTabView}">  
                 <p:tab title="#{manualesTarifariosMB.tituloTabManual}">  
                     <br/>
                     <table style="margin-left: auto; margin-right: auto;" >                         

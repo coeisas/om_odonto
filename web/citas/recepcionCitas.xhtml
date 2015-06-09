@@ -52,8 +52,8 @@
                 </table>
             </p:panel>
             <br/>
-            <p:schedule id="agenda" rendered="#{agendaRecepcionMB.renderAgenda}" draggable="false" resizable="false" value="#{agendaRecepcionMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" view="agendaDay" rightHeaderTemplate="agendaDay" leftHeaderTemplate="today" minTime="#{agendaRecepcionMB.minTime}" maxTime="#{agendaRecepcionMB.maxTime}" timeFormat="hh:mm" allDaySlot="false">
-                <p:ajax event="eventSelect" listener="#{agendaRecepcionMB.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show();"/>
+            <p:schedule id="agenda" rendered="#{agendaRecepcionMB.renderAgenda}" draggable="false" resizable="false" value="#{agendaRecepcionMB.evenModel}" widgetVar="agendawv" minTime="#{agendaRecepcionMB.minTime}" maxTime="#{agendaRecepcionMB.maxTime}" locale="es" timeZone="America/Bogota" view="agendaDay" rightHeaderTemplate="agendaDay" timeFormat="hh:mm" allDaySlot="false" >
+                <p:ajax event="eventSelect" listener="#{agendaRecepcionMB.onEventSelect}"/>
             </p:schedule> 
             <p:dialog id="pdialog" widgetVar="eventDialog" header="Detalles de la cita" modal="true" resizable="false">                
                 <p:panel id="eventDetails" style="border: none;">  

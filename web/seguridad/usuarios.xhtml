@@ -64,9 +64,9 @@
                                     </p:dialog>
                                     <p:dialog id="upload1" widgetVar="dlgUploadFoto" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
                                         <p:fileUpload 
-                                            fileUploadListener="#{usuariosMB.uploadFoto}" sizeLimit="204800" auto="true"
+                                            fileUploadListener="#{usuariosMB.uploadFoto}" sizeLimit="5000000" auto="true"
                                             update="IdFoto" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
-                                            mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar" />                            
+                                            mode="advanced" label="Seleccionar" uploadLabel="Enviar" cancelLabel="Cancelar" />                            
                                         <br/>
                                         <br/>
                                         <p:commandButton type="button" value="Cerrar" onclick="PF('dlgUploadFoto').hide()"/>
@@ -76,7 +76,7 @@
                                     <p:commandButton id="cmdUploadFirma" value="&nbsp;" icon="ui-icon-folder-open" onclick="PF('dlgUploadFirma').show()" type="button" title="Upload Archivo firma" />
                                     <p:dialog id="upload2" widgetVar="dlgUploadFirma" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
                                         <p:fileUpload 
-                                            fileUploadListener="#{usuariosMB.uploadFirma}" sizeLimit="204800" auto="true"
+                                            fileUploadListener="#{usuariosMB.uploadFirma}" sizeLimit="5000000" auto="true"
                                             update="IdFirma" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
                                             mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar"/>                            
                                         <br/>
@@ -129,9 +129,9 @@
                             <td colspan="2">
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Dirección"/>                                            
                                 <p:inputText styleClass="campoFormulario" size="33" value="#{usuariosMB.direccion}"/>
-                                <p:outputLabel styleClass="campoNoObligatorio" value="Teléfono"/>                                            
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tel. residencia"/>                                            
                                 <p:inputText styleClass="campoFormulario" size="10" value="#{usuariosMB.telefonoResidencia}"/>
-                                <p:outputLabel styleClass="campoNoObligatorio" value="Celular"/>                                            
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Tel. oficina"/>                                            
                                 <p:inputText styleClass="campoFormulario" size="10" value="#{usuariosMB.telefonoOficina}"/>
                             </td>
                         </tr>

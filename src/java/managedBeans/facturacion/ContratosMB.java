@@ -122,9 +122,10 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
     //---------------------------------------------------      
     public void inicializar() {
         if (contratoSeleccionado != null) {
-            limpiarFormularioContratos();
             contratoSeleccionadoTabla = contratoSeleccionado;
             cargarContrato();
+        } else {
+            limpiarFormularioContratos();
         }
     }
 
@@ -134,12 +135,23 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
     //---------------------------------------------------
     //-----------------FUNCIONES CONTRATOS --------------
     //--------------------------------------------------- 
+    public void btnNuevoContrato(){
+        contratoSeleccionado=null;
+        limpiarFormularioContratos();
+    }
+    
     public void limpiarFormularioContratos() {
         listaProgramas = new ArrayList<>();
         programaSeleccionado = null;
         idContratoACopiar = "";
         listaContratos = contratoFacade.buscarOrdenado();
-        listaManuales = manualTarifarioFacade.buscarOrdenado();
+        listaManuales = manualTarifarioFacade.buscarNoAsociados();
+        if (listaManuales == null) {//agregar manual 
+            listaManuales = new ArrayList<>();
+        }
+        if (contratoSeleccionado!=null && contratoSeleccionado.getIdManualTarifario() != null) {
+            listaManuales.add(contratoSeleccionado.getIdManualTarifario());
+        }
         tituloTabContratos = "Nuevo Contrato";
         tituloTabProgramas = "Programas (0)";
         contratoSeleccionado = null;
@@ -198,7 +210,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
     public void recargarSiHaySeleccionado() {
         //se usa esta funcion cuando se crea un manua tarifario y al volver a contratos esten cargados los datos
         //if (contratoSeleccionado != null) {
-        listaManuales = manualTarifarioFacade.buscarOrdenado();
+        listaManuales = manualTarifarioFacade.buscarNoAsociados();
         //}
     }
 
@@ -226,6 +238,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
             imprimirMensaje("Error", "No se ha seleccionado ningún contrato de la tabla", FacesMessage.SEVERITY_ERROR);
             return;
         }
+        contratoSeleccionado=contratoSeleccionadoTabla;
         limpiarFormularioContratos();
         contratoSeleccionado = contratoFacade.find(contratoSeleccionadoTabla.getIdContrato());
         codigo = contratoSeleccionado.getCodigoContrato();

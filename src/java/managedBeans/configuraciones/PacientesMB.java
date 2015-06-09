@@ -225,7 +225,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
             urlFirma = firmaPorDefecto;
         }
         if (pacienteSeleccionado.getFoto() != null) {
-            urlFoto = pacienteSeleccionado.getFoto().getUrlImagen();
+            urlFoto = "../imagenesOpenmedical/" +pacienteSeleccionado.getFoto().getUrlImagen();
         } else {
             urlFoto = fotoPorDefecto;
         }

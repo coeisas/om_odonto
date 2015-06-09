@@ -70,7 +70,7 @@
                                     </p:dialog>
                                     <p:dialog id="upload1" widgetVar="dlgUploadFoto" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
                                         <p:fileUpload 
-                                            fileUploadListener="#{pacientesMB.uploadFoto}" sizeLimit="204800" auto="true"
+                                            fileUploadListener="#{pacientesMB.uploadFoto}" sizeLimit="5000000" auto="true"
                                             update="IdFoto" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
                                             mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar" />                            
                                         <br/>
@@ -82,7 +82,7 @@
                                     <p:commandButton id="cmdUploadFirma" value="&nbsp;" icon="ui-icon-folder-open" onclick="PF('dlgUploadFirma').show()" type="button" title="Upload Archivo firma" />
                                     <p:dialog id="upload2" widgetVar="dlgUploadFirma" modal="true" dynamic="true" resizable="false" showHeader="false" closable="false" >
                                         <p:fileUpload 
-                                            fileUploadListener="#{pacientesMB.uploadFirma}" sizeLimit="204800" auto="true"
+                                            fileUploadListener="#{pacientesMB.uploadFirma}" sizeLimit="5000000" auto="true"
                                             update="IdFirma" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" oncomplete="dlgUpload.hide();"
                                             mode="advanced" label="Selecionar" uploadLabel="Enviar" cancelLabel="Cancelar"/>                            
                                         <br/>

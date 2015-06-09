@@ -74,8 +74,7 @@ public class PaginaInformativaMB extends MetodosGenerales implements Serializabl
             imprimirMensaje("Error", "Se debe seleccionar un registro de la tabla: ", FacesMessage.SEVERITY_ERROR);
             return;
         }
-        RequestContext.getCurrentInstance().execute("window.parent.cargarTab('Historias Clínicas','historias/historias.xhtml','idCita;" + citaSeleccionadaTabla.getIdCita().toString() + "')");
-
+        RequestContext.getCurrentInstance().execute("window.parent.cargarTab('Historias Clinicas','historias/historias.xhtml','idCita;" + citaSeleccionadaTabla.getIdCita().toString() + "')");        
     }
 
     private void crearGraficoFacturacion() {
@@ -110,7 +109,7 @@ public class PaginaInformativaMB extends MetodosGenerales implements Serializabl
                 pastelFacturacion.set(datoGraficoFacturacion.getNombreAdministradora(), datoGraficoFacturacion.getValorFactura());
                 //System.out.println("Se saca en el pastel : "+datoGraficoFacturacion.getNombreAdministradora()+ " - "+datoGraficoFacturacion.getValorFactura());
             }
-            configurarGrafico(pastelFacturacion, "Total pendiende de cobro a administradoras: " + formateadorDecimal.format(total), "e", true, true, 330);
+            configurarGrafico(pastelFacturacion, "Total pendiente de cobro a administradoras: " + formateadorDecimal.format(total), "e", true, true, 330);
         }
     }
 

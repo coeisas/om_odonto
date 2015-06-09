@@ -93,14 +93,15 @@
                         <p:selectOneMenu id="idSelectPaquetes" styleClass="campoFormulario" value="#{citasMasivasV3MB.idPaquete}">
                             <f:selectItem itemValue="#{null}" itemLabel="..."/>
                             <f:selectItems value="#{citasMasivasV3MB.listaPaquetes}"/>
-                            <p:ajax event="change" listener="#{citasMasivasV3MB.determinarAutorizacionParaPaquete}" update="@none" />
+                            <p:ajax event="change" listener="#{citasMasivasV3MB.determinarAutorizacionParaPaquete(true)}" update="@none" />
                         </p:selectOneMenu>
                         <p:outputLabel value="Fecha Inicial:" styleClass="labelFormularioBold"/>
-                        <p:calendar navigator="true" id="fechIni" widgetVar="calwidgetini"  mindate="calwidgetini.today()" value="#{citasMasivasV3MB.fechaInicial}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="12" styleClass="campoFormulario"/>                                
+                        <p:calendar navigator="true" id="fechIni" widgetVar="calwidgetini" value="#{citasMasivasV3MB.fechaInicial}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="12" styleClass="campoFormulario"/>                                
                         <p:outputLabel value="Fecha Final:" styleClass="labelFormularioBold"/>                            
-                        <p:calendar navigator="true" id="fechFin" widgetVar="calwidgetfin" mindate="calwidgetfin.today()" value="#{citasMasivasV3MB.fechaFinal}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="12" styleClass="campoFormulario"/>
+                        <p:calendar navigator="true" id="fechFin" widgetVar="calwidgetfin" value="#{citasMasivasV3MB.fechaFinal}" locale="es" maxlength="10" timeZone="America/Bogota" pattern="dd/MM/yyyy" mask="99/99/9999" size="12" styleClass="campoFormulario"/>
                         <p:outputLabel value="Hora:" styleClass="labelFormularioBold"/>                            
                         <p:calendar timeOnly="true" id="horaini" widgetVar="calwidgethora" value="#{citasMasivasV3MB.horaInicial}" locale="es" timeZone="America/Bogota" pattern="HH:mm" mask="99:99" size="7" styleClass="campoFormulario"/>
+                        <p:commandButton id="idButtonVerAutorizacion" icon="ui-icon-newwin" styleClass="campoFormulario" title="Ver Autorizacion" value="Ver Autorizacion" actionListener="#{citasMasivasV3MB.verAutorizacion()}"/>
                         <p:commandButton id="idButtonVerTurnos" styleClass="campoFormulario" icon="ui-icon-calendar" title="Ver Turnos" value="Ver Turnos" actionListener="#{citasMasivasV3MB.buscarDiponibilidad()}"/>
                     </p:column>
                 </p:row>

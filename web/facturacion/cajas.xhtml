@@ -14,50 +14,43 @@
     </h:head>
     <h:body>     
         <h:form id="IdFormCajas">              
-            <p:growl id="IdMensajeCajas"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
-            <div style="margin: 15px;">
-                <p:outputLabel styleClass="labelFormularioBold" value="Sede: "/>
-                <p:selectOneMenu styleClass="campoFormulario" value="#{cajasMB.idSedeSeleccionada}" style="width: 200px;" filter="true" filterMatchMode="contains">
-                    <f:ajax event="change" listener="#{cajasMB.cambiaSede}" render="IdFormCajas"/>
-                    <f:selectItem itemLabel=""/>
-                    <f:selectItems value="#{aplicacionGeneralMB.listaSedes}"/>
-                </p:selectOneMenu>
-            </div>            
+            <p:growl id="IdMensajeCajas"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
+            <br/>
             <div>
-                <p:commandButton 
-                    rendered="#{cajasMB.mostrarControlesCajas}"
+                <p:commandButton                     
                     title="Nueva caja" value="&nbsp;"                                        
                     styleClass="icon-new fg-lightBlue bg-white no-border"
-                    actionListener="#{cajasMB.limpiarFormularioCajas}"
+                    actionListener="#{cajasMB.clickBtnNuevaCaja}"
                     update=":IdFormCajas"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
                 <p:commandButton 
-                    rendered="#{cajasMB.mostrarControlesCajas}"
                     title="Buscar caja" value="&nbsp;"                                        
                     styleClass="icon-search fg-lightBlue bg-white no-border"                     
                     actionListener="#{cajasMB.buscarCaja}"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
-                <p:commandButton                     
-                    rendered="#{cajasMB.mostrarControlesCajas}"
+                <p:commandButton 
                     title="Eliminar caja" value="&nbsp;"                                        
                     styleClass="icon-cancel fg-lightBlue bg-white no-border"  
                     actionListener="#{cajasMB.eliminarCaja}"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
                 <p:commandButton 
-                    rendered="#{cajasMB.mostrarControlesCajas}"
                     title="Guardar/Actualizar caja" value="&nbsp;"
                     styleClass="icon-floppy fg-lightBlue bg-white no-border" 
                     actionListener="#{cajasMB.guardarCaja}"                    
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>  
             </div>
             <br/>
-            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" rendered="#{cajasMB.mostrarControlesCajas}">                 
+            <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;" rendered="#{cajasMB.mostrarTabView}">                 
                 <p:tab title="#{cajasMB.tituloTabCaja}">                    
                     <br/>
                     <p:panelGrid id="IdPanelEditarCaja" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;">                    
+                        <p:outputLabel styleClass="campoObligatorio" value="Sede: "/>
+                        <p:selectOneMenu styleClass="campoFormulario" value="#{cajasMB.idSedeSeleccionada}" style="width: 200px;" filter="true" filterMatchMode="contains">                            
+                            <f:selectItems value="#{aplicacionGeneralMB.listaSedes}"/>
+                        </p:selectOneMenu>
                         <p:outputLabel styleClass="campoObligatorio" value="Código"/>
                         <p:inputText   value="#{cajasMB.codigoCaja}" size="35" maxlength="10" />                    
                         <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>

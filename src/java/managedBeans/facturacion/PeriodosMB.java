@@ -163,7 +163,7 @@ public class PeriodosMB extends MetodosGenerales implements Serializable {
     public void guardarPeriodo() {
         if (periodoSeleccionado == null) {
             if (periodoFacade.buscarPorNombre(determinarNombre(anio, mes)) != null) {
-                imprimirMensaje("Error", "Ya existe un periodo con igual este año y mes", FacesMessage.SEVERITY_ERROR);
+                imprimirMensaje("Error", "Ya existe un periodo con igual año y mes", FacesMessage.SEVERITY_ERROR);
                 return;
             }
             guardarNuevoPeriodo();

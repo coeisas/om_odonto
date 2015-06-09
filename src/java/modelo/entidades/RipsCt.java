@@ -39,14 +39,14 @@ public class RipsCt implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected RipsCtPK ripsCtPK;
-    @Size(max = 10)
-    @Column(name = "cod_pres", length = 10)
+    @Size(max = 12)
+    @Column(name = "cod_pres", length = 12)
     private String codPres;
     @Column(name = "fec_rem")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecRem;
-    @Size(max = 8)
-    @Column(name = "cod_arc", length = 8)
+    @Size(max = 20)
+    @Column(name = "cod_arc", length = 20)
     private String codArc;
     @Column(name = "total_reg")
     private Integer totalReg;

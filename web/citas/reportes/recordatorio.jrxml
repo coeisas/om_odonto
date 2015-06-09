@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="396" columnWidth="532" leftMargin="40" rightMargin="40" topMargin="20" bottomMargin="20" uuid="895d6443-2e83-4803-a66f-f95662aeb46e">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="233"/>
+	<property name="ireport.y" value="25"/>
 	<parameter name="user" class="java.lang.String"/>
 	<parameter name="logoEmpresa" class="java.lang.String"/>
 	<field name="empresa" class="java.lang.String"/>
@@ -145,7 +145,7 @@
 				<textFieldExpression><![CDATA[$F{consultorio}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="23">
+		<band height="97">
 			<staticText>
 				<reportElement x="0" y="0" width="48" height="20" uuid="568f6ea0-3111-4c4c-b281-86f284958f81"/>
 				<textElement verticalAlignment="Middle">

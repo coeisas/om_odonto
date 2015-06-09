@@ -118,7 +118,9 @@ public class AgendaPrestadorMB extends MetodosGenerales implements Serializable 
         } else {
             evenModel = null;
             setRendAgenda(false);
-            imprimirMensaje("Informacion", "No tiene agenda para esta sede", FacesMessage.SEVERITY_WARN);
+            if (actualizarDesdeHistorias) {
+                imprimirMensaje("Informacion", "No tiene agenda para esta sede", FacesMessage.SEVERITY_WARN);
+            }
         }
     }
 
@@ -184,7 +186,10 @@ public class AgendaPrestadorMB extends MetodosGenerales implements Serializable 
         RequestContext.getCurrentInstance().execute("window.parent.cargarTab('Historias Clinicas','historias/historias.xhtml','idCita;" + citCita.getIdCita().toString() + "')");
     }
 
+    boolean actualizarDesdeHistorias;
+
     public void actualizarAutorizaciones(CitCitas cita) {
+        actualizarDesdeHistorias = true;
         //si el servicio requiere autorizacion y la administradora es diferente a particular
         if (cita.getIdServicio().getAutorizacion() && !cita.getIdAdministradora().getCodigoAdministradora().equals("1")) {
             if (cita.getIdAutorizacion() == null) {
@@ -211,12 +216,14 @@ public class AgendaPrestadorMB extends MetodosGenerales implements Serializable 
                 autorizacionesFacade.edit(autorizaciones);
             }
         }
-        citasFacade.edit(citCita);
+        citasFacade.edit(cita);
         CitTurnos ct = cita.getIdTurno();
         ct.setEstado("atendido");
         turnosfacade.edit(ct);
         loadEvents();
+
         RequestContext.getCurrentInstance().update("formAgendaPrestador:agenda");
+        actualizarDesdeHistorias = false;
 //            RequestContext.getCurrentInstance().execute("PF('eventDialog').hide()");
 //            imprimirMensaje("Correcto", "Cita " + citCita.getIdCita() + " Atendida", FacesMessage.SEVERITY_INFO);
     }

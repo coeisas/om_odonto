@@ -22,7 +22,7 @@ public class RipsUsFacade extends AbstractFacade<RipsUs> {
 
     public RipsUs buscarPorIdAlmacenadoYIdentificacion(int idRipAlmacenado, String numIde) {
         try {
-            String hql = "SELECT c FROM RipsUs c WHERE c.RipsUsPK.idRipAlmacenado = :idRipAlmacenado AND c.numIde = :numIde";
+            String hql = "SELECT c FROM RipsUs c WHERE c.ripsUsPK.idRipAlmacenado = :idRipAlmacenado AND c.numIde = :numIde";
             return (RipsUs) getEntityManager().createQuery(hql).setParameter("idRipAlmacenado", idRipAlmacenado).setParameter("numIde", numIde).getSingleResult();
         } catch (Exception e) {
             return null;

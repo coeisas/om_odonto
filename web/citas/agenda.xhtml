@@ -10,6 +10,7 @@
         <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
         <link href="../recursos/css/iconFont.css" rel="stylesheet"/>        
         <script type="text/javascript">
+/*
             var identificadorIntervalo;
             function Repetir() {
                 rcRecargarAgenda();
@@ -20,10 +21,10 @@
             function PararIntervalo() {
                 clearInterval(identificadorIntervalo);
             }
-
+*/
         </script>
     </h:head>
-    <h:body onload="IniciarIntervalo()">
+    <h:body>
         <!-- AGENDA CORRESPONDEIENTE AL MEDICO -->
         #{agendaPrestadorMB.loadEvents()}
         <!-- p:commandButton value="Recargar Agenda" icon="ui-icon-arrowrefresh-1-s" actionListener="# {agendaPrestadorMB.loadEvents()}" update=":formAgendaPrestador:agenda"/ -->        
@@ -37,9 +38,9 @@
                 <table>
                     <tr>
                         <td><p:outputLabel value="Asignado"/></td>
-                        <td><div class="asignado" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
-                        <td><p:outputLabel value="En espera" /></td>
                         <td><div class="no_atendido" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <td><p:outputLabel value="En Espera" /></td>
+                        <td><div class="en_espera" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
                         <td><p:outputLabel value="Libre"/></td>
                         <td><div class="libre" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
                         <td><p:outputLabel value="Atendido"/></td>
@@ -48,14 +49,14 @@
                 </table>
             </p:panel>
             <br/>
-            <p:schedule id="agenda" rendered="#{agendaPrestadorMB.rendAgenda}" draggable="false" resizable="false" value="#{agendaPrestadorMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" view="agendaDay" rightHeaderTemplate="agendaDay" leftHeaderTemplate="today" minTime="#{agendaPrestadorMB.minTime}" maxTime="#{agendaPrestadorMB.maxTime}" timeFormat="hh:mm" allDaySlot="false">
-                <p:ajax event="eventSelect" listener="#{agendaPrestadorMB.onEventSelect}" update="eventDetails" oncomplete="PF('eventDialog').show(); PararIntervalo();"/>
+            <p:schedule id="agenda" rendered="#{agendaPrestadorMB.rendAgenda}" draggable="false" resizable="false" value="#{agendaPrestadorMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" view="agendaDay" rightHeaderTemplate="agendaDay" minTime="#{agendaPrestadorMB.minTime}" maxTime="#{agendaPrestadorMB.maxTime}" timeFormat="hh:mm" allDaySlot="false">
+                <p:ajax event="eventSelect" listener="#{agendaPrestadorMB.onEventSelect}"/>
             </p:schedule> 
             <p:dialog id="pdialog" widgetVar="eventDialog" header="Detalles de la cita" modal="true" resizable="false">
-                <p:ajax event="close" oncomplete="IniciarIntervalo();"/>
+                <p:ajax event="close"/>
                 <h:panelGrid id="eventDetails" columns="2">
                     <p:outputLabel for="title" value="Id turno:" />
-                    <p:inputText id="title" value="#{agendaPrestadorMB.event.title}" required="true" readonly="true" size="60"/>
+                    <p:inputText id="title" value="#{agendaPrestadorMB.idTurno}" required="true" readonly="true" size="60"/>
                     <p:outputLabel for="paciente" value="Paciente:" rendered="#{agendaPrestadorMB.rend}"/>
                     <p:inputText rendered="#{agendaPrestadorMB.rend}" readonly="true" id="paciente" value="#{agendaPrestadorMB.citCita.idPaciente.nombreCompleto()}" size="60"/>
                     <p:outputLabel  rendered="#{agendaPrestadorMB.rend}" for="administradora" value="Administradora:"/>

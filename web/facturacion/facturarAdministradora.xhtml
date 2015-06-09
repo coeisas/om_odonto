@@ -93,7 +93,7 @@
                         value="#{facturarAdministradoraMB.listaServiciosFactura}" 
                         filteredValue="#{facturarAdministradoraMB.listaServiciosFacturaFiltro}"
                         rowKey="#{servicioFactura.columna1}"  
-                        selection="#{facturarAdministradoraMB.servicioFacturaSeleccionado}"                                     
+
                         paginator="true"
                         paginatorPosition="bottom"                                
                         emptyMessage="No hay servicios"
@@ -104,7 +104,6 @@
                         currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         pageLinks="5"
-                        selectionMode="single"
                         resizableColumns="true">                                                                                               
                         <f:facet name="header">
                             SERVICIOS
@@ -115,10 +114,10 @@
                         <p:column headerText="IDENTIFICACION" width="100" filterBy="#{servicioFactura.columna3}" filterMatchMode="contains">
                             #{servicioFactura.columna3}
                         </p:column>
-                        <p:column headerText="PACIENTE" width="300" filterBy="#{servicioFactura.columna4}" filterMatchMode="contains">
+                        <p:column headerText="PACIENTE" width="200" filterBy="#{servicioFactura.columna4}" filterMatchMode="contains">
                             #{servicioFactura.columna4}
                         </p:column>
-                        <p:column headerText="SERVICIO" width="200" filterBy="#{servicioFactura.columna5}" filterMatchMode="contains">
+                        <p:column headerText="SERVICIO" width="300" filterBy="#{servicioFactura.columna5}" filterMatchMode="contains">
                             #{servicioFactura.columna5}
                         </p:column>
                         <p:column headerText="CANTIDAD" width="50" filterBy="#{servicioFactura.columna6}" filterMatchMode="contains">
@@ -128,8 +127,27 @@
                             #{servicioFactura.columna7}
                         </p:column>                                    
                     </p:dataTable>  
+                    <table>
+                        <tr>
+                            <td>
+                                <p:commandButton value="Observaciones Factura" onclick="PF('dialogoObservacionesFactura').show()"/>
+                            </td>                            
+                            <td style="#{facturarAdministradoraMB.estiloNotas}">                               
+                                <p:outputLabel id="IdNotaNoCerradas" value="#{facturarAdministradoraMB.notaNoCerradas}" escape="false"/>                               
+                                <p:tooltip for="IdNotaNoCerradas" style="width: 200px;" value="
+                                           Solo se agregan aquellas facturas 
+                                           con autorizaciones cerradas(o sea se aplicaron
+                                           todos los servicios contenidos en la autorización)" escape="false" />                            
+                                <p:outputLabel id="IdNotaFueraRango" value="#{facturarAdministradoraMB.notaFueraRango}" escape="false"/>                               
+                                <p:tooltip for="IdNotaFueraRango" style="width: 200px;" value="
+                                           Las facturas fuera de rango corresponden a aquellas que
+                                           no están dentro del rango de fechas especificado actualmente
+                                           pero tienen igual número de autorización que una factura que si
+                                           esta en este rango." escape="false" />                            
+                            </td>
+                        </tr>
+                    </table>
 
-                    <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
                 </p:tab>
                 <p:tab title="#{facturarAdministradoraMB.tituloTabPaquetesFactura}">
 
@@ -139,8 +157,7 @@
                         widgetVar="wvTablaPaquetesFactura"
                         value="#{facturarAdministradoraMB.listaPaquetesFactura}" 
                         filteredValue="#{facturarAdministradoraMB.listaPaquetesFacturaFiltro}"
-                        rowKey="#{paqueteFactura.columna1}"  
-                        selection="#{facturarAdministradoraMB.paqueteFacturaSeleccionado}" 
+                        rowKey="#{paqueteFactura.columna1}"                          
                         paginator="true"
                         scrollWidth="100%"
                         scrollHeight="175"
@@ -151,7 +168,6 @@
                         currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         pageLinks="5"
-                        selectionMode="single"
                         resizableColumns="true">                                                                                               
                         <f:facet name="header">
                             PAQUETES
@@ -165,7 +181,7 @@
                         <p:column headerText="PACIENTE" width="200" filterBy="#{paqueteFactura.columna4}" filterMatchMode="contains">
                             #{paqueteFactura.columna4}
                         </p:column>                                    
-                        <p:column headerText="PAQUETE" width="200" filterBy="#{paqueteFactura.columna5}" filterMatchMode="contains">
+                        <p:column headerText="PAQUETE" width="300" filterBy="#{paqueteFactura.columna5}" filterMatchMode="contains">
                             #{paqueteFactura.columna5}
                         </p:column>
                         <p:column headerText="CANTIDAD" width="50" filterBy="#{paqueteFactura.columna6}" filterMatchMode="contains">
@@ -186,7 +202,6 @@
                         value="#{facturarAdministradoraMB.listaMedicamentosFactura}" 
                         filteredValue="#{facturarAdministradoraMB.listaMedicamentosFacturaFiltro}"
                         rowKey="#{medicamentoFactura.columna1}"  
-                        selection="#{facturarAdministradoraMB.medicamentoFacturaSeleccionado}" 
                         paginator="true"
                         scrollWidth="100%"
                         scrollHeight="175"
@@ -197,7 +212,6 @@
                         currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         pageLinks="5"
-                        selectionMode="single"
                         resizableColumns="true">                                                                                               
                         <f:facet name="header">
                             MEDICAMENTOS
@@ -208,10 +222,10 @@
                         <p:column headerText="IDENTIFICACION" width="100" filterBy="#{medicamentoFactura.columna3}" filterMatchMode="contains">
                             #{medicamentoFactura.columna3}
                         </p:column>                                   
-                        <p:column headerText="PACIENTE" width="300" filterBy="#{medicamentoFactura.columna4}" filterMatchMode="contains">
+                        <p:column headerText="PACIENTE" width="200" filterBy="#{medicamentoFactura.columna4}" filterMatchMode="contains">
                             #{medicamentoFactura.columna4}
                         </p:column>                                   
-                        <p:column headerText="MEDICAMENTO" width="200" filterBy="#{medicamentoFactura.columna5}" filterMatchMode="contains">
+                        <p:column headerText="MEDICAMENTO" width="300" filterBy="#{medicamentoFactura.columna5}" filterMatchMode="contains">
                             #{medicamentoFactura.columna5}
                         </p:column>                                   
                         <p:column headerText="CANTIDAD" width="50" filterBy="#{medicamentoFactura.columna6}" filterMatchMode="contains">
@@ -232,7 +246,6 @@
                         value="#{facturarAdministradoraMB.listaInsumosFactura}" 
                         filteredValue="#{facturarAdministradoraMB.listaInsumosFacturaFiltro}"
                         rowKey="#{insumoFactura.columna1}"  
-                        selection="#{facturarAdministradoraMB.insumoFacturaSeleccionado}" 
                         paginator="true"
                         scrollWidth="100%"
                         scrollHeight="175"
@@ -243,7 +256,6 @@
                         currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                         pageLinks="5"
-                        selectionMode="single"
                         resizableColumns="true">                                                                                               
                         <f:facet name="header">
                             INSUMOS
@@ -254,10 +266,10 @@
                         <p:column headerText="IDENTIFICACION" width="100" filterBy="#{insumoFactura.columna3}" filterMatchMode="contains">
                             #{insumoFactura.columna3}
                         </p:column>
-                        <p:column headerText="PACIENTE" width="300" filterBy="#{insumoFactura.columna4}" filterMatchMode="contains">
+                        <p:column headerText="PACIENTE" width="200" filterBy="#{insumoFactura.columna4}" filterMatchMode="contains">
                             #{insumoFactura.columna4}
                         </p:column>
-                        <p:column headerText="INSUMO" width="200" filterBy="#{insumoFactura.columna5}" filterMatchMode="contains">
+                        <p:column headerText="INSUMO" width="300" filterBy="#{insumoFactura.columna5}" filterMatchMode="contains">
                             #{insumoFactura.columna5}
                         </p:column>
                         <p:column headerText="CANTIDAD" width="50" filterBy="#{insumoFactura.columna6}" filterMatchMode="contains">
@@ -324,7 +336,7 @@
                     currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                     pageLinks="5">                    
-                    <p:ajax event="rowSelect" listener="#{facturarAdministradoraMB.seleccionFilaBuscarFactura}" update=":IdFormFacturacion:IdBtnPdfFactura :IdFormFacturacion:IdBtnPdfFactura2 :IdFormFacturacion:IdBtnAnularFactura" />
+                    <p:ajax event="rowSelect" listener="#{facturarAdministradoraMB.seleccionFilaBuscarFactura}" update=":IdFormFacturacion:IdBtnPdfFactura :IdFormFacturacion:IdBtnPdfFactura2 :IdFormFacturacion:IdBtnAnularFactura :IdFormFacturacion:IdBtnRips"/>
                     <p:column headerText="FECHA" width="95"> 
                         #{factura.columna2}
                     </p:column>  
@@ -342,9 +354,12 @@
                     </p:column>
                 </p:dataTable>
                 <br/>                
-                <p:commandButton id="IdBtnPdfFactura"    disabled="#{facturarAdministradoraMB.disableControlesBuscarFactura}" icon="ui-icon-document" value="PDF Detallada" actionListener="#{facturarAdministradoraMB.generarPdfDetallada}" ajax="false" onclick="this.form.target = '_blank'" widgetVar="wvBtnPdfFactura"/>
-                <p:commandButton id="IdBtnPdfFactura2"    disabled="#{facturarAdministradoraMB.disableControlesBuscarFactura}" icon="ui-icon-document" value="PDF Agrupada" actionListener="#{facturarAdministradoraMB.generarPdfAgrupada}" ajax="false" onclick="this.form.target = '_blank'" widgetVar="wvBtnPdfFactura"/>
-                <p:commandButton id="IdBtnAnularFactura" disabled="#{facturarAdministradoraMB.disableControlesBuscarFactura}" icon="ui-icon-cancel"   value="Anular" actionListener="#{facturarAdministradoraMB.anularFactura}" update="IdMensajeFacturacion"/>
+                <p:commandButton id="IdBtnPdfFactura"    disabled="#{facturarAdministradoraMB.facturaSeleccionadaTabla==null}" icon="ui-icon-document" value="PDF Detallada" actionListener="#{facturarAdministradoraMB.generarPdfDetallada}" ajax="false" onclick="this.form.target = '_blank'" widgetVar="wvBtnPdfFactura"/>
+                <p:commandButton id="IdBtnPdfFactura2"   disabled="#{facturarAdministradoraMB.facturaSeleccionadaTabla==null}" icon="ui-icon-document" value="PDF Agrupada" actionListener="#{facturarAdministradoraMB.generarPdfAgrupada}" ajax="false" onclick="this.form.target = '_blank'" widgetVar="wvBtnPdfFactura"/>
+                <p:commandButton id="IdBtnAnularFactura" disabled="#{facturarAdministradoraMB.facturaSeleccionadaTabla==null}" icon="ui-icon-cancel"   value="Anular" actionListener="#{facturarAdministradoraMB.anularFactura}" update="IdMensajeFacturacion"/>
+                <p:commandButton id="IdBtnRips"          disabled="#{facturarAdministradoraMB.facturaSeleccionadaTabla==null}" icon="ui-icon-triangle-1-s"   value="RIPS" ajax="false">
+                    <p:fileDownload value="#{ripsMB.generarZipfacturaAdministradora()}" />
+                </p:commandButton>
                 <br/>                
             </p:dialog>              
             <p:dialog id="IdDialogoGuardarFactura" header="CONFIRMAR GUARDAR FACTURA" widgetVar="dialogoConfirmarGuardarFactura" resizable="false" modal="true">  

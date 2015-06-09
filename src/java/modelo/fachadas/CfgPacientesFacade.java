@@ -77,8 +77,7 @@ public class CfgPacientesFacade extends AbstractFacade<CfgPacientes> {
         }
     }
     
-    
-    public EntityManager obtenerEntityManager(){
+    public EntityManager obtenerEntityManager() {
         return getEntityManager();
     }
 

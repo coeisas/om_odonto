@@ -152,18 +152,6 @@ h2{
 .width0{ /*DIMENSIONES USADAD EN CAMPOS DE FORMULARIOS DE HISTORIAS CLINICAS*/
     width: 50px; 
 }
-.width200{ 
-    width: 200px; 
-}
-.width250{ 
-    width: 250px; 
-}
-.width300{ 
-    width: 300px; 
-}
-.width400{ 
-    width: 400px; 
-}
 
 //.ui-selectonemenu-panel{/*LOS POPUP DE SELECONEMENU SALGAN DISMINUIDOS*/
 //    width: 30% !important;
@@ -231,6 +219,7 @@ h2{
 }*/
 .reservado .fc-event-inner {
     background: #b6cfd4;
+    color: #226a94;
 }
 /*
 .disponible .fc-event-inner {

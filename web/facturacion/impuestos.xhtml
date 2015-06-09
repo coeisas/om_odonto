@@ -15,6 +15,7 @@
     <h:body>     
         <h:form id="IdFormImpuestos">              
             <p:growl id="IdMensajeImpuestos"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />                        
+            <br/>
             <div>
                 <p:commandButton 
                     title="Nuevo impuesto" value="&nbsp;"                                        
@@ -44,7 +45,7 @@
             <br/>
             <p:tabView id="IdTabView" style=" width: 95%;  margin-left: 15px;">                 
                 <p:tab title="#{impuestosMB.tituloTabImpuestos}">                    
-                    <br/>
+                    <br/>                    
                     <p:panelGrid id="IdPanelEditarImpuesto" styleClass="panelGridSinBordes" columns="2" style="margin-left: auto; margin-right: auto;">                    
                         <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>                        
                         <p:selectOneMenu styleClass="campoFormulario" style="width: 140px;" value="#{impuestosMB.nombre}">                            
@@ -55,8 +56,8 @@
                         <p:calendar id="IdFechaInicial" navigator="true" locale="es" value="#{impuestosMB.fechaInicial}" pattern="dd/MM/yyyy" mask="true" size="23" style="width: 200px;" />
                         <p:outputLabel styleClass="campoNoObligatorio" value="Fecha Final"/>
                         <p:calendar id="IdFechaFinal" navigator="true" locale="es" value="#{impuestosMB.fechaFinal}" pattern="dd/MM/yyyy" mask="true" size="23" style="width: 200px;" />
-                        <h:outputText styleClass="campoNoObligatorio" value="Valor"/>                    
-                        <pe:inputNumber decimalSeparator="," decimalPlaces="2" minValue="0"  value="#{impuestosMB.valor}"/>
+                        <h:outputText styleClass="campoNoObligatorio" value="Porcentaje"/>                    
+                        <pe:inputNumber  decimalPlaces="2" minValue="0" maxValue="100"  value="#{impuestosMB.valor}"/>
                     </p:panelGrid>
                     <br/>
                 </p:tab>                

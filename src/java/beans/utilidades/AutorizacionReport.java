@@ -15,6 +15,8 @@ public class AutorizacionReport {
     private String paciente;
     private String numAutorizacion;
     private boolean cerrada;
+    private int idServicio;
+    private boolean requiereAutorizacion;
     private String servicio;
     private int sesionesAutorizadas;
     private int sesionesRealizadas;
@@ -105,6 +107,22 @@ public class AutorizacionReport {
 
     public void setSesionesPendientes(int sesionesPendientes) {
         this.sesionesPendientes = sesionesPendientes;
+    }
+
+    public int getIdServicio() {
+        return idServicio;
+    }
+
+    public void setIdServicio(int idServicio) {
+        this.idServicio = idServicio;
+    }
+
+    public boolean isRequiereAutorizacion() {
+        return requiereAutorizacion;
+    }
+
+    public void setRequiereAutorizacion(boolean requiereAutorizacion) {
+        this.requiereAutorizacion = requiereAutorizacion;
     }
     
 }

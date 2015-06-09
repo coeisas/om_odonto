@@ -3,6 +3,9 @@
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <NOTAS>
     SERVIDOR 431 038 342    
+    
+    UPDATE    1) git > commit     2)git > Remote > pull     3)mergue     4)resolve conflicts si aparecen
+    CONFIRM   1) git > commit     2)git > Remote > Push (seleccionar: Specify Git repository location) 3)Cuando aparece el mensaje: Remote repository contains commits..... Es por que otro usuario subio cambios por lo cual primero se debe actualizar       
 </NOTAS>
 <!-- /////////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 <!-- //////////////////////////////// SE DEBE REALIZAR ///////////////////////////////////////////////////////// -->
@@ -26,8 +29,7 @@
 7. Favor los servicios carguemoslos de la tabla CUPS para no estar creandolos en cada cliente.
    pero son muchisimos cada entidad maneja solo unos, pero de ser asi realice un script que pase todo lo de cups a servicios y eliminar la tabla cups
    
-    
-    
+       
 8. Los pacientes se los estan enviando en archivo plano cada EPS asociado a un contrato.
     ¿Y que pasa con esto?
     

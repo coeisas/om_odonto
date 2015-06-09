@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 import modelo.entidades.CitTurnos;
 
 /**
@@ -200,10 +199,10 @@ public class CitTurnosFacade extends AbstractFacade<CitTurnos> {
         Query query;
         try {
             if (id_horario != 0) {
-                query = getEntityManager().createQuery("DELETE FROM CitTurnos t WHERE t.idPrestador.idUsuario = ?1 AND t.fecha >= ?2 AND t.fecha <= ?3 AND t.idHorario.idHorario = ?4 AND t.estado NOT IN ?5 AND t.idConsultorio.idSede.idSede = ?6");
+                query = getEntityManager().createQuery("DELETE FROM CitTurnos t WHERE t.idPrestador.idUsuario = ?1 AND t.fecha >= ?2 AND t.fecha <= ?3 AND t.idHorario.idHorario = ?4 AND t.estado NOT IN ?5 AND t.idConsultorio.idSede.idSede = ?6 AND t.idTurno NOT IN (SELECT c.idTurno.idTurno FROM CitCitas c WHERE c.idPrestador.idUsuario = ?1 AND c.idTurno.fecha >= ?2 AND c.idTurno.fecha <= ?3 AND c.idTurno.idHorario.idHorario = ?4)");
                 query.setParameter(4, id_horario);
             } else {
-                query = getEntityManager().createQuery("DELETE FROM CitTurnos t WHERE t.idPrestador.idUsuario = ?1 AND t.fecha >= ?2 AND t.fecha <= ?3 AND t.idHorario IS NULL AND t.estado NOT IN ?5 AND t.idConsultorio.idSede.idSede = ?6");
+                query = getEntityManager().createQuery("DELETE FROM CitTurnos t WHERE t.idPrestador.idUsuario = ?1 AND t.fecha >= ?2 AND t.fecha <= ?3 AND t.idHorario IS NULL AND t.estado NOT IN ?5 AND t.idConsultorio.idSede.idSede = ?6  AND t.idTurno NOT IN (SELECT c.idTurno.idTurno FROM CitCitas c WHERE c.idPrestador.idUsuario = ?1 AND c.idTurno.fecha >= ?2 AND c.idTurno.fecha <= ?3 AND c.idTurno.idHorario IS NULL)");
             }
             query.setParameter(1, idPrestador);
             query.setParameter(2, fechaInicial);
@@ -353,6 +352,18 @@ public class CitTurnosFacade extends AbstractFacade<CitTurnos> {
         try {
             Query query = getEntityManager().createQuery("SELECT COUNT(t.idTurno) FROM CitTurnos t WHERE t.idTurno IN ?1 AND t.estado = 'disponible'");
             query.setParameter(1, idTurnos);
+            return Integer.parseInt(query.getSingleResult().toString());
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int totalTurnosDisponiblesApartirFecha(int idPrestador, int idSede, Date fecha) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT COUNT(t.idTurno) FROM CitTurnos t WHERE t.idPrestador.idUsuario = ?1 AND t.idConsultorio.idSede.idSede = ?2 AND t.fecha >= ?3 AND t.estado = 'disponible'");
+            query.setParameter(1, idPrestador);
+            query.setParameter(2, idSede);
+            query.setParameter(3, fecha);
             return Integer.parseInt(query.getSingleResult().toString());
         } catch (Exception e) {
             return 0;

@@ -93,7 +93,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
     }
 
     public ServiciosMB() {
-        aplicacionGeneralMB = FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{aplicacionGeneralMB}", AplicacionGeneralMB.class);
+        aplicacionGeneralMB=FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{aplicacionGeneralMB}", AplicacionGeneralMB.class);
     }
 
     //---------------------------------------------------
@@ -133,7 +133,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
     }
 
     public void buscarServicio() {
-        listaServicios = servicioFacade.busacarOrdenado();
+        listaServicios = servicioFacade.buscarTodosOrdenado();
         servicioSeleccionadoTabla = null;
         RequestContext.getCurrentInstance().execute("PF('wvTablaServicios').clearFilters(); PF('wvTablaServicios').getPaginator().setPage(0); PF('dialogoBuscarServicios').show();");
     }
@@ -307,7 +307,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
         }
         if (validarNoVacio(codigoActQtx)) {
             nuevoServicio.setActoQuirurgico(clasificacionesFacade.find(Integer.parseInt(codigoActQtx)));
-        }
+        }        
         if (validarNoVacio(codigoDiagnostico)) {
             nuevoServicio.setCodigoDiagnostico(diagnosticoFacade.find(codigoDiagnostico));
         }
@@ -360,7 +360,7 @@ public class ServiciosMB extends MetodosGenerales implements Serializable {
             servicioSeleccionado.setUnidadEdadFinal(clasificacionesFacade.find(Integer.parseInt(unidadEdadFinal)));
         }
         servicioSeleccionado.setRipAplica(ripAplica);
-
+        
         if (validarNoVacio(finalidad)) {
             servicioSeleccionado.setFinalidad(clasificacionesFacade.find(Integer.parseInt(finalidad)));
         }
