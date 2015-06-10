@@ -88,7 +88,12 @@ public class LazyAgendaModel extends LazyScheduleModel {
             inicial.setHours(turno.getHoraIni().getHours());
             inicial.setMinutes(turno.getHoraIni().getMinutes());
             Date finaliza = new Date(turno.getFecha().getTime());
-            String estilo = "disponible";
+            String estilo;
+            if (turno.getEstado().equals("no_disponible")) {
+                estilo = "no_disponible";
+            } else {
+                estilo = "disponible";
+            }
             finaliza.setHours(turno.getHoraFin().getHours());
             finaliza.setMinutes(turno.getHoraFin().getMinutes());
             title = turno.getIdTurno().toString();

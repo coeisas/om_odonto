@@ -5,8 +5,8 @@
  */
 package beans.utilidades;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public class LazyTurnosDataModel extends LazyDataModel<CitTurnos> {
     private Date horaIni;
     private Date horaFin;
     private List diasSemana;
-    private List<Integer> consultorios;
+    private Integer sede;
 
     public LazyTurnosDataModel() {
     }
@@ -37,16 +37,16 @@ public class LazyTurnosDataModel extends LazyDataModel<CitTurnos> {
         this.horaIni = horaIni;
         this.horaFin = horaFin;
         this.diasSemana = diasSemana;
-        this.consultorios = new ArrayList();
+        this.sede = 0;
     }
 
-    public LazyTurnosDataModel(CitTurnosFacade citTurnosFacade, List<Integer> idsprestadores, Date horaIni, Date horaFin, List diasSemana, List<Integer> consultorios) {
+    public LazyTurnosDataModel(CitTurnosFacade citTurnosFacade, List<Integer> idsprestadores, Date horaIni, Date horaFin, List diasSemana, Integer sede) {
         this.citTurnosFacade = citTurnosFacade;
         this.idsprestadores = idsprestadores;
         this.horaIni = horaIni;
         this.horaFin = horaFin;
         this.diasSemana = diasSemana;
-        this.consultorios = consultorios;
+        this.sede = sede;
     }
 
     @Override
@@ -101,26 +101,8 @@ public class LazyTurnosDataModel extends LazyDataModel<CitTurnos> {
         }
         String query;
         String queryCount;
-        if (consultorios.isEmpty()) {
-            query = "select * from cit_turnos, cfg_usuarios where cit_turnos.id_prestador = cfg_usuarios.id_usuario and cit_turnos.id_prestador in (";
-            queryCount = "select count(*) from cit_turnos, cfg_usuarios where cit_turnos.id_prestador = cfg_usuarios.id_usuario and cit_turnos.id_prestador in (";
-        } else {
-            query = "select * from cit_turnos, cfg_usuarios where cit_turnos.id_prestador = cfg_usuarios.id_usuario and cit_turnos.id_consultorio in (";
-            queryCount = "select count(*) from cit_turnos, cfg_usuarios where cit_turnos.id_prestador = cfg_usuarios.id_usuario and cit_turnos.id_consultorio in (";
-            int i = consultorios.size();
-            int index = 1;
-            for (Integer c : consultorios) {
-                query += c;
-                queryCount += c;
-                if (index < i) {
-                    query += ", ";
-                    queryCount += ", ";
-                }
-                index++;
-            }
-            query += ") and cit_turnos.id_prestador in (";
-            queryCount += ") and cit_turnos.id_prestador in (";
-        }
+        query = "SELECT * FROM cit_turnos JOIN cfg_consultorios ON cfg_consultorios.id_consultorio = cit_turnos.id_consultorio JOIN cfg_usuarios ON id_prestador = id_usuario WHERE cfg_consultorios.id_sede = " + sede + " AND id_prestador IN (";
+        queryCount = "SELECT COUNT(id_turno) FROM cit_turnos JOIN cfg_consultorios ON cfg_consultorios.id_consultorio = cit_turnos.id_consultorio JOIN cfg_usuarios ON id_prestador = id_usuario WHERE cfg_consultorios.id_sede = " + sede + " AND id_prestador IN (";
         int i = idsprestadores.size();
         int indx = 1;
         for (Integer id : idsprestadores) {
@@ -132,15 +114,14 @@ public class LazyTurnosDataModel extends LazyDataModel<CitTurnos> {
             }
             indx++;
         }
-        query += ") and cit_turnos.estado = 'disponible' and cit_turnos.fecha >= current_date";
-        queryCount += ") and cit_turnos.estado = 'disponible' and cit_turnos.fecha >= current_date";
+        query += ") AND estado = 'disponible' AND fecha >= current_date";
+        queryCount += ") AND estado = 'disponible' AND fecha >= current_date";
 
         if (filters.isEmpty()) {
             data = citTurnosFacade.findTurnosDisponiblesByPrestadoresLazyNative(query.concat(sql), idsprestadores, 0, horaIni, horaFin, diasSemana, offset, limit);
             int elementos = citTurnosFacade.totalTurnosByPrestadoresLazyNative(queryCount.concat(sql), idsprestadores, 0, horaIni, horaFin, diasSemana);
             this.setRowCount(elementos);
         } else {
-            String prestador = "";
             int especialidad = 0;
             for (Map.Entry<String, Object> entry : filters.entrySet()) {
                 String filterProperty = entry.getKey();
@@ -148,6 +129,17 @@ public class LazyTurnosDataModel extends LazyDataModel<CitTurnos> {
                     case "idPrestador.especialidad.id":
                         especialidad = Integer.parseInt(entry.getValue().toString());
                         sql += " AND cfg_usuarios.especialidad = " + especialidad;
+                        break;
+                    case "fecha":
+                        ft = new SimpleDateFormat("dd/MM/yyyy");
+                        try {
+                            String aux = entry.getValue().toString();
+                            Date fecha = ft.parse(aux);
+                            ft = new SimpleDateFormat("yyyy-MM-dd");
+                            sql += " AND cit_turnos.fecha = '"+ft.format(fecha)+"'";
+                        } catch (ParseException pe){
+                            sql += "";
+                        }
                         break;
                 }
             }

@@ -834,7 +834,7 @@
                         <p:ajax event="change"
                                 listener="#{facturarPacienteMB.cambiaServicio}"
                                 update="IdPanelAgregarServicio"/>
-                        <f:selectItems value="#{facturarPacienteMB.listaServiciosManual}" var="servicio" itemLabel="#{servicio.facServicio.idServicio} - #{servicio.facServicio.nombreServicio}" itemValue="#{servicio.facServicio.idServicio}"/>
+                        <f:selectItems value="#{facturarPacienteMB.listaServiciosManual}" var="servicio" itemLabel="#{servicio.facServicio.codigoServicio} - #{servicio.facServicio.nombreServicio}" itemValue="#{servicio.facServicio.idServicio}"/>
                     </p:selectOneMenu>
                     <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
                     <p:calendar navigator="true" locale="es" value="#{facturarPacienteMB.fechaServicio}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />

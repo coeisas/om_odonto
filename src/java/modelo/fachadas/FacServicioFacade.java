@@ -70,6 +70,7 @@ public class FacServicioFacade extends AbstractFacade<FacServicio> {
             return null;
         }
     }
+
     public List<FacServicio> buscarNoEstanEnPaquete(Integer idPaquete) {//busca los servicios que no se encuentren en un manual tarifario
         try {
             String sql = "SELECT * FROM fac_servicio WHERE visible = true AND id_servicio NOT IN (SELECT id_servicio FROM fac_paquete_servicio WHERE id_paquete = " + idPaquete.toString() + ") ORDER BY id_servicio";
@@ -78,6 +79,16 @@ public class FacServicioFacade extends AbstractFacade<FacServicio> {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public FacServicio buscarPorIdServicio(Integer idservicio) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT s FROM FacServicio s WHERE s.idServicio = ?1");
+            query.setParameter(1, idservicio);
+            return (FacServicio) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+}
     }
 
 }

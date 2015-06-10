@@ -355,7 +355,7 @@
                                 <p:ajax event="change"
                                         listener="#{paquetesServiciosMB.cambiaServicio}"
                                         update="IdPanelAgregarServicio"/>
-                                <f:selectItems value="#{paquetesServiciosMB.listaServicios}" var="servicio" itemLabel="#{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
+                                <f:selectItems value="#{paquetesServiciosMB.listaServicios}" var="servicio" itemLabel="#{servicio.codigoServicio} - #{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>

@@ -74,7 +74,7 @@
                                 <p:selectOneMenu id="idHorario" value="#{generadorTurnosMB.id_horario}" styleClass="campoFormulario">
                                     <f:selectItem itemLabel="..." itemValue="#{null}" noSelectionOption="true" />
                                     <f:selectItems value="#{generadorTurnosMB.listahorarios}" />
-                                    <p:ajax event="change" listener="#{generadorTurnosMB.seleccionarHorario()}" update="@form :formcfghorario"/>
+                                    <p:ajax event="change" listener="#{generadorTurnosMB.seleccionarHorario()}" update=":formcfghorario"/>
                                 </p:selectOneMenu>
                                 <p:commandButton title="Horario" icon="ui-icon-clock" styleClass="campoFormulario" style="width: 22px; height: 22px;" onclick="PF('dlghorario').show();"/>                                                            
                                 <p:outputLabel value="Hora Inicial:" styleClass="campoObligatorio" style="display: #{generadorTurnosMB.displayHoraInicial}"/>
@@ -105,8 +105,8 @@
                     <tr>
                         <td><p:outputLabel value="No Disponible"/></td>
                         <td><div class="no_disponible" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
-                        <td><p:outputLabel value="Sin Asignar" /></td>
-                        <td><div class="color_sin_asignar" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
+                        <!--td><p:outputLabel value="Sin Asignar" /></td>
+                        <td><div class="color_sin_asignar" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td-->
                         <td><p:outputLabel value="Disponible"/></td>
                         <td><div class="disponible" style="width: 40px; height: 20px; border-color: black; border: solid 1px; "><div class="fc-event-inner"></div></div></td>
                     </tr>

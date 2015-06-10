@@ -5,10 +5,12 @@
  */
 package managedBeans.Citas;
 
+import beans.utilidades.CtrlSesionesAutorizadas;
 import beans.utilidades.LazyPacienteDataModel;
 import beans.utilidades.LazyTurnosDataModel;
 import beans.utilidades.MetodosGenerales;
 import beans.utilidades.ObjetTnode;
+import beans.utilidades.TurnoServicio;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +27,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import managedBeans.seguridad.LoginMB;
 import modelo.entidades.CfgClasificaciones;
-import modelo.entidades.CfgConsultorios;
 import modelo.entidades.CfgPacientes;
 import modelo.entidades.CfgUsuarios;
 import modelo.entidades.CitAutorizaciones;
@@ -48,6 +49,7 @@ import org.primefaces.context.RequestContext;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.CheckboxTreeNode;
 import org.primefaces.model.LazyDataModel;
@@ -66,14 +68,21 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     private String identificacion;
     private CfgPacientes pacienteSeleccionado;
     private String displayPaciente = "none";//muestra u oculta campos del paciente
+    private String displayServicio = "block";//muestra u oculta campos para determinar el servicio para todos los turnos que se seleccionen
     private boolean hayPacienteSeleccionado;
+    private boolean rendBtnAutorizacion = false;
     private List<SelectItem> listaServicios;
+    private List<FacServicio> listaServiciosSeleccionados;//listado de los diferentes servicios que se han asignado a los turnos 
+    private List<CtrlSesionesAutorizadas> listaControlSesionesAutorizadas;//controla las sesiones autorizadas para cada servicio
+    private List<TurnoServicio> listaTurnoServicio;
     private LazyDataModel<CfgPacientes> listaPacientes;
 
     //patrones de disponibilidad. sirven para filtrar los turnos a mostrar
     private List diassemana;
     private Date horaIni;
     private Date horaFin;
+    private boolean diferenteServicio = false;
+    CitTurnos turnoSeleccionado = null;//turno que se selecciona en la tabla turnos cuando el servicio cambia entre turnos 
 
     //listado de especialidades de los prestadores actuales
     private List<SelectItem> listaEspecialidades;
@@ -106,6 +115,8 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     private int sesionesAutorizadas = 1;
     private CitAutorizaciones autorizacionSeleccionada;
     private CitAutorizacionesServicios autorizacionServicioSeleccionado;
+    private boolean autorizacionrequerida;
+    int totalTurnosSeleccionables;//total turnos para un unico servicio
 
     private int sede;
 
@@ -146,7 +157,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         crearlistaServicios();
         root = createCheckboxDocuments();
 
-        //setListaPrestadores(prestadoresFachada.findAll());
+        //setListaPrestadores(prestadoresFachada.findAll());       
         setListaTurnos((new LazyTurnosDataModel(turnosFacade, idsPrestadores(), horaIni, horaFin, getDiassemana())));
         cargarEspecialidadesPrestadores();
         setListaCitas((List<CitCitas>) new ArrayList());
@@ -155,6 +166,10 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         LoginMB loginMB = FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{loginMB}", LoginMB.class);
         sede = loginMB.getCentroDeAtencionactual().getIdSede();
         //setIdsprestadores((List<Integer>) new ArrayList());
+        listaServiciosSeleccionados = new ArrayList();
+        listaControlSesionesAutorizadas = new ArrayList();
+        listaTurnoServicio = new ArrayList();
+        idsprestadores = new ArrayList();
     }
 
     //-----------------------------------------------------------------------------------
@@ -162,6 +177,10 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     //-----------------------------------------------------------------------------------    
     public void findPaciente() {
         listaCitas.clear();
+        listaTurnosSeleccionadosRespaldo.clear();
+        listaControlSesionesAutorizadas.clear();
+        listaTurnoServicio.clear();
+        listaTurnosSeleccionado.clear();
         listaTurnosSeleccionado.clear();
         getListaTurnosSeleccionadosRespaldo().clear();
         RequestContext.getCurrentInstance().update("result");
@@ -197,6 +216,10 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     }
 
     public void actualizarPaciente() {
+        listaTurnosSeleccionadosRespaldo.clear();
+        listaControlSesionesAutorizadas.clear();
+        listaTurnoServicio.clear();
+        listaTurnosSeleccionado.clear();
         listaCitas.clear();
         listaTurnosSeleccionado.clear();
         getListaTurnosSeleccionadosRespaldo().clear();
@@ -221,19 +244,80 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
     }
 
+    public void switchDiferenteServicio() {
+        listaTurnosSeleccionado.clear();
+        listaServiciosSeleccionados.clear();
+        listaTurnosSeleccionadosRespaldo.clear();
+        listaControlSesionesAutorizadas.clear();
+        listaTurnoServicio.clear();
+        displayServicio = diferenteServicio ? "none" : "block";
+        setIdServicio(0);
+        setAutorizacionSeleccionada(null);
+        setNumAutorizacion(null);
+        RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
+        RequestContext.getCurrentInstance().update("tabprincipal:formCita");
+    }
+
+    public void abrirTabAutorizaciones() {
+        RequestContext.getCurrentInstance().execute("window.parent.cargarTab('Autorizaciones','citas/autorizaciones.xhtml','idPaciente;" + pacienteSeleccionado.getIdPaciente().toString() + ";idServicio;" + String.valueOf(idServicio) + "')");
+    }
+
     //----------------------------------------------------------------------------------
     //----------------------SELECTEVENT TABLA TURNOS DISPONIBLES-----------------------
     //----------------------------------------------------------------------------------
     public void onRowSelect(SelectEvent event) {
         CitTurnos turno = (CitTurnos) event.getObject();
+        if (listaTurnosSeleccionadosRespaldo.contains(turno)) {
+            imprimirMensaje("Informacion", "El turno ya se habia adicionado", FacesMessage.SEVERITY_WARN);
+            return;
+        }
         if (getListaTurnosSeleccionadosRespaldo().size() > 0) {
             listaTurnosSeleccionado.clear();
             for (CitTurnos ct : getListaTurnosSeleccionadosRespaldo()) {
                 listaTurnosSeleccionado.add(ct);
             }
         }
+//        si cada turno seleccionado admitira un servicio diferente. Se abre un modal para elegir el servicio 
+        if (isDiferenteServicio()) {
+            setIdServicio(0);
+            turnoSeleccionado = turno;
+            RequestContext.getCurrentInstance().update("formservicio");
+            RequestContext.getCurrentInstance().execute("PF('dlgServicio').show()");
+            return;
+//        cada turno seleccionado admite un unico servicio
+        } else {
+            turnoSeleccionado = null;
+            if (idServicio == 0) {
+                imprimirMensaje("Erro", "Necesita especifacar el servicio", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            if (pacienteSeleccionado.getIdAdministradora() != null) {
+                //si el paciente no es particular. Se controla la cantidad de turnos seleccionables.
+                if (!pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
+                    if (facServicioFacade.buscarPorIdServicio(idServicio).getAutorizacion()) {//si el servicio requiere autorizacion
+                        if (totalTurnosSeleccionables > 0) {
+                            totalTurnosSeleccionables -= 1;
+                        } else {
+                            if (autorizacionrequerida && autorizacionSeleccionada == null) {
+                                imprimirMensaje("Error", "Se necesita autorizacion", FacesMessage.SEVERITY_ERROR);
+                                return;
+                            } else {
+                                if (totalTurnosSeleccionables <= 0) {
+                                    imprimirMensaje("Error", "La autorizacion no permite adicionar otro turno", FacesMessage.SEVERITY_ERROR);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                imprimirMensaje("Error", "El paciente no tiene definida la administradora", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+        }
         listaTurnosSeleccionado.add(turno);
         getListaTurnosSeleccionadosRespaldo().add(turno);
+        ordenarListaTurnos();
 //        getListaTurnosSeleccionadosRespaldo().sort(new Comparator<CitTurnos>() {
 //            @Override
 //            public int compare(CitTurnos o1, CitTurnos o2) {
@@ -243,7 +327,12 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
 //                Date aux2 = new Date(time);
 //                return aux.compareTo(aux2);
 //            }
-//        });
+//        });        
+//        FacesMessage msg = new FacesMessage("Turno Selected", turno.getIdTurno().toString());
+//        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    private void ordenarListaTurnos() {
         Collections.sort(listaTurnosSeleccionadosRespaldo, new Comparator<CitTurnos>() {
             @Override
             public int compare(CitTurnos o1, CitTurnos o2) {
@@ -255,8 +344,6 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             }
         });
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
-//        FacesMessage msg = new FacesMessage("Turno Selected", turno.getIdTurno().toString());
-//        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
     public void onRowUnselect(UnselectEvent event) {
@@ -266,12 +353,147 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             for (CitTurnos ct : getListaTurnosSeleccionadosRespaldo()) {
                 listaTurnosSeleccionado.add(ct);
             }
+        } else {
+            return;
         }
         listaTurnosSeleccionado.remove(turno);
         getListaTurnosSeleccionadosRespaldo().remove(turno);
+        if (!isDiferenteServicio()) {
+            if (pacienteSeleccionado.getIdAdministradora() != null) {
+                //si el paciente no es particular. Se controla la cantidad de turnos seleccionables.
+                if (!pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
+                    FacServicio servicio = facServicioFacade.buscarPorIdServicio(idServicio);
+                    if (servicio == null) {
+                        return;
+                    }
+                    if (servicio.getAutorizacion()) {//si el servicio requiere autorizacion
+                        if (autorizacionrequerida && autorizacionSeleccionada != null) {
+                            int sesionesPendientes = autorizacionesServiciosFacade.buscarServicioPorAutorizacion(autorizacionSeleccionada.getIdAutorizacion(), idServicio).getSesionesPendientes();
+                            if (sesionesPendientes > listaTurnosSeleccionadosRespaldo.size()) {
+                                totalTurnosSeleccionables += 1;
+                            }
+                        }
+                    }
+                }
+            } else {
+                imprimirMensaje("Error", "El paciente no tiene definida la administradora", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+        } else {//si el servicio es diferente para cada turno
+            TurnoServicio turnoServicio = buscarTurnoServicio(turno.getIdTurno());
+            if (turnoServicio != null) {
+                CtrlSesionesAutorizadas csa = determinarSesionesPendiente(facServicioFacade.buscarPorIdServicio(turnoServicio.getServicio()));
+                if (csa.isAutorizacionRequerida()) {
+                    csa.setContadorSesiones(csa.getContadorSesiones() - 1);
+                }
+            }
+        }
+
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
 //        FacesMessage msg = new FacesMessage("Turno Unselected", turno.getIdTurno().toString());
 //        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void insertarServicio() {
+        if (pacienteSeleccionado.getIdAdministradora() != null) {
+            FacServicio servicio = facServicioFacade.buscarPorIdServicio(idServicio);
+            if (servicio == null) {
+                imprimirMensaje("Error", "Falta elegir el servicio", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            if (!listaServiciosSeleccionados.contains(servicio)) {//si el servicio no se ha elegido anteriormente se registra el control de las sesiones autorizadas para el servicio
+                listaServiciosSeleccionados.add(servicio);
+                CtrlSesionesAutorizadas ctrlSesionesAutorizadas;
+                if (!pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
+                    if (servicio.getAutorizacion() && autorizacionSeleccionada == null) {
+                        imprimirMensaje("Error", "No tiene autorizacion para este servicio", FacesMessage.SEVERITY_ERROR);
+                        return;
+                    } else if (servicio.getAutorizacion() && autorizacionSeleccionada != null) {
+                        if (totalTurnosSeleccionables == 0) {
+                            imprimirMensaje("Error", "La autorizacion no permite crear otra cita para este servicio", FacesMessage.SEVERITY_ERROR);
+                            return;
+                        }
+                    }
+                    ctrlSesionesAutorizadas = new CtrlSesionesAutorizadas(idServicio, servicio.getAutorizacion(), totalTurnosSeleccionables);
+                    ctrlSesionesAutorizadas.setContadorSesiones(1);
+                } else {//los servicios de un paciente particular no requiere autorizacion. No se hace control de la cantidad de turnos seleccionables
+                    ctrlSesionesAutorizadas = new CtrlSesionesAutorizadas(idServicio, false, -1);
+                }
+                listaControlSesionesAutorizadas.add(ctrlSesionesAutorizadas);
+            } else {//el servicio seleccionada ya se ha insertado anteriormente. Se hace uso del control de sesiones autorizadas
+                CtrlSesionesAutorizadas csa = determinarSesionesPendiente(servicio);
+                if (csa.isAutorizacionRequerida()) {
+                    if (csa.getContadorSesiones() < csa.getSesionesAutorizadas()) {
+                        csa.setContadorSesiones(csa.getContadorSesiones() + 1);
+                    } else {
+                        imprimirMensaje("Error", "La autorizacion no permite crear otra cita para este servicio", FacesMessage.SEVERITY_ERROR);
+                        return;
+                    }
+                }
+            }
+            turnoSeleccionado.setServicio(servicio.getNombreServicio());
+            listaTurnoServicio.add(new TurnoServicio(idServicio, turnoSeleccionado.getIdTurno()));
+            listaTurnosSeleccionado.add(turnoSeleccionado);
+            listaTurnosSeleccionadosRespaldo.add(turnoSeleccionado);
+            ordenarListaTurnos();
+        } else {
+            imprimirMensaje("Error", "El paciente no tiene asociada una administradora", FacesMessage.SEVERITY_ERROR);
+        }
+        RequestContext.getCurrentInstance().execute("PF('dlgServicio').hide()");
+        RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
+    }
+
+    public void quitarTurno(ActionEvent event) {
+        CitTurnos t = (CitTurnos) event.getComponent().getAttributes().get("turno");
+        listaTurnosSeleccionado.remove(t);
+        getListaTurnosSeleccionadosRespaldo().remove(t);
+        if (!isDiferenteServicio()) {
+            if (pacienteSeleccionado.getIdAdministradora() != null) {
+                //si el paciente no es particular. Se controla la cantidad de turnos seleccionables.
+                if (!pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
+                    if (facServicioFacade.buscarPorIdServicio(idServicio).getAutorizacion()) {//si el servicio requiere autorizacion
+                        if (autorizacionrequerida && autorizacionSeleccionada != null) {
+                            int sesionesPendientes = autorizacionesServiciosFacade.buscarServicioPorAutorizacion(autorizacionSeleccionada.getIdAutorizacion(), idServicio).getSesionesPendientes();
+                            if (sesionesPendientes > listaTurnosSeleccionadosRespaldo.size()) {
+                                totalTurnosSeleccionables += 1;
+                            }
+                        }
+                    }
+                }
+            } else {
+                imprimirMensaje("Error", "El paciente no tiene definida la administradora", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+        } else {//si el servicio es diferente para cada turno
+            TurnoServicio turnoServicio = buscarTurnoServicio(t.getIdTurno());
+            if (turnoServicio != null) {
+                CtrlSesionesAutorizadas csa = determinarSesionesPendiente(facServicioFacade.buscarPorIdServicio(turnoServicio.getServicio()));
+                if (csa.isAutorizacionRequerida()) {
+                    csa.setContadorSesiones(csa.getContadorSesiones() - 1);
+                }
+            }
+        }
+        RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
+    }
+
+    private CtrlSesionesAutorizadas determinarSesionesPendiente(FacServicio servicio) {
+        CtrlSesionesAutorizadas ctrlSesionesAutorizadas = null;
+        for (CtrlSesionesAutorizadas csa : listaControlSesionesAutorizadas) {
+            if (csa.getIdServicio() == servicio.getIdServicio()) {
+                ctrlSesionesAutorizadas = csa;
+                break;
+            }
+        }
+        return ctrlSesionesAutorizadas;
+    }
+
+    private TurnoServicio buscarTurnoServicio(int idTurno) {
+        for (TurnoServicio ts : listaTurnoServicio) {
+            if (idTurno == ts.getTurno()) {
+                return ts;
+            }
+        }
+        return null;
     }
 
     //----------------------------------------------------------------------------------
@@ -321,109 +543,97 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             imprimirMensaje("Error", "Necesita elegir al menos un turno", FacesMessage.SEVERITY_ERROR);
             return;
         }
-
-        //variable que controla si el servicio o tipo de cita seleccionado requiere autorizacion
-        boolean ban = false;
-        if (getIdServicio() != 0) {
-            FacServicio facServicio = facServicioFacade.find(getIdServicio());
-            if (facServicio.getAutorizacion() && !pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
-                ban = true;
-                //validarAutorizacion(0);
-                //descomentar si para crear una cita es necesario poseer una autorizacion registrada previamente
-                /*
-                 if (!autorizacionMB.isAutorizacionvalidada()) {
-                 imprimirMensaje("Información", "Para crear la cita se requiere autorizacion", FacesMessage.SEVERITY_ERROR);
-                 return;
-                 }
-                 */
-            }
-
-        } else {
-            imprimirMensaje("Error", "Es necesario elegir el servicio", FacesMessage.SEVERITY_ERROR);
+        int totalTurnosSeleccionados = listaTurnosSeleccionadosRespaldo.size();
+        List<Integer> idTurnos = new ArrayList();
+        for (CitTurnos t : listaTurnosSeleccionadosRespaldo) {
+            idTurnos.add(t.getIdTurno());
+        }
+        int totalTurnosDisponibles = turnosFacade.totalTurnosDisponibles(idTurnos);
+        if (totalTurnosDisponibles != totalTurnosSeleccionados) {
+            listaTurnosSeleccionadosRespaldo.clear();
+            listaControlSesionesAutorizadas.clear();
+            listaTurnoServicio.clear();
+            listaTurnosSeleccionado.clear();
+            RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
+            imprimirMensaje("Error", "Almenos un turno de los seleccionados ya no esta disponible. Seleccione nuevamente los Turnos", FacesMessage.SEVERITY_ERROR);
             return;
-
         }
 
-//        if (getMotivoConsulta() == 0) {
-//            imprimirMensaje("Error", "Especifique el motivo de consulta", FacesMessage.SEVERITY_ERROR);
-//            return;
-//        }
-//        if (getTurnoSeleccionado().getEstado().equals("asignado")) {
-//            imprimirMensaje("Error", "El turno ya se encuentra asignado", FacesMessage.SEVERITY_ERROR);
-//            return;
-//        }
-        if (pacienteSeleccionado != null) {
-            //creando una cita nueva
-            CitCitas nuevaCita;
-            for (CitTurnos ct : listaTurnosSeleccionadosRespaldo) {
-                if (ct.getEstado().equals("disponible")) {
-                    nuevaCita = new CitCitas();
-                    nuevaCita.setIdPaciente(pacienteSeleccionado);
-                    nuevaCita.setIdPrestador(ct.getIdPrestador());
-                    nuevaCita.setIdTurno(ct);
-                    if (motivoConsulta != 0) {
-                        CfgClasificaciones clasificaciones;
-                        clasificaciones = clasificacionesFachada.find(getMotivoConsulta());
-                        nuevaCita.setTipoCita(clasificaciones);
-                    }
-                    nuevaCita.setFechaRegistro(new Date());
-                    nuevaCita.setIdServicio(new FacServicio(idServicio));
-                    nuevaCita.setFacturada(false);
-                    nuevaCita.setAtendida(false);
-                    nuevaCita.setCancelada(false);
-                    nuevaCita.setMultado(false);
-                    nuevaCita.setIdPaquete(null);
-                    FacAdministradora facAdministradora = pacienteSeleccionado.getIdAdministradora();
-                    nuevaCita.setIdAdministradora(facAdministradora);
-                    //si el servicio requiere autorizacion se envia esta a la tabla de citas
+        //creando una cita nueva
+        CitCitas nuevaCita;
+        for (CitTurnos ct : listaTurnosSeleccionadosRespaldo) {
+            if (ct.getEstado().equals("disponible")) {
+                nuevaCita = new CitCitas();
+                nuevaCita.setIdPaciente(pacienteSeleccionado);
+                nuevaCita.setIdPrestador(ct.getIdPrestador());
+                nuevaCita.setIdTurno(ct);
+                if (motivoConsulta != 0) {
+                    CfgClasificaciones clasificaciones;
+                    clasificaciones = clasificacionesFachada.find(getMotivoConsulta());
+                    nuevaCita.setTipoCita(clasificaciones);
+                }
+                nuevaCita.setFechaRegistro(new Date());
+                Integer id_servicio;
+                if (isDiferenteServicio()) {
+                    TurnoServicio turnoServicio = buscarTurnoServicio(ct.getIdTurno());
+                    id_servicio = turnoServicio.getServicio();
+                    nuevaCita.setIdServicio(facServicioFacade.buscarPorIdServicio(id_servicio));
+                    listaTurnoServicio.remove(turnoServicio);
+                } else {
+                    id_servicio = idServicio;
+                    nuevaCita.setIdServicio(facServicioFacade.buscarPorIdServicio(id_servicio));
+                }
+                nuevaCita.setFacturada(false);
+                nuevaCita.setAtendida(false);
+                nuevaCita.setCancelada(false);
+                nuevaCita.setMultado(false);
+                nuevaCita.setIdPaquete(null);
+                FacAdministradora facAdministradora = pacienteSeleccionado.getIdAdministradora();
+                nuevaCita.setIdAdministradora(facAdministradora);
 
-                    if (ban) {
-                        CitAutorizaciones autorizacion = autorizacionesFacade.findAutorizacion(pacienteSeleccionado.getIdPaciente(), idServicio, pacienteSeleccionado.getIdAdministradora().getIdAdministradora());
-                        if (autorizacion != null) {
+                if (!pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
+                    CitAutorizaciones autorizacion = autorizacionesFacade.findAutorizacion(pacienteSeleccionado.getIdPaciente(), id_servicio, pacienteSeleccionado.getIdAdministradora().getIdAdministradora());
+                    if (autorizacion != null) {
+                        nuevaCita.setIdAutorizacion(autorizacion);
+                        //se modifica las sesiones pendientes del servicio de la autorizacion implicada
+                        CitAutorizacionesServicios autorizacionServicio = autorizacionesServiciosFacade.buscarServicioPorAutorizacion(autorizacion.getIdAutorizacion(), id_servicio);
+                        if (autorizacionServicio != null) {//se actualizara los valores de la autorizacion.
+                            autorizacionServicio.setSesionesPendientes(autorizacionServicio.getSesionesPendientes() - 1);
+                            autorizacionesServiciosFacade.edit(autorizacionServicio);
                             nuevaCita.setIdAutorizacion(autorizacion);
-                            //se modifica las sesiones pendientes del servicio de la autorizacion implicada
-                            CitAutorizacionesServicios autorizacionServicio = autorizacionesServiciosFacade.buscarServicioPorAutorizacion(autorizacion.getIdAutorizacion(), idServicio);
-                            if (autorizacionServicio != null) {
-                                autorizacionServicio.setSesionesPendientes(autorizacionServicio.getSesionesPendientes() - 1);
-                                autorizacionesServiciosFacade.edit(autorizacionServicio);
-                                nuevaCita.setIdAutorizacion(autorizacion);
-                            } else {
-                                nuevaCita.setIdAutorizacion(null);
-                            }
-                        } else {
-                            nuevaCita.setIdAutorizacion(null);
                         }
-                    } else {
+                    } else {//el servicio no requiere autorizacion. La validacion se hace desde la vista: citasMasivasV2.xhtml
                         nuevaCita.setIdAutorizacion(null);
                     }
-                    nuevaCita.setTieneRegAsociado(false);
-                    citasFacade.create(nuevaCita);
-
-                    //modificando la tabla turnos: se incrementa el contador, dependiendo de la situacion el estado del turno puede llegar a ser false
-                    ct.setContador(ct.getContador() + 1);
-                    if (ct.getContador() == ct.getConcurrencia()) {
-                        ct.setEstado("asignado");
-                    }
-                    turnosFacade.edit(ct);
-                    listaCitas.add(nuevaCita);
+                } else {
+                    nuevaCita.setIdAutorizacion(null);
                 }
-            }
-            //liberando Selecciones previas
-            imprimirMensaje("Correto", "Las citas han sido creadas.", FacesMessage.SEVERITY_INFO);
-            RequestContext.getCurrentInstance().execute("PF('dlgturnosselect').hide();");
-            liberarCampos(1);
-            loadTurnos();
-            RequestContext.getCurrentInstance().update("result");
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('dlgresult').show();");
-        } else {
-            imprimirMensaje("Error", "Es necesario seleccionar el paciente", FacesMessage.SEVERITY_ERROR);
-        }
+                nuevaCita.setTieneRegAsociado(false);
+                citasFacade.create(nuevaCita);
 
+                //modificando la tabla turnos: se incrementa el contador, dependiendo de la situacion el estado del turno puede llegar a ser false
+                ct.setContador(ct.getContador() + 1);
+                if (ct.getContador() == ct.getConcurrencia()) {
+                    ct.setEstado("asignado");
+                }
+                turnosFacade.edit(ct);
+                listaCitas.add(nuevaCita);
+            }
+        }
+        //liberando Selecciones previas
+        imprimirMensaje("Correto", "Las citas han sido creadas.", FacesMessage.SEVERITY_INFO);
+        RequestContext.getCurrentInstance().execute("PF('dlgturnosselect').hide();");
+        liberarCampos(1);
+        loadTurnos();
+        RequestContext.getCurrentInstance().update("result");
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('dlgresult').show();");
     }
 
-//ban == 1 muestra informaciona adcional cuando se valida una autorizacion
+//ban == 1 muestra informaciona adcional cuando se valida una autorizacion. Solo se usa cuando el servicio es igual para todos los servicios
     public void validarAutorizacion(int ban) {
+        setRendBtnAutorizacion(false);
+        totalTurnosSeleccionables = 0;
         if (idServicio != 0) {
             FacServicio facServicio = facServicioFacade.find(idServicio);
             setNombreServicio(facServicio.getNombreServicio());
@@ -436,15 +646,17 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
                     }
                     //paciente particular no necesita validar autorizaciones
                     if (pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
-                        setAutorizacionSeleccionada(null);
+                        autorizacionrequerida = false;
                         autorizacionvalidada = false;
-                        RequestContext context = RequestContext.getCurrentInstance();
-                        context.update("autorizar");
+                        setRendBtnAutorizacion(false);
+                        setAutorizacionSeleccionada(null);
                         return;
                     }
+                    autorizacionrequerida = true;
                     CitAutorizaciones autorizacion = autorizacionesFacade.findAutorizacion(pacienteSeleccionado.getIdPaciente(), idServicio, pacienteSeleccionado.getIdAdministradora().getIdAdministradora());
                     if (autorizacion != null) {
                         autorizacionvalidada = true;
+                        totalTurnosSeleccionables = autorizacionesServiciosFacade.buscarServicioPorAutorizacion(autorizacion.getIdAutorizacion(), idServicio).getSesionesPendientes();
                         setAutorizacionSeleccionada(autorizacion);
                         if (ban == 1) {
                             setAutorizacionServicioSeleccionado(autorizacionesServiciosFacade.buscarServicioPorAutorizacion(autorizacion.getIdAutorizacion(), idServicio));
@@ -453,30 +665,39 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
                         }
                     } else {
                         autorizacionvalidada = false;
+                        autorizacion = autorizacionesFacade.findAutorizacionDos(pacienteSeleccionado.getIdPaciente(), idServicio, pacienteSeleccionado.getIdAdministradora().getIdAdministradora());
                         setAutorizacionSeleccionada(null);
                         setAutorizacionServicioSeleccionado(null);
-                        RequestContext context = RequestContext.getCurrentInstance();
-                        context.update("autorizar");
-                        if (ban == 1) {
-                            imprimirMensaje("Alerta", "El servicio requiere autorizacion y el paciente no posee una autorizacion vigente", FacesMessage.SEVERITY_WARN);
+//                        RequestContext context = RequestContext.getCurrentInstance();
+//                        context.update("autorizar");
+                        if (ban == 1 && autorizacion == null) {
+                            setRendBtnAutorizacion(true);
+                            imprimirMensaje("Error", "El servicio requiere autorizacion y el paciente no posee una autorizacion vigente", FacesMessage.SEVERITY_ERROR);
+                        }
+                        if (ban == 1 && autorizacion != null) {
+                            setAutorizacionSeleccionada(autorizacion);
+                            imprimirMensaje("Error", "La autorizacion asociada al servicio no admite crear otra cita", FacesMessage.SEVERITY_ERROR);
                         }
                     }
                 }
             } else {
+                autorizacionrequerida = false;
+                autorizacionvalidada = false;
                 setNombreServicio(null);
                 setAutorizacionSeleccionada(null);
-                RequestContext context = RequestContext.getCurrentInstance();
-                context.update("autorizar");
-                autorizacionvalidada = false;
+//                RequestContext context = RequestContext.getCurrentInstance();
+//                context.update("autorizar");
             }
 
         } else {
             autorizacionvalidada = false;
+            autorizacionrequerida = false;
             setNombreServicio(null);
             setAutorizacionSeleccionada(null);
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.update("autorizar");
+//            RequestContext context = RequestContext.getCurrentInstance();
+//            context.update("autorizar");
         }
+        RequestContext.getCurrentInstance().update("formCita");
     }
 
     public void crearAutorizacion() {
@@ -617,15 +838,8 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
 
                 //lista de turnos sin importar la sede
                 //listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana());
-                //turnos importando la sede, se buscara los consultorios que pertenecen a la sede por la cual se inicio sesion
-                List<Integer> consultorios = new ArrayList();
-                List<CfgConsultorios> listaconsultorio = consultoriosFacade.getBySede(sede);
-                if (!listaconsultorio.isEmpty()) {
-                    for (CfgConsultorios cc : listaconsultorio) {
-                        consultorios.add(cc.getIdConsultorio());
-                    }
-                }
-                listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana(), consultorios);
+                //turnos importando la sede por la cual se inicio sesion
+                listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana(), sede);
 
                 setListaTurnos(listaTurnos);
             } else {
@@ -656,7 +870,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             }
         }
         loadTurnos();
-        imprimirMensaje("Informacion", "Disponibilidad registrada correctamente", FacesMessage.SEVERITY_INFO);
+        imprimirMensaje("Correcto", "Disponibilidad registrada", FacesMessage.SEVERITY_INFO);
     }
 
     //--------------------------------------------------------------------------------------------
@@ -683,26 +897,49 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         return root;
     }
 
-    public void displaySelectedMultiple(NodeSelectEvent event) {
-        if (selectedNodes != null && selectedNodes.length > 0) {
-            setIdsprestadores((List<Integer>) new ArrayList());
-            for (TreeNode node : selectedNodes) {
-                if (!node.getData().toString().equals("0")) {
-                    getIdsprestadores().add(Integer.parseInt(node.getData().toString()));
+    public void onTabChange(TabChangeEvent event) {
+        if (event.getTab().getTitle().equals("Prestadores")) {
+            if (pacienteSeleccionado == null) {
+                listaTurnosSeleccionado.clear();
+                listaTurnosSeleccionadosRespaldo.clear();
+                setRenderizarListaTurnos(false);
+            } else {
+                if (selectedNodes != null && selectedNodes.length > 0) {
+                    loadTurnos();
+                    setRenderizarListaTurnos(true);
+                } else {
+                    setRenderizarListaTurnos(false);
                 }
             }
-            setRenderizarListaTurnos(true);
-            loadTurnos();
+            RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
+        }
+    }
+
+    public void displaySelectedMultiple(NodeSelectEvent event) {
+        if (pacienteSeleccionado != null) {
+            if (selectedNodes != null && selectedNodes.length > 0) {
+                setIdsprestadores((List<Integer>) new ArrayList());
+                for (TreeNode node : selectedNodes) {
+                    if (!node.getData().toString().equals("0")) {
+                        getIdsprestadores().add(Integer.parseInt(node.getData().toString()));
+                    }
+                }
+                setRenderizarListaTurnos(true);
+                loadTurnos();
+            } else {
+                getIdsprestadores().clear();
+                setRenderizarListaTurnos(false);
+            }
         } else {
-            getIdsprestadores().clear();
+            imprimirMensaje("Error", "Elija el paciente", FacesMessage.SEVERITY_ERROR);
             setRenderizarListaTurnos(false);
         }
-        RequestContext.getCurrentInstance().update("tabprincipal:formturnos");
+        RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
     }
 
     public void displayUnSelectedMultiple(NodeUnselectEvent event) {
         if (selectedNodes != null && selectedNodes.length > 0) {
-            setIdsprestadores((List<Integer>) new ArrayList());
+            idsprestadores.clear();
             for (TreeNode node : selectedNodes) {
                 if (!node.getData().toString().equals("0")) {
                     getIdsprestadores().add(Integer.parseInt(node.getData().toString()));
@@ -714,7 +951,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             getIdsprestadores().clear();
             setRenderizarListaTurnos(false);
         }
-        RequestContext.getCurrentInstance().update("tabprincipal:formturnos");
+        RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
     }
 
     //-------------------------------------------------------------------
@@ -966,6 +1203,48 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
 
     public void setAutorizacionServicioSeleccionado(CitAutorizacionesServicios autorizacionServicioSeleccionado) {
         this.autorizacionServicioSeleccionado = autorizacionServicioSeleccionado;
+    }
+
+    /**
+     * @return the diferenteServicio
+     */
+    public boolean isDiferenteServicio() {
+        return diferenteServicio;
+    }
+
+    /**
+     * @param diferenteServicio the diferenteServicio to set
+     */
+    public void setDiferenteServicio(boolean diferenteServicio) {
+        this.diferenteServicio = diferenteServicio;
+    }
+
+    /**
+     * @return the displayServicio
+     */
+    public String getDisplayServicio() {
+        return displayServicio;
+    }
+
+    /**
+     * @param displayServicio the displayServicio to set
+     */
+    public void setDisplayServicio(String displayServicio) {
+        this.displayServicio = displayServicio;
+    }
+
+    /**
+     * @return the rendBtnAutorizacion
+     */
+    public boolean isRendBtnAutorizacion() {
+        return rendBtnAutorizacion;
+    }
+
+    /**
+     * @param rendBtnAutorizacion the rendBtnAutorizacion to set
+     */
+    public void setRendBtnAutorizacion(boolean rendBtnAutorizacion) {
+        this.rendBtnAutorizacion = rendBtnAutorizacion;
     }
 
 }
