@@ -389,7 +389,7 @@
                                 <p:ajax event="change"
                                         listener="#{manualesTarifariosMB.cambiaServicio}"
                                         update="IdPanelAgregarServicio"/>
-                                <f:selectItems value="#{manualesTarifariosMB.listaServicios}" var="servicio" itemLabel="#{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaServicios}" var="servicio" itemLabel="#{servicio.codigoServicio} - #{servicio.nombreServicio}" itemValue="#{servicio.idServicio}"/>
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
