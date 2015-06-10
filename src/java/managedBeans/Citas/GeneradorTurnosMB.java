@@ -289,9 +289,9 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
             imprimirMensaje("Error", "Falta elegir consultorio", FacesMessage.SEVERITY_ERROR);
             return;
         }
-        if (duracion < 20) {
+        if (duracion < 0) {
             duracion = 20;
-            imprimirMensaje("Error", "El valor minimo para duracion de la cita es de 20 minutos", FacesMessage.SEVERITY_ERROR);
+            imprimirMensaje("Error", "El valor de la duracion de la cita no es valido", FacesMessage.SEVERITY_ERROR);
             return;
         }
         if (concurrencia < 1) {
@@ -429,9 +429,9 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
             imprimirMensaje("Error", "Falta elegir consultorio", FacesMessage.SEVERITY_ERROR);
             return;
         }
-        if (duracion < 20) {
+        if (duracion < 0) {
             duracion = 20;
-            imprimirMensaje("Error", "El valor minimo para duracion de la cita es de 20 minutos", FacesMessage.SEVERITY_ERROR);
+            imprimirMensaje("Error", "El valor de la duracion de la cita no es valido", FacesMessage.SEVERITY_ERROR);
             return;
         }
         if (concurrencia < 1) {
@@ -646,7 +646,6 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
         }
         List estados = new ArrayList();//listado de los estados de los turnos de no eliminacion
         estados.add("asignado");
-        estados.add("reservado");
         estados.add("en_espera");
         estados.add("atendido");
         try {
@@ -656,13 +655,18 @@ public class GeneradorTurnosMB extends MetodosGenerales implements Serializable 
                 if (result == totalTurnos) {
                     RequestContext.getCurrentInstance().update(listaComponentesActualizar);
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Correcto", "Agenda eliminada"));
-                    imprimirMensaje("Correcto", "Turnos eliminados", FacesMessage.SEVERITY_INFO);
+//                    imprimirMensaje("Correcto", "Turnos eliminados", FacesMessage.SEVERITY_INFO);
                 } else if (result > 0) {
 //                    RequestContext.getCurrentInstance().update("formCrearAgenda:idCBeliminarAgenda");
+                    citTurnosFacade.actualizarTurno(prestadorSeleccionado.getIdUsuario(), id_sede, fechaIni, fechaFin, id_horario);
                     imprimirMensaje("Informacion", "Se eliminaron unicamente los turnos que nunca han sido asignados a una cita", FacesMessage.SEVERITY_WARN);
                 } else {
-                    imprimirMensaje("Error", "Al menos un turno esta relacionado con una cita cancelada", FacesMessage.SEVERITY_ERROR);
-                    return;
+                    result = citTurnosFacade.actualizarTurno(prestadorSeleccionado.getIdUsuario(), id_sede, fechaIni, fechaFin, id_horario);
+                    if (result == 0) {
+                        imprimirMensaje("Error", "No encontraron turnos a elminar", FacesMessage.SEVERITY_ERROR);
+                        return;
+                    }
+                    imprimirMensaje("Informacion", "Los turnos disponibles relacionados con una cita cancelada no lo estaran", FacesMessage.SEVERITY_INFO);
                 }
                 loadEvents();
             } else {

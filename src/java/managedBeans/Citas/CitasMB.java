@@ -46,10 +46,8 @@ import modelo.fachadas.CitAutorizacionesServiciosFacade;
 import modelo.fachadas.FacServicioFacade;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.DefaultScheduleModel;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.ScheduleEvent;
-import org.primefaces.model.ScheduleModel;
 
 /**
  *
@@ -210,7 +208,7 @@ public class CitasMB extends MetodosGenerales implements Serializable {
     private void crearlistaServicios() {
         List<FacServicio> servicios = facServicioFacade.buscarActivos();
         for (FacServicio servicio : servicios) {
-            getListaServicios().add(new SelectItem(servicio.getIdServicio(), servicio.getNombreServicio()));
+            getListaServicios().add(new SelectItem(servicio.getIdServicio(), servicio.getCodigoServicio() + " - " + servicio.getNombreServicio()));
         }
     }
 
@@ -334,7 +332,7 @@ public class CitasMB extends MetodosGenerales implements Serializable {
             imprimirMensaje("Error", "El turno seleccionado esta programado para una fecha previa", FacesMessage.SEVERITY_ERROR);
             return;
         }
-        
+
         //variable que controla si el servicio o tipo de cita seleccionado requiere autorizacion
 //        boolean ban = false;
         if (idServicio != 0) {
@@ -530,7 +528,7 @@ public class CitasMB extends MetodosGenerales implements Serializable {
                 if (pacienteSeleccionado != null) {
                     if (pacienteSeleccionado.getIdAdministradora() == null) {
                         idServicio = 0;
-                        RequestContext.getCurrentInstance().update("formCita");                        
+                        RequestContext.getCurrentInstance().update("formCita");
                         imprimirMensaje("Error", "Este paciente no tiene administradora, debe ingresar a pacientes y asignarle una administradora", FacesMessage.SEVERITY_ERROR);
                         return;
                     }
@@ -554,7 +552,7 @@ public class CitasMB extends MetodosGenerales implements Serializable {
                             RequestContext context = RequestContext.getCurrentInstance();
                             context.execute("PF('dlgresautorizacion').show();");
                         }
-                    } else {                        
+                    } else {
                         autorizacionvalidada = false;
                         autorizacion = autorizacionesFacade.findAutorizacionDos(pacienteSeleccionado.getIdPaciente(), idServicio, pacienteSeleccionado.getIdAdministradora().getIdAdministradora());
                         setAutorizacionSeleccionada(null);
@@ -568,8 +566,8 @@ public class CitasMB extends MetodosGenerales implements Serializable {
                         if (ban == 1 && autorizacion != null) {
                             setAutorizacionSeleccionada(autorizacion);
                             imprimirMensaje("Error", "La autorizacion asociada al servicio no admite crear otra cita", FacesMessage.SEVERITY_ERROR);
-                        }                        
-                    }                    
+                        }
+                    }
                 }
             } else {
                 autorizacionrequerida = false;
@@ -668,10 +666,15 @@ public class CitasMB extends MetodosGenerales implements Serializable {
             setRendBtnElegir(true);
         }
         CitTurnos turno = turnosFacade.findById(id);
-        if (turno.getEstado().equals("reservado") || turno.getEstado().equals("asignado")) {
-            setRendBtnReservar(false);
-        } else {
-            setRendBtnReservar(true);
+        if (!turno.getEstado().equals("no_disponible")) {
+            if (turno.getEstado().equals("reservado") || turno.getEstado().equals("asignado")) {
+                setRendBtnReservar(false);
+            } else {
+                setRendBtnReservar(true);
+            }
+            RequestContext.getCurrentInstance().update("fstsch:eventDetails");
+            RequestContext.getCurrentInstance().execute("PF('eventDialog').show()");
+
         }
     }
 

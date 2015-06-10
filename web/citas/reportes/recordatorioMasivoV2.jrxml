@@ -26,16 +26,16 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="80" splitType="Stretch">
+		<band height="40" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="0" width="500" height="79" uuid="55d03f33-ecc0-4be5-bcd0-4ce4f0e9ea72"/>
+				<reportElement x="0" y="0" width="500" height="38" uuid="55d03f33-ecc0-4be5-bcd0-4ce4f0e9ea72"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="24" isBold="true"/>
+					<font size="18" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Asignacion de Citas]]></text>
 			</staticText>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Top">
-				<reportElement x="5" y="5" width="128" height="64" uuid="d3fdbf6f-e518-4788-b39c-6f2f0d0036f3"/>
+				<reportElement x="0" y="0" width="100" height="38" uuid="d3fdbf6f-e518-4788-b39c-6f2f0d0036f3"/>
 				<imageExpression><![CDATA[$P{logoEmpresa}]]></imageExpression>
 			</image>
 		</band>
@@ -47,7 +47,8 @@
 			</rectangle>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="14" width="280" height="13" uuid="5524b8ca-43ff-4048-b7b5-b9537e875fb2"/>
-				<textFieldExpression><![CDATA[$F{pacientePN} + " " + ($F{pacienteSN} == null ? "" : $F{pacienteSN} + " ") + $F{pacientePA}+ " " + ($F{pacienteSA} == null ? "" : $F{pacienteSA})]]></textFieldExpression>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{pacientePN}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="1" width="275" height="13" uuid="5c837014-bd74-4c1d-8c85-1d77f3150f6f"/>
@@ -57,33 +58,29 @@
 				<text><![CDATA[NOMBRE DEL PACIENTE]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="27" width="275" height="13" uuid="7d0e8f00-c55a-496f-8e51-e5cacbf556af"/>
-				<textElement>
+				<reportElement x="357" y="63" width="142" height="13" uuid="7d0e8f00-c55a-496f-8e51-e5cacbf556af"/>
+				<textElement verticalAlignment="Bottom">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[SERVICIO]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="40" width="275" height="13" uuid="c67ad9f2-b542-4400-9e63-da0f2ad94c54"/>
-				<textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression>
-			</textField>
 			<staticText>
-				<reportElement x="238" y="63" width="262" height="13" uuid="bf378421-2348-4eaa-905c-1bcb700da703"/>
-				<textElement>
+				<reportElement x="215" y="63" width="142" height="13" uuid="bf378421-2348-4eaa-905c-1bcb700da703"/>
+				<textElement verticalAlignment="Bottom">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[DR(A)]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="0" y="63" width="133" height="13" uuid="55fff187-26a6-4b5c-a332-bb6ce4a2302c"/>
-				<textElement>
+				<textElement verticalAlignment="Bottom">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[FECHA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="133" y="63" width="101" height="13" uuid="37ef60c1-e3b6-45f8-bed6-67d185e4af85"/>
-				<textElement>
+				<reportElement x="133" y="63" width="82" height="13" uuid="37ef60c1-e3b6-45f8-bed6-67d185e4af85"/>
+				<textElement verticalAlignment="Bottom">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[HORA]]></text>
@@ -97,24 +94,26 @@
 			</staticText>
 			<textField>
 				<reportElement x="276" y="14" width="224" height="13" uuid="767257c7-9eef-484c-a0b6-f2c41bd76d1c"/>
+				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{edad}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="276" y="27" width="150" height="13" uuid="587ef271-5286-4fca-afa2-eee9bab26d8e"/>
-				<textElement>
+				<reportElement x="1" y="28" width="498" height="13" uuid="587ef271-5286-4fca-afa2-eee9bab26d8e"/>
+				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[NO SESIONES]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="276" y="40" width="224" height="13" uuid="6f165218-5339-4b04-9f55-18215e636f35"/>
+				<reportElement x="1" y="40" width="498" height="13" uuid="6f165218-5339-4b04-9f55-18215e636f35"/>
+				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{sesiones}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="0" y="27" width="500" height="1" uuid="1b9066ed-d27c-4d93-a211-1a74273ca37a"/>
 			</line>
 			<line>
-				<reportElement x="275" y="0" width="1" height="53" uuid="335ea063-a698-4f52-a5b9-efb3cb65ed8b"/>
+				<reportElement x="275" y="0" width="1" height="27" uuid="335ea063-a698-4f52-a5b9-efb3cb65ed8b"/>
 			</line>
 			<line>
 				<reportElement x="0" y="40" width="500" height="1" uuid="555b98c3-37fc-4b0c-b017-113d3a57a98d"/>
@@ -126,42 +125,32 @@
 	</columnHeader>
 	<detail>
 		<band height="15" splitType="Stretch">
-			<line>
-				<reportElement x="0" y="0" width="500" height="1" uuid="2a3ddeea-f998-476e-bd87-459402d09774"/>
-			</line>
-			<line>
-				<reportElement x="0" y="14" width="500" height="1" uuid="927f285a-d939-4fe6-8160-c4f20b1ee6c6"/>
-			</line>
-			<line>
-				<reportElement x="0" y="0" width="1" height="15" uuid="20f1411c-3b24-45e8-acb9-098b55655cd1"/>
-			</line>
-			<line>
-				<reportElement x="499" y="0" width="1" height="15" uuid="efd4c4ad-a697-4df0-a408-76a1ce321578"/>
-			</line>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="238" y="0" width="262" height="13" uuid="6c9d88c0-2634-47b9-9612-7b3ac76d36a2"/>
-				<textFieldExpression><![CDATA[$F{prestadorPN} + " " + $F{prestadorPA}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" pattern="EEEEE dd MMMMM yyyy" isBlankWhenNull="true">
 				<reportElement x="1" y="0" width="132" height="13" uuid="a153226e-c7f0-4799-a97c-dc67d4695d4a"/>
+				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
 			</textField>
-			<textField pattern="h.mm a" isBlankWhenNull="true">
-				<reportElement x="134" y="0" width="99" height="13" uuid="09912d45-d198-4d32-b14b-e47cc1c628fb"/>
+			<textField isStretchWithOverflow="true" pattern="h.mm a" isBlankWhenNull="true">
+				<reportElement x="134" y="0" width="80" height="13" uuid="09912d45-d198-4d32-b14b-e47cc1c628fb"/>
+				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{hora}]]></textFieldExpression>
 			</textField>
-			<line>
-				<reportElement x="133" y="1" width="1" height="14" uuid="ee6b6ed7-7802-4eb6-92a8-a84415e552bf"/>
-			</line>
-			<line>
-				<reportElement x="234" y="1" width="1" height="14" uuid="550f480a-2133-4fe5-8d5e-f571c1dc93e6"/>
-			</line>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="214" y="1" width="143" height="13" uuid="6c9d88c0-2634-47b9-9612-7b3ac76d36a2"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{prestadorPN}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="357" y="0" width="143" height="13" uuid="c67ad9f2-b542-4400-9e63-da0f2ad94c54"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$F{servicio}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>
 		<band height="25">
 			<textField>
-				<reportElement x="0" y="0" width="500" height="25" forecolor="#999999" uuid="b1fc5d51-923a-4ca9-8fdf-edff7f5d4754"/>
+				<reportElement x="0" y="0" width="500" height="25" forecolor="#333333" uuid="b1fc5d51-923a-4ca9-8fdf-edff7f5d4754"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{sedeDir}.toUpperCase()]]></textFieldExpression>
 			</textField>

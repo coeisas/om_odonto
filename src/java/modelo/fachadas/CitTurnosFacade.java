@@ -90,7 +90,8 @@ public class CitTurnosFacade extends AbstractFacade<CitTurnos> {
 
     public List<CitTurnos> findTurnosDisponiblesByPrestadoresLazyNative(String consulta, List id_prestadores, int especialidad, Date horaIni, Date horaFin, List<Integer> daysofweek, int offset, int limit) {
         try {
-            Query query = getEntityManager().createNativeQuery(consulta.concat(" order by cit_turnos.fecha, cit_turnos.hora_ini"), CitTurnos.class);
+            Query query = getEntityManager().createNativeQuery(consulta.concat(" order by fecha, hora_ini"), CitTurnos.class);
+//            System.out.println(query);
             query.setFirstResult(offset);
             query.setMaxResults(limit);
             return (List<CitTurnos>) query.getResultList();
@@ -230,6 +231,25 @@ public class CitTurnosFacade extends AbstractFacade<CitTurnos> {
             query.setParameter(5, idSede);
             int totalTurnos = Integer.parseInt(query.getSingleResult().toString());
             return totalTurnos;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public int actualizarTurno(int idPrestador, int idSede, Date fechaInicial, Date fechaFinal, int id_horario) {
+        Query query;
+        try {
+            if (id_horario != 0) {
+                query = getEntityManager().createQuery("UPDATE CitTurnos t SET t.idHorario = null, t.estado = 'no_disponible' WHERE t.idTurno IN (SELECT c.idTurno.idTurno FROM CitCitas c WHERE c.idPrestador.idUsuario = ?1 AND c.idTurno.estado = 'disponible' AND c.idTurno.fecha >= ?2 AND c.idTurno.fecha <= ?3 AND c.idTurno.idHorario.idHorario = ?4 AND c.idTurno.idConsultorio.idSede.idSede = ?5)");
+                query.setParameter(4, id_horario);
+            } else {
+                query = getEntityManager().createQuery("UPDATE CitTurnos t SET t.estado = 'no_disponible' WHERE t.idTurno IN (SELECT c.idTurno.idTurno FROM CitCitas c WHERE c.idPrestador.idUsuario = ?1 AND c.idTurno.estado = 'disponible' AND c.idTurno.fecha >= ?2 AND c.idTurno.fecha <= ?3 AND c.idTurno.idHorario IS NULL AND c.idTurno.idConsultorio.idSede.idSede = ?5)");
+            }
+            query.setParameter(1, idPrestador);
+            query.setParameter(2, fechaInicial);
+            query.setParameter(3, fechaFinal);
+            query.setParameter(5, idSede);
+            return query.executeUpdate();
         } catch (Exception e) {
             return 0;
         }

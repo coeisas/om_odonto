@@ -547,15 +547,9 @@ public class CitasMasivaMB extends MetodosGenerales implements Serializable {
                 //turnos sin importar la sede
                 //listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana());
 
-                //turnos importando la sede, se buscara los consultorios que pertenecen a la sede por la cual se inicio sesion
-                List<Integer> consultorios = new ArrayList();
-                List<CfgConsultorios> listaconsultorio = consultoriosFacade.getBySede(sede);
-                if (!listaconsultorio.isEmpty()) {
-                    for (CfgConsultorios cc : listaconsultorio) {
-                        consultorios.add(cc.getIdConsultorio());
-                    }
-                }
-                listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana(), consultorios);
+                //turnos importando la sede por la cual se inicio sesion
+
+                listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana(), sede);
 
                 setListaTurnos(listaTurnos);
             } else {
