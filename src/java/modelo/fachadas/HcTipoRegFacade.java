@@ -22,7 +22,7 @@ public class HcTipoRegFacade extends AbstractFacade<HcTipoReg> {
     
     public List<HcTipoReg> buscarTiposRegstroActivos() {
         try {
-            String hql = "SELECT h FROM HcTipoReg h WHERE h.activo = TRUE";
+            String hql = "SELECT h FROM HcTipoReg h WHERE h.activo = TRUE ORDER BY h.idTipoReg";
             return getEntityManager().createQuery(hql).getResultList();
         } catch (Exception e) {
             return null;

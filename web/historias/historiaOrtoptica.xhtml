@@ -23,9 +23,10 @@
                 <tr>
                     <td colspan="2">
                         <p:focus for="IdFocus" />
-                        <p:selectOneMenu id="IdFocus" style="width: 315px;" value="#{historiasMB.datosFormulario.dato1}" filter="true" filterMatchMode="contains">
-                            <f:selectItems value="#{aplicacionGeneralMB.listaMotivoConsulta}"/>
-                        </p:selectOneMenu>
+                        <p:inputTextarea id="IdFocus" cols="89"  value="#{historiasMB.datosFormulario.dato1}"/>
+                        <!-- p:selectOneMenu id="IdFocus" style="width: 315px;" value="# {historiasMB.datosFormulario.dato1}" filter="true" filterMatchMode="contains">
+                            <f:selectItems value="# {aplicacionGeneralMB.listaMotivoConsulta}"/>
+                        </p:selectOneMenu -->
                     </td>                    
                 </tr>
                 <tr>
@@ -138,15 +139,17 @@
                             <f:selectItem itemValue="CON CORRECCION" itemLabel="CON CORRECCION"/>
                         </p:selectOneMenu>                                                
                     </td>
-                </tr>    
+                </tr>                    
+                
                 <tr>
                     <td><p:outputLabel value="Visión Lejana"/></td>
                     <td><p:outputLabel value="Visión Cercana"/></td>
                 </tr>    
                 <tr>
-                    <td><p:inputTextarea  cols="42" value="#{historiasMB.datosFormulario.dato20}"/></td>
-                    <td><p:inputTextarea  cols="42" value="#{historiasMB.datosFormulario.dato22}"/></td>
-                </tr>
+                    <td><p:editor controls="" value="#{historiasMB.datosFormulario.dato20}"/></td>
+                    <td><p:editor controls="" value="#{historiasMB.datosFormulario.dato22}"/></td>
+                </tr>               
+                
 
                 <tr>
                     <td colspan="2"><p:outputLabel value="OJO DOMINANTE"/></td>
@@ -202,16 +205,46 @@
                     <td colspan="2"><p:inputTextarea  cols="89"  value="#{historiasMB.datosFormulario.dato34}"/></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><h2>DIAGNOSTICO</h2></td>
+                    <td colspan="2"><h2>DIAGNOSTICO CIE-10</h2></td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO CIE-10"/>
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO PRINCIPAL"/>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <p:autoComplete size="125" value="#{historiasMB.datosFormulario.dato35}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 1"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:autoComplete size="125" value="#{historiasMB.datosFormulario.dato37}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 2"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:autoComplete size="125" value="#{historiasMB.datosFormulario.dato38}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 3"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:autoComplete size="125" value="#{historiasMB.datosFormulario.dato39}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
                     </td>
                 </tr>
                 <tr>

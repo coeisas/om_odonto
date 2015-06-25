@@ -1139,16 +1139,22 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     }
 
     private boolean cargarFuenteDeDatosFactura() {
-
         List<EstructuraItemsPaciente> listaItemsFactura = new ArrayList<>();
         listaRegistrosFactura = new ArrayList<>();
         EstructuraFacturaPaciente nuevaFactura = new EstructuraFacturaPaciente();
-        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
-        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
+                
+        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
+        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevaFactura.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
+        nuevaFactura.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
+        
+        //nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        //nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
+        //nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
         nuevaFactura.setTipoDocumento(facturaSeleccionada.getTipoDocumento().getDescripcion() + " No.");
         nuevaFactura.setCodigoDocumento("" + facturaSeleccionada.getCodigoDocumento());
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
+        //nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaSeleccionada.getIdPaciente().nombreCompleto());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaSeleccionada.getIdPaciente().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaSeleccionada.getIdPaciente().getIdentificacion());
@@ -1216,11 +1222,13 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     private boolean cargarFuenteDeDatosReciboCaja() {
         listaRegistrosReciboCaja = new ArrayList<>();
         EstructuraReciboCaja nuevoReciboCaja = new EstructuraReciboCaja();
-        nuevoReciboCaja.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevoReciboCaja.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
-        nuevoReciboCaja.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
+        nuevoReciboCaja.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
+        nuevoReciboCaja.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
+        nuevoReciboCaja.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevoReciboCaja.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
+        nuevoReciboCaja.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
+
         nuevoReciboCaja.setCodigoDocumento("" + facturaSeleccionada.getCodigoDocumento());
-        nuevoReciboCaja.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
         nuevoReciboCaja.setClienteCiudad("<b>CIUDAD: </b>" + "-");
         nuevoReciboCaja.setFechaFactura("<b>FECHA : </b>" + formateadorFecha.format(facturaSeleccionada.getFechaElaboracion()));
         nuevoReciboCaja.setClienteAdministradora("<b>ADMINISTRADORA: </b>" + facturaSeleccionada.getIdPaciente().getIdAdministradora().getRazonSocial());

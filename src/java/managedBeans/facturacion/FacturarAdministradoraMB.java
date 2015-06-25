@@ -658,12 +658,16 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         List<EstructuraItemsAdministradora> listaItemsFactura = new ArrayList<>();
         listaRegistrosParaPdf = new ArrayList<>();
         EstructuraFacturaAdministradora nuevaFactura = new EstructuraFacturaAdministradora();
-        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
-        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
+        
+        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
+        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevaFactura.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
+        nuevaFactura.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
+                
         nuevaFactura.setTipoDocumento(" FACTURA No.");
         nuevaFactura.setCodigoDocumento("" + facturaAdmiSeleccionada.getCodigoDocumento());
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
+        
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getRazonSocial());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getNumeroIdentificacion());
@@ -816,13 +820,17 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
 
         List<EstructuraItemsAdministradora> listaItemsFactura = new ArrayList<>();
         listaRegistrosParaPdf = new ArrayList<>();
-        EstructuraFacturaAdministradora nuevaFactura = new EstructuraFacturaAdministradora();
-        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
-        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
+        EstructuraFacturaAdministradora nuevaFactura = new EstructuraFacturaAdministradora();      
+        
+        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
+        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevaFactura.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
+        nuevaFactura.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
+        
         nuevaFactura.setTipoDocumento(" FACTURA No.");
         nuevaFactura.setCodigoDocumento("" + facturaAdmiSeleccionada.getCodigoDocumento());
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
+        
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getRazonSocial());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getNumeroIdentificacion());

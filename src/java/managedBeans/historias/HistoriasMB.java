@@ -24,6 +24,7 @@ import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import managedBeans.facturacion.ConsecutivosMB;
 import managedBeans.seguridad.LoginMB;
 import modelo.entidades.CfgClasificaciones;
 import modelo.entidades.CfgDiagnostico;
@@ -33,6 +34,7 @@ import modelo.entidades.CfgPacientes;
 import modelo.entidades.CfgTxtPredefinidos;
 import modelo.entidades.CfgUsuarios;
 import modelo.entidades.CitCitas;
+import modelo.entidades.FacConsecutivo;
 import modelo.entidades.FacServicio;
 import modelo.entidades.HcCamposReg;
 import modelo.entidades.HcDetalle;
@@ -47,6 +49,7 @@ import modelo.fachadas.CfgTxtPredefinidosFacade;
 import modelo.fachadas.CfgUsuariosFacade;
 import modelo.fachadas.CitCitasFacade;
 import modelo.fachadas.CitTurnosFacade;
+import modelo.fachadas.FacConsecutivoFacade;
 import modelo.fachadas.FacServicioFacade;
 import modelo.fachadas.HcCamposRegFacade;
 import modelo.fachadas.HcRegistroFacade;
@@ -167,46 +170,11 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     private String municipio = "";
 
     private final SimpleDateFormat sdfDate = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat sdfHour = new SimpleDateFormat("HH:mm");
     private final SimpleDateFormat sdfDateHour = new SimpleDateFormat("dd/MM/yyyy HH:mm");
     private final SimpleDateFormat sdfFechaString = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);//Thu Apr 30 19:00:00 COT 2015
     private final DecimalFormat formateadorDecimal = new DecimalFormat("#.##");
 
-    /*
-     public void mostrarValorObjeto2() {
-     try {
-     System.out.println("Muestra dato1: " + datosFormulario.getDato1());
-     System.out.println("Muestra dato2: " + datosFormulario.getDato2());
-     System.out.println("Muestra dato3: " + datosFormulario.getDato3());
-     System.out.println("Muestra dato4: " + datosFormulario.getDato4());
-     System.out.println("gMuestra dato5: " + datosFormulario.getDato5());
-     System.out.println("Muestra dato6: " + datosFormulario.getDato6());
-     } catch (Exception e) {
-     System.out.println("No se pudo mostrar ");
-     }
-     }
-     private Object objeto;
-
-     public Object getObjeto() {
-     return objeto;
-     }
-
-     public void setObjeto(Object objeto) {
-     this.objeto = objeto;
-     }
-
-     public void mostrarValorObjeto() {
-     if (objeto == null) {
-     System.out.println("Es null");
-     } else {
-     try {
-     System.out.println("Se convirtio: " + Double.parseDouble(objeto.toString()));
-     } catch (Exception e) {
-     System.out.println("No se pudo convertir: " + objeto);
-     }
-
-     }
-     }
-     */
     //---------------------------------------------------
     //----------------- FUNCIONES INICIALES -----------------------
     //---------------------------------------------------
@@ -242,12 +210,14 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     private void valoresPorDefecto() {
         //Asignacion de valores por defecto cuando se muestra un formulario
         if (tipoRegistroClinicoActual != null) {//validacion particular para asignar valores por defecto             
-            if (tipoRegistroClinicoActual.getIdTipoReg() == 1) {
-                datosFormulario.setDato2("475");//en este combo quede seleccionado ENFERMEDAD GENERAL                
+            if (tipoRegistroClinicoActual.getIdTipoReg() == 8) {//SOLICITUD DE AUTORIZACION DE SERVICIOS
+                datosFormulario.setDato4("Prioritaria");//prioridad de la atencion                
+                datosFormulario.setDato0(pacienteSeleccionado.getIdAdministradora().getRazonSocial());//pagador 
+                datosFormulario.setDato1(pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora());//codigo
             }
-            if (tipoRegistroClinicoActual.getIdTipoReg() == 2) {
-                datosFormulario.setDato1("475");//en este combo quede seleccionado ENFERMEDAD GENERAL                
-            }
+//            if (tipoRegistroClinicoActual.getIdTipoReg() == 2) {
+//                datosFormulario.setDato1("475");//en este combo quede seleccionado ENFERMEDAD GENERAL                
+//            }
         }
     }
 
@@ -523,6 +493,7 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
         datosReporte.setValor(53, "<b>NOMBRE: </b>" + pacienteSeleccionado.nombreCompleto());//NOMBRES PACIENTE        
 
         datosReporte.setValor(54, "<b>FECHA: </b> " + sdfDateHour.format(regEncontrado.getFechaReg()));
+        datosReporte.setValor(88, "<b>FECHA: </b> " + sdfDate.format(regEncontrado.getFechaReg()) + "<b> HORA: </b> " + sdfHour.format(regEncontrado.getFechaReg()));
         if (pacienteSeleccionado.getIdAdministradora() != null) {
             datosReporte.setValor(55, "<b>ENTIDAD: </b> " + pacienteSeleccionado.getIdAdministradora().getRazonSocial());
         } else {
@@ -603,23 +574,28 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
             }
             datosReporte.setValor(73, obtenerCadenaNoNula(regEncontrado.getIdMedico().getRegistroProfesional()));//REGISTRO PROFESIONAL MEDICO
             datosReporte.setValor(84, datosReporte.getValor(84) + " <br/> Reg. prof. " + regEncontrado.getIdMedico().getRegistroProfesional());//NOMBRE MEDICO
-            
+
             if (regEncontrado.getIdMedico().getFirma() != null) {
                 datosReporte.setValor(74, loginMB.getRutaCarpetaImagenes() + regEncontrado.getIdMedico().getFirma().getUrlImagen());//FIRMA MEDICO            
             } else {
                 datosReporte.setValor(74, null);//FIRMA MEDICO
             }
         }
-        datosReporte.setValor(75, "<b>Dirección: </b> " + empresa.getDireccion() + "      " + empresa.getWebsite() + "      <b>Teléfono: </b> " + empresa.getTelefono1() + " - " + empresa.getTelefono2());//DIR TEL EMPRESA        
+        datosReporte.setValor(75, "<b>Dirección: </b> " + empresa.getDireccion() + "      " + empresa.getWebsite() + "      <b>Teléfono: </b> " + empresa.getTelefono1());//DIR TEL EMPRESA        
         datosReporte.setValor(76, "<b>NOMBRE: </b>" + empresa.getRazonSocial());//NOMBRE EMPRESA                
         datosReporte.setValor(77, "<b>CODIGO: </b>" + empresa.getCodigoEmpresa());//CODIGO EMPRESA                
         datosReporte.setValor(78, "<b>DIRECCION: </b>" + empresa.getDireccion());//DIRECCION EMPRESA                
         datosReporte.setValor(79, "<b>TELEFONO: </b>" + empresa.getTelefono1());//TELEFONO EMPRESA                
-        datosReporte.setValor(80, "<b>DEPARTAMENTO: </b>" + empresa.getCodDepartamento().getDescripcion() + " " + empresa.getCodDepartamento().getCodigo());//TELEFONO EMPRESA                
-        datosReporte.setValor(81, "<b>MUNICIPIO: </b>" + empresa.getCodMunicipio().getDescripcion() + " " + empresa.getCodMunicipio().getCodigo());//TELEFONO EMPRESA                
-        datosReporte.setValor(82, "<b>NIT: </b>" + empresa.getTipoDoc().getDescripcion() + "  " + empresa.getNumIdentificacion());//NIT
-        datosReporte.setValor(83, empresa.getWebsite());//sitio web
+        datosReporte.setValor(80, "<b>DEPARTAMENTO: </b>" + empresa.getCodDepartamento().getCodigo() + " " + empresa.getCodDepartamento().getDescripcion());//TELEFONO EMPRESA                
+        datosReporte.setValor(81, "<b>MUNICIPIO: </b>" + empresa.getCodMunicipio().getCodigo() + " " + empresa.getCodMunicipio().getDescripcion());//TELEFONO EMPRESA                
+        datosReporte.setValor(82, "<b>" + empresa.getTipoDoc().getDescripcion() + ": </b>  " + empresa.getNumIdentificacion());//NIT        
+        datosReporte.setValor(83, empresa.getWebsite());//sitio web       
 
+        
+        datosReporte.setValor(97, empresa.getNomRepLegal());//CONSTANSA PORTILLA BENAVIDES
+        datosReporte.setValor(98, empresa.getTipoDoc().getDescripcion() + ":" + empresa.getNumIdentificacion() + " " + empresa.getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA        
+        datosReporte.setValor(100, empresa.getRazonSocial());//
+        datosReporte.setValor(99, "CONSULTORIO " + empresa.getDireccion() + " " + empresa.getCodMunicipio().getDescripcion() + "  TELEFONO: " + empresa.getTelefono1());//CONSULTRIO
         //datosReporte.setValor(85, "<b>ASEGURADORA RESPONSABLE DE LA ATENCION, NUMERO DE POLIZA SI ES SOAT Y VIGENCIA: </b> ");
 
         //----------------------------------------------------------------------
@@ -764,6 +740,7 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     public void cambiaTipoRegistroClinico() {//cambia el combo 'tipo de registro clinico'
         limpiarFormulario();
         cargarUltimoRegistro();
+        valoresPorDefecto();
         modificandoRegCli = false;
     }
 
@@ -970,6 +947,21 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
                 }
             }
         }
+
+        if (tipoRegistroClinicoActual.getIdTipoReg() == 8) {//SOLICITUD DE AUTORIZACION DE SERVICIOS            
+            tipoRegistroClinicoActual.setConsecutivo(tipoRegistroClinicoActual.getConsecutivo() + 1);
+            tipoRegCliFacade.edit(tipoRegistroClinicoActual);//incrementar consecutivo a tipo de registro clinico actual           
+            for (int i = 0; i < listaDetalle.size(); i++) {//se quita el valor por se autocalculara
+                if (listaDetalle.get(i).getHcDetallePK().getIdCampo() == 182) {
+                    listaDetalle.remove(i);
+                    break;
+                }
+            }
+            nuevoDetalle = new HcDetalle(nuevoRegistro.getIdRegistro(), 182);//numero de solicitud
+            nuevoDetalle.setValor(String.valueOf(tipoRegistroClinicoActual.getConsecutivo()));
+            listaDetalle.add(nuevoDetalle);
+        }
+
         nuevoRegistro.setHcDetalleList(listaDetalle);
         nuevoRegistro.setFolio(registroFacade.buscarMaximoFolio(nuevoRegistro.getIdPaciente().getIdPaciente()) + 1);
         registroFacade.edit(nuevoRegistro);
