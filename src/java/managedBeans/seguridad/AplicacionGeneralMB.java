@@ -182,8 +182,8 @@ public class AplicacionGeneralMB {
         timer.start();
     }
 
-    //Timer timer = new Timer(3600000, new ActionListener() {//cada hora
-    Timer timer = new Timer(60000, new ActionListener() {//cada minuto
+    Timer timer = new Timer(3600000, new ActionListener() {//cada hora
+    //Timer timer = new Timer(60000, new ActionListener() {//cada minuto
         @Override
         public void actionPerformed(ActionEvent e) {
             actionsPerHour();
