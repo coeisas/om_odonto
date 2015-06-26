@@ -18,23 +18,18 @@
             <table style="margin-left: auto; margin-right: auto;" >
                 <tr><td colspan="2"><h2>SOLICITUD DE AUTORIZACION DE SERVICIOS DE SALUD</h2></td></tr>                                
                 <tr>
+                    <td><p:outputLabel value="NUMERO DE SOLICITUD"/></td>            
+                    <td><p:outputLabel value="CODIGO ENTIDAD"/></td>                   
+                </tr>
+                <tr>
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato28}" disabled="true"/></td>            
+                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato1}" disabled="true"/></td>
+                </tr>
+                <tr>
                     <td colspan="2"><p:outputLabel value="ENTIDAD A LA QUE SE LE SOLICITA (PAGADOR)"/></td>                    
                 </tr>
                 <tr>
-                    <td colspan="2">
-                        <p:focus for="IdFocus" />
-                        <p:inputText  id="IdFocus" styleClass="width2" value="#{historiasMB.datosFormulario.dato0}"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td><p:outputLabel value="CODIGO"/></td>                    
-                    <td>&nbsp;</td>                    
-                </tr>
-                <tr>
-                    <td>                        
-                        <p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato1}"/>
-                    </td>
-                    <td>&nbsp;</td>                    
+                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato0}" disabled="true"/></td>
                 </tr>
                 <tr><td colspan="2"><h2>INFORMACION DE LA ATENCION Y SERVICIOS SOLICITADOS</h2></td></tr>                                
                 <tr>
@@ -42,7 +37,7 @@
                     <td><p:outputLabel value="TIPO DE SERVICIOS SOLICITADOS"/></td>
                 </tr>
                 <tr>
-                    <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato2}"/></td>
+                    <td><p:focus for="IdFocus" /><p:inputText id="IdFocus" styleClass="width1" value="#{historiasMB.datosFormulario.dato2}"/></td>
                     <td><p:inputText styleClass="width1" value="#{historiasMB.datosFormulario.dato3}"/></td>
                 </tr>                
                 <tr>
@@ -50,7 +45,7 @@
 
                 </tr>
                 <tr>
-                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato4}"/></td>
+                    <td colspan="2"><p:inputText styleClass="width2" value="#{historiasMB.datosFormulario.dato4}" disabled="true"/></td>
                 </tr>
                 <tr>
                     <td colspan="2"><p:outputLabel value="UBICACION DEL PACIENTE AL MOMENTO DE LA SOLICITUD DE AUTORIZACION"/></td>
@@ -119,7 +114,7 @@
                         <p:inputText  value="#{historiasMB.datosFormulario.dato22}" style="width: 385px;"/>
                     </td>
                 </tr>
-                
+
                 <tr>
                     <td colspan="2"><p:outputLabel value="JUSTIFICACION CLINICA" /></td>
                 </tr>

@@ -15,6 +15,7 @@ public class EstructuraReciboCaja {
     private String tituloFactura = "";//NombreEmpresa,Nit,Regimen <=> Html    
     private String nitEmpresa = "";
     private String regimenEmpresa = "";
+    private String piePagina = "";
     private String subtituloFactura = "";//direccion-telefonos-email
     private String codigoDocumento = "";
     private String clienteCiudad = "";
@@ -182,6 +183,14 @@ public class EstructuraReciboCaja {
 
     public void setLogoEmpresa(String logoEmpresa) {
         this.logoEmpresa = logoEmpresa;
+    }
+
+    public String getPiePagina() {
+        return piePagina;
+    }
+
+    public void setPiePagina(String piePagina) {
+        this.piePagina = piePagina;
     }
 
 }

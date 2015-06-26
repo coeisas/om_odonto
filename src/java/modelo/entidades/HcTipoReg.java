@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "HcTipoReg.findByNombre", query = "SELECT h FROM HcTipoReg h WHERE h.nombre = :nombre"),
     @NamedQuery(name = "HcTipoReg.findByUrlPagina", query = "SELECT h FROM HcTipoReg h WHERE h.urlPagina = :urlPagina"),
     @NamedQuery(name = "HcTipoReg.findByActivo", query = "SELECT h FROM HcTipoReg h WHERE h.activo = :activo"),
-    @NamedQuery(name = "HcTipoReg.findByCantCampos", query = "SELECT h FROM HcTipoReg h WHERE h.cantCampos = :cantCampos")})
+    @NamedQuery(name = "HcTipoReg.findByCantCampos", query = "SELECT h FROM HcTipoReg h WHERE h.cantCampos = :cantCampos"),
+    @NamedQuery(name = "HcTipoReg.findByConsecutivo", query = "SELECT h FROM HcTipoReg h WHERE h.consecutivo = :consecutivo")})
 public class HcTipoReg implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -49,6 +50,8 @@ public class HcTipoReg implements Serializable {
     private Boolean activo;
     @Column(name = "cant_campos")
     private Integer cantCampos;
+    @Column(name = "consecutivo")
+    private Integer consecutivo;
     @OneToMany(mappedBy = "idTipoReg")
     private List<HcCamposReg> hcCamposRegList;
     @OneToMany(mappedBy = "idTipoReg")
@@ -99,6 +102,14 @@ public class HcTipoReg implements Serializable {
 
     public void setCantCampos(Integer cantCampos) {
         this.cantCampos = cantCampos;
+    }
+
+    public Integer getConsecutivo() {
+        return consecutivo;
+    }
+
+    public void setConsecutivo(Integer consecutivo) {
+        this.consecutivo = consecutivo;
     }
 
     @XmlTransient

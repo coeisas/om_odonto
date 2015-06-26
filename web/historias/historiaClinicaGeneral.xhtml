@@ -23,9 +23,10 @@
                 <tr>
                     <td colspan="2">
                         <p:focus for="IdFocus" />
-                        <p:selectOneMenu id="IdFocus" style="width: 315px;" value="#{historiasMB.datosFormulario.dato2}" filter="true" filterMatchMode="contains" >
-                            <f:selectItems value="#{aplicacionGeneralMB.listaMotivoConsulta}"/>
-                        </p:selectOneMenu>                        
+                        <p:inputTextarea id="IdFocus" cols="89"  value="#{historiasMB.datosFormulario.dato2}"/>
+                        <!-- p:selectOneMenu id="IdFocus" style="width: 315px;" value="# {historiasMB.datosFormulario.dato2}" filter="true" filterMatchMode="contains" >
+                            <f:selectItems value="# {aplicacionGeneralMB.listaMotivoConsulta}"/>
+                        </p:selectOneMenu-->                        
                     </td>                    
                 </tr>
                 <tr>
@@ -77,7 +78,7 @@
                     <td ><p:inputTextarea  styleClass="width1" value="#{historiasMB.datosFormulario.dato11}"  /></td>
                 </tr>                                
                 <tr>
-                    <td colspan="2"><h2>EXAMEN INTERNO</h2></td>
+                    <td colspan="2"><h2>EXAMEN EXTERNO</h2></td>
                 </tr>                
                 <tr>
                     <td colspan="2"><p:outputLabel value="Ojo derecho"/></td>
@@ -212,16 +213,46 @@
                 </tr>
 
                 <tr>
-                    <td colspan="2"><h2>DIAGNOSTICO</h2></td>
+                    <td colspan="2"><h2>DIAGNOSTICO CIE-10</h2></td>
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO CIE-10"/>
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO PRINCIPAL"/>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2">
                         <p:autoComplete size="125"  value="#{historiasMB.datosFormulario.dato34}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 1"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:autoComplete size="125"  value="#{historiasMB.datosFormulario.dato36}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 2"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:autoComplete size="125"  value="#{historiasMB.datosFormulario.dato37}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:outputLabel styleClass="labelFormulario" style="width: 182px;" value="DIAGNOSTICO RELACIONADO 3"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <p:autoComplete size="125"  value="#{historiasMB.datosFormulario.dato38}" completeMethod="#{historiasMB.autocompletarDiagnostico}" forceSelection="true"/>
                     </td>
                 </tr>
                 <tr>

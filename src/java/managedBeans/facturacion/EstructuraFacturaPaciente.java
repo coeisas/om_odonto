@@ -16,6 +16,7 @@ public class EstructuraFacturaPaciente { //clase que contiene los datos para una
     private String tituloFactura = "";//NombreEmpresa,Nit,Regimen <=> Html
     private String nitEmpresa = "";
     private String regimenEmpresa = "";
+    private String piePagina="";
     private String tipoDocumento = "";//Factura, Orden, Recibo...
     private String codigoDocumento = "";
     private String subtituloFactura = "";//direccion-telefonos-email
@@ -264,6 +265,14 @@ public class EstructuraFacturaPaciente { //clase que contiene los datos para una
 
     public void setTituloCree(String tituloCree) {
         this.tituloCree = tituloCree;
+    }
+
+    public String getPiePagina() {
+        return piePagina;
+    }
+
+    public void setPiePagina(String piePagina) {
+        this.piePagina = piePagina;
     }
 
 }

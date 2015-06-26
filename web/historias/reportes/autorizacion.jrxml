@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" uuid="9f7fc654-ee1d-4b56-916d-b168aa7d7a43">
-	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="12"/>
+	<property name="ireport.zoom" value="3.0"/>
+	<property name="ireport.x" value="87"/>
+	<property name="ireport.y" value="1674"/>
 	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -327,57 +327,54 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="73">
+		<band height="62">
 			<frame>
 				<reportElement uuid="8c3c6500-b0ac-4237-ab34-fe5e78823fd1" positionType="Float" x="0" y="0" width="515" height="59"/>
-				<rectangle radius="10">
-					<reportElement uuid="3dc8551e-a7ac-4d75-b1d2-d35c2605e1b1" positionType="Float" x="0" y="0" width="515" height="59"/>
-				</rectangle>
-				<image scaleImage="FillFrame">
-					<reportElement uuid="9c3bbc6e-8311-410d-a87e-f822b43f3dd0" positionType="Float" x="7" y="3" width="83" height="53"/>
-					<imageExpression><![CDATA[$F{dato70}]]></imageExpression>
+				<staticText>
+					<reportElement uuid="faf14165-e485-4341-90a0-429fd8508710" x="60" y="0" width="455" height="15"/>
+					<textElement textAlignment="Center">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[MINISTERIO DE LA PROTECCION SOCIAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement uuid="faf14165-e485-4341-90a0-429fd8508710" x="60" y="15" width="455" height="15"/>
+					<textElement textAlignment="Center">
+						<font size="11" isBold="true"/>
+					</textElement>
+					<text><![CDATA[SOLICITUD DE AUTORIZACION DE SERVICIOS DE SALUD]]></text>
+				</staticText>
+				<image>
+					<reportElement uuid="cc1f3d60-7145-430c-ac0e-484ee0f156c7" x="0" y="0" width="60" height="59"/>
+					<imageExpression><![CDATA["../../recursos/img/escudo.jpg"]]></imageExpression>
 				</image>
-				<staticText>
-					<reportElement uuid="faf14165-e485-4341-90a0-429fd8508710" x="90" y="5" width="277" height="20"/>
-					<textElement textAlignment="Center">
-						<font size="15" isBold="true"/>
-					</textElement>
-					<text><![CDATA[UNIOPTICA TUQUERRES]]></text>
-				</staticText>
-				<staticText>
-					<reportElement uuid="faf14165-e485-4341-90a0-429fd8508710" x="90" y="30" width="277" height="20"/>
-					<textElement textAlignment="Center">
-						<font size="15" isBold="false"/>
-					</textElement>
-					<text><![CDATA[FORMULARIO DE REFERENCIA]]></text>
-				</staticText>
 				<frame>
-					<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="367" y="5" width="138" height="12"/>
+					<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="143" y="43" width="121" height="12"/>
 					<textField isStretchWithOverflow="true">
-						<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="138" height="12"/>
+						<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="121" height="12"/>
 						<textElement markup="html">
 							<font fontName="SansSerif" size="9"/>
 							<paragraph leftIndent="5"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{dato50}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{dato28}]]></textFieldExpression>
 					</textField>
 				</frame>
 				<frame>
-					<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="367" y="18" width="138" height="12"/>
+					<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="279" y="43" width="162" height="12"/>
 					<textField isStretchWithOverflow="true">
-						<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="138" height="12"/>
+						<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="162" height="12"/>
 						<textElement markup="html">
 							<font fontName="SansSerif" size="9"/>
 							<paragraph leftIndent="5"/>
 						</textElement>
-						<textFieldExpression><![CDATA[$F{dato51}]]></textFieldExpression>
+						<textFieldExpression><![CDATA[$F{dato88}]]></textFieldExpression>
 					</textField>
 				</frame>
 			</frame>
 		</band>
 	</title>
 	<detail>
-		<band height="452" splitType="Stretch">
+		<band height="450" splitType="Stretch">
 			<frame>
 				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="96" width="251" height="12"/>
 				<textField isStretchWithOverflow="true">
@@ -560,28 +557,6 @@
 					</textElement>
 					<text><![CDATA[INFORMACION DEL PRESTADOR (Solicitante)]]></text>
 				</staticText>
-			</frame>
-			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="0" width="252" height="12"/>
-				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="252" height="12"/>
-					<textElement markup="html">
-						<font fontName="SansSerif" size="9"/>
-						<paragraph leftIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{dato86}]]></textFieldExpression>
-				</textField>
-			</frame>
-			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="252" y="0" width="263" height="12"/>
-				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="263" height="12"/>
-					<textElement markup="html">
-						<font fontName="SansSerif" size="9"/>
-						<paragraph leftIndent="5"/>
-					</textElement>
-					<textFieldExpression><![CDATA[$F{dato54}]]></textFieldExpression>
-				</textField>
 			</frame>
 			<frame>
 				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="48" width="157" height="12"/>
@@ -1123,4 +1098,44 @@
 			</frame>
 		</band>
 	</pageFooter>
+	<summary>
+		<band height="108">
+			<line>
+				<reportElement uuid="eab9670c-6faa-4f32-b945-3933c1079775" x="263" y="82" width="252" height="1"/>
+			</line>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="9c3bbc6e-8311-410d-a87e-f822b43f3dd0" positionType="Float" x="22" y="0" width="204" height="82"/>
+				<imageExpression><![CDATA[$F{dato74}]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="0" y="82" width="252" height="12"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="251" height="12"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dato84}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="263" y="82" width="252" height="12"/>
+				<textField isStretchWithOverflow="true">
+					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="252" height="12"/>
+					<textElement markup="html">
+						<font fontName="SansSerif" size="9"/>
+						<paragraph leftIndent="5"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{dato69}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="9c3bbc6e-8311-410d-a87e-f822b43f3dd0" positionType="Float" x="286" y="0" width="204" height="82"/>
+				<imageExpression><![CDATA[$F{dato68}]]></imageExpression>
+			</image>
+			<line>
+				<reportElement uuid="eab9670c-6faa-4f32-b945-3933c1079775" x="0" y="81" width="252" height="1"/>
+			</line>
+		</band>
+	</summary>
 </jasperReport>

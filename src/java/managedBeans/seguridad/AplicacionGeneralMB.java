@@ -14,6 +14,29 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.model.SelectItem;
 import beans.utilidades.Sesion;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PreDestroy;
+import javax.swing.Timer;
+import modelo.entidades.CfgConfiguraciones;
+import modelo.entidades.CfgCopiasSeguridad;
 import modelo.entidades.CfgInsumo;
 import modelo.entidades.CfgMedicamento;
 import modelo.entidades.CfgPerfilesUsuario;
@@ -23,6 +46,8 @@ import modelo.entidades.CfgUsuarios;
 import modelo.entidades.FacAdministradora;
 import modelo.entidades.FacPaquete;
 import modelo.entidades.FacServicio;
+import modelo.fachadas.CfgConfiguracionesFacade;
+import modelo.fachadas.CfgCopiasSeguridadFacade;
 import modelo.fachadas.CfgInsumoFacade;
 import modelo.fachadas.CfgMedicamentoFacade;
 import modelo.fachadas.CfgPerfilesUsuarioFacade;
@@ -64,10 +89,15 @@ public class AplicacionGeneralMB {
     CfgMedicamentoFacade medicamentoFacade;
     @EJB
     FacPaqueteFacade paqueteFacade;
+    @EJB
+    CfgConfiguracionesFacade configuracionesFacade;
+    @EJB
+    CfgCopiasSeguridadFacade copiasSeguridadFacade;
 
     //---------------------------------------------------
     //-----------------ENTIDADES ------------------------
     //---------------------------------------------------
+    //private CfgConfiguraciones configuracionActual;
     private List<SelectItem> listaTipoIdentificacion;
     private List<SelectItem> listaGenero;
     private List<SelectItem> listaTipoEdad;
@@ -121,15 +151,179 @@ public class AplicacionGeneralMB {
     //---------------------------------------------------
     private ArrayList<Sesion> sesionesActuales = new ArrayList<>();
     private List<SelectItem> listaMeses;
+    private String rutaCopiasseguridad;
+    private String usuario;
+    private String servidor;
+    private String clave;
+    private String rutaBinPostgres;
+    private String baseDeDatos;
+    private String url;
+
+    public Connection conn;
+    private ResultSet rs;
+    private Statement st;
 
     //---------------------------------------------------
     //----------------- FUNCIONES -----------------------
     //---------------------------------------------------
+    @PreDestroy
+    private void destroySession() {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+                System.out.println("Cerrada conexion a base de datos " + url + " ... OK  " + this.getClass().getName());
+            }
+        } catch (Exception e) {
+            System.out.println("Error:" + e.getMessage());
+        }
+    }
+
     public AplicacionGeneralMB() {
+        timer.start();
+    }
+
+    Timer timer = new Timer(3600000, new ActionListener() {//cada hora
+    //Timer timer = new Timer(60000, new ActionListener() {//cada minuto
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            actionsPerHour();
+        }
+    });
+
+    private void actionsPerHour() {//Metodo que se ejecuta cada hora, y si no hay usuarios logeados en el sistema realiza una copia de seguridad
+        try {
+            if (!sesionesActuales.isEmpty()) {//si hay usuarios conectados salir
+                return;
+            }
+            if (conn == null || conn.isClosed()) {//no hay conexion
+                return;
+            }
+            TimeZone zonah = java.util.TimeZone.getTimeZone("GMT+1");
+            Calendar Calendario = java.util.GregorianCalendar.getInstance(zonah, new java.util.Locale("es"));
+            SimpleDateFormat df = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat df2 = new java.text.SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+            SimpleDateFormat df3 = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            String dateStr = df.format(Calendario.getTime());
+
+            String sql = "SELECT * FROM cfg_copias_seguridad WHERE fecha::date = to_date('" + df3.format(Calendario.getTime()) + "','yyyy-MM-dd')";
+            ResultSet rsA = consult(sql);
+            if (rsA.next()) {
+                return;//System.out.println("no se realiza copia de seguridad por que existe una copia de seguridad para este dia");
+            }
+            //System.out.println("No existe copia para este dia");
+            String nombreCopiaSeguridad = df2.format(Calendario.getTime()) + ".backup";
+            try {
+                if (new java.io.File(rutaCopiasseguridad).exists()) {//verificar que el directorio exista                    
+                    nonQuery(" INSERT INTO cfg_copias_seguridad(nombre,fecha,ruta,tipo) VALUES ('" + nombreCopiaSeguridad + "','" + dateStr + "','" + rutaCopiasseguridad + nombreCopiaSeguridad + "','AUTOMATICA')");
+                } else {
+                    System.out.println("Error: Directorio '" + rutaCopiasseguridad + "' no existe en el servidor");
+                    return;
+                }
+            } catch (Exception x) {
+                System.out.println("Error:" + x.getMessage());
+                return;
+            }
+            try {
+                Process p;
+                ProcessBuilder pb;
+                String backupFilePath = rutaCopiasseguridad + nombreCopiaSeguridad;
+                File fiRcherofile = new java.io.File(backupFilePath);//si archivo od existe Lo eliminamos
+                if (fiRcherofile.exists()) {
+                    fiRcherofile.delete();
+                }
+                //ejecutamos proceso de copia de seguridad
+                pb = new ProcessBuilder(rutaBinPostgres + "pg_dump", "-i", "-h", servidor, "-p", "5432", "-U", usuario, "-F", "c", "-b", "-v", "-f", backupFilePath, baseDeDatos);
+                pb.environment().put("PGPASSWORD", clave);
+                pb.redirectErrorStream(true);
+                p = pb.start();
+                //imprimirSalidaDeProceso(p, " crear copia de seguridad: " + backupFilePath + "_od.backup");
+                System.out.println("Correcto: Copia de seguridad automática creada correctamente: " + nombreCopiaSeguridad);
+            } catch (IOException x) {
+                System.out.println("Error: " + x.getMessage());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AplicacionGeneralMB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void imprimirSalidaDeProceso(Process p, String description) {// mostrar por consola el progreso de un proceso externo invocado         
+        try {//CODIGO PARA MOSTRAR EL PROGESO DE LA GENERACION DEL ARCHIVO
+            InputStream is = p.getInputStream();
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String ll;
+            while ((ll = br.readLine()) != null) {
+                System.out.println(ll);
+            }
+        } catch (IOException e) {
+            System.out.println("Error 99 " + e.getMessage());
+        }//System.out.println("Termina proceso " + description + " /////////////////////////////////////////");
+    }
+
+    public ResultSet consult(String query) {//consulta que retorne una o varias tuplas
+        try {
+            if (conn != null) {
+                st = conn.createStatement();
+                rs = st.executeQuery(query);
+                //System.out.println("---- CONSULTA: " + query);
+                return rs;
+            } else {
+                System.out.println("There don't exist connection");
+                return null;
+            }
+        } catch (SQLException e) {//System.out.println("Error 3 en " + this.getClass().getName() + ":" + e.getMessage() + "---- CONSULTA:" + query);
+            return null;
+        }
+    }
+
+    public int nonQuery(String query) {//procesar una consulta que no retorne tuplas INSERT, UPDATE, DELETE... retorna 0 si se realizo correctamente retorna 1 cuando la instuccion no pudo ejecutarse        
+        int reg = 0;
+        try {
+            if (conn != null) {
+                try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                    reg = stmt.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error 4 en " + this.getClass().getName() + ":" + e.getMessage());
+        }
+        return reg;
+    }
+
+    private void crearConexionJDBC() {
+        CfgConfiguraciones configuracionActual = configuracionesFacade.find(1);
+        rutaCopiasseguridad = configuracionActual.getRutaCopiasSeguridad();
+        usuario = configuracionActual.getUsuario();
+        servidor = configuracionActual.getServidor();
+        clave = configuracionActual.getClave();
+        rutaBinPostgres = configuracionActual.getRutaBinPostgres();
+        baseDeDatos = configuracionActual.getNombreDb();
+
+        try {
+            Class.forName("org.postgresql.Driver").newInstance();// seleccionar SGBD
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            System.out.println("Error 001: " + this.getClass().getName() + " " + e.toString());
+            return;
+        }
+        try {
+            url = "jdbc:postgresql://" + servidor + "/" + baseDeDatos;
+            conn = DriverManager.getConnection(url, usuario, clave);//conectarse db del observatorio
+            if (conn != null && !conn.isClosed()) {
+                //System.out.println("Correcto === Conexión a base de datos Correcta." + this.getClass().getName());
+            } else {
+                System.out.println("Error === No se pudo realizar conexion a " + url + " " + this.getClass().getName());
+            }
+        } catch (Exception e) {
+            System.out.println("Error === No se pudo realizar conexion a " + url + " " + e.toString() + " " + this.getClass().getName());
+            conn = null;
+        }
     }
 
     public void inicializar() {
+
         if (listaGenero == null) {//no se han cargaron las listas
+            crearConexionJDBC();
+
             cargarClasificacion(ClasificacionesEnum.ActoQuirurgico);
             cargarClasificacion(ClasificacionesEnum.Administradoras);
             cargarClasificacion(ClasificacionesEnum.Ambito);
