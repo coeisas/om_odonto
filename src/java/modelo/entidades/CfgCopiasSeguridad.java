@@ -18,6 +18,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CfgCopiasSeguridad.findByIdCopia", query = "SELECT c FROM CfgCopiasSeguridad c WHERE c.idCopia = :idCopia"),
     @NamedQuery(name = "CfgCopiasSeguridad.findByNombre", query = "SELECT c FROM CfgCopiasSeguridad c WHERE c.nombre = :nombre"),
     @NamedQuery(name = "CfgCopiasSeguridad.findByFecha", query = "SELECT c FROM CfgCopiasSeguridad c WHERE c.fecha = :fecha"),
-    @NamedQuery(name = "CfgCopiasSeguridad.findByRuta", query = "SELECT c FROM CfgCopiasSeguridad c WHERE c.ruta = :ruta")})
+    @NamedQuery(name = "CfgCopiasSeguridad.findByRuta", query = "SELECT c FROM CfgCopiasSeguridad c WHERE c.ruta = :ruta"),
+    @NamedQuery(name = "CfgCopiasSeguridad.findByTipo", query = "SELECT c FROM CfgCopiasSeguridad c WHERE c.tipo = :tipo")})
 public class CfgCopiasSeguridad implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -40,13 +42,18 @@ public class CfgCopiasSeguridad implements Serializable {
     @Basic(optional = false)
     @Column(name = "id_copia", nullable = false)
     private Integer idCopia;
+    @Size(max = 300)
     @Column(name = "nombre", length = 300)
     private String nombre;
     @Column(name = "fecha")
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
+    @Size(max = 2147483647)
     @Column(name = "ruta", length = 2147483647)
     private String ruta;
+    @Size(max = 10)
+    @Column(name = "tipo", length = 10)
+    private String tipo;
 
     public CfgCopiasSeguridad() {
     }
@@ -85,6 +92,14 @@ public class CfgCopiasSeguridad implements Serializable {
 
     public void setRuta(String ruta) {
         this.ruta = ruta;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     @Override

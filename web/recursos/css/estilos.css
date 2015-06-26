@@ -9,9 +9,9 @@
     width: 100%;
     height: 100%;
     background: #000;
-    filter:alpha(opacity=10);
-    -moz-opacity: 0.1;
-    opacity: 0.1;
+    filter:alpha(opacity=30);
+    -moz-opacity: 0.3;
+    opacity: 0.3;
 }  
 .panelGridSinBordes tr, .panelGridSinBordes td {
     background: none !important;
@@ -171,6 +171,7 @@ h2{
 /*COLORES PARA LAS AGENDAS crearAgendaPrestador.xhtml-------------------------*/
 .no_disponible .fc-event-inner {
     background: #fabfb7;
+    color: brown;
 }
 .color_sin_asignar .fc-event-inner {
     background: #b6cfd4;
