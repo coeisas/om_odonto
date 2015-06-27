@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" uuid="9f7fc654-ee1d-4b56-916d-b168aa7d7a43">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="546"/>
 	<style name="table 4_TD" mode="Opaque" backcolor="#FFFFFF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -768,9 +768,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="324" width="250" height="12"/>
+				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="324" width="515" height="12"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="12"/>
+					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="515" height="12"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 						<paragraph leftIndent="5"/>
@@ -779,9 +779,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="336" width="250" height="12"/>
+				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="250" y="336" width="265" height="12"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="12"/>
+					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="265" height="12"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 						<paragraph leftIndent="5"/>
@@ -801,9 +801,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="250" y="324" width="265" height="12"/>
+				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="336" width="250" height="12"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="265" height="12"/>
+					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="250" height="12"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 						<paragraph leftIndent="5"/>

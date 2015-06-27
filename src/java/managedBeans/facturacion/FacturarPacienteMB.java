@@ -1237,8 +1237,8 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         nuevoReciboCaja.setCuotaModeradora(formateadorDecimal.format(facturaSeleccionada.getCuotaModeradora()));
         nuevoReciboCaja.setCopago(formateadorDecimal.format(facturaSeleccionada.getCopago()));
         nuevoReciboCaja.setBono("");
-        nuevoReciboCaja.setParticular("");
-        nuevoReciboCaja.setObservaciones("");
+        nuevoReciboCaja.setParticular("");        
+        nuevoReciboCaja.setObservaciones(facturaSeleccionada.getObservacion());
         String t = formateadorDecimal.format(facturaSeleccionada.getValorTotal());
         t = t.replace(".", ",");
         if (t.contains(",")) {
