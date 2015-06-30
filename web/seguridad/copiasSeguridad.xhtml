@@ -68,7 +68,9 @@
                         selectionMode="single"
                         resizableColumns="true">                                                                
                         <p:column headerText="CREACION" width="130">  
-                            #{copia.fecha}  
+                            <h:outputText value="#{copia.fecha}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" ></f:convertDateTime>
+                            </h:outputText>
                         </p:column>  
                         <p:column headerText="TIPO" width="130">  
                             #{copia.tipo}  
