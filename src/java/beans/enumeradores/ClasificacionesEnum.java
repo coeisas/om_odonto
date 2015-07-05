@@ -44,7 +44,7 @@ public enum ClasificacionesEnum {
     TipoAfiliado,//Tipos de afiliados
     TipoConsulta,//Tipos de consultas
     TipoConsumo,//Tipo de consumo: Insumo, Medicamento, Servicio
-    TipoContrato,//Tipo de contrato
+    //TipoContrato,//Tipo de contrato
     TipoDiagnosticoConsulta,//Tipos de diagnosticos en consultas
     TipoEdad,//Tipo de edad
     TipoFacturacion,//Tipo de facturacion en contratos

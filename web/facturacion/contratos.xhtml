@@ -56,41 +56,36 @@
                             <td>
                                 <p:outputLabel styleClass="campoObligatorio" value="Código"/>
                                 <p:inputText   styleClass="campoFormulario" size="12" disabled="false" value="#{contratosMB.codigo}"  maxlength="10"/>
-                                <p:outputLabel styleClass="campoObligatorio" value="Descripción"/>
-                                <p:inputText   styleClass="campoFormulario" size="87" value="#{contratosMB.descripcionContrato}"/>                                
+                                <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>
+                                <p:inputText   styleClass="campoFormulario" size="91" value="#{contratosMB.descripcionContrato}"/>                                
                             </td>                            
                         </tr>
                         <tr>
                             <td>
-                                <p:outputLabel styleClass="campoObligatorio" value="Administradora: "/>
-                                <p:selectOneMenu styleClass="campoFormulario" style="width: 310px;" value="#{contratosMB.administradora}"  filter="true" filterMatchMode="contains">
+                                <p:outputLabel  styleClass="campoObligatorio" value="Administradora: "/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 485px;" value="#{contratosMB.administradora}"  filter="true" filterMatchMode="contains">
                                     <f:selectItem itemLabel="" itemValue=""/>
                                     <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
                                 </p:selectOneMenu>
-                                <p:outputLabel    styleClass="campoObligatorio" value="Tipo Contrato"/> 
-                                <p:selectOneMenu styleClass="campoFormulario" style="width: 145px;" value="#{contratosMB.tipoContrato}">
-                                    <f:selectItem itemLabel="" itemValue=""/>
-                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoContrato}"/>
-                                </p:selectOneMenu>
                             </td>                            
                         </tr>
                         <tr>
                             <td>
+                                <p:outputLabel    styleClass="campoObligatorio" value="Tipo (Régimen)" title="Hace referencia a que régimen tienen los pacientes a los que aplica este contrato."/> 
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 205px;" value="#{contratosMB.tipoContrato}" filter="true" filterMatchMode="contains">
+                                    <f:selectItem itemLabel="" itemValue=""/>
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaRegimen}"/>
+                                </p:selectOneMenu>
                                 <p:outputLabel styleClass="campoObligatorio" value="Fecha inicio"/>
                                 <p:calendar navigator="true" styleClass="campoFormulario" locale="es" pattern="dd/MM/yyyy" mask="99/99/9999" size="11" maxlength="10" value="#{contratosMB.fechaInicio}"  />
                                 <p:outputLabel styleClass="campoObligatorio" value="Fecha Vencimiento"/>
                                 <p:calendar navigator="true" styleClass="campoFormulario" locale="es" pattern="dd/MM/yyyy" mask="99/99/9999" size="11" maxlength="10" value="#{contratosMB.fechaVencimiento}"/>
-                                <p:outputLabel styleClass="campoNoObligatorio" value="Número RIP"/>
-                                <p:inputText   styleClass="campoFormulario" size="8" value="#{contratosMB.numeroRipContrato}" maxlength="10"/>                                     
-                                <p:outputLabel styleClass="campoNoObligatorio" value="Numeró Poliza"/>
-                                <p:inputText styleClass="campoFormulario" size="8" value="#{contratosMB.numeroPoliza}"  maxlength="10"/>
                             </td>                                        
                         </tr>
                         <tr>
                             <td>
-
-                                <p:outputLabel styleClass="campoObligatorio"  value="Tipo Pago"/>
-                                <p:selectOneMenu styleClass="campoFormulario" style="width: 123px;" value="#{contratosMB.tipoPago}">
+                                <p:outputLabel styleClass="campoObligatorio"  value="Tipo Pago" title="Según el 'Tipo de Pago' se determinan los 'Tipos de Facturación'"/>
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 200px;" value="#{contratosMB.tipoPago}">
                                     <f:ajax 
                                         event="change"
                                         listener="#{contratosMB.cambiaTipoPago}"                                                
@@ -98,14 +93,24 @@
                                     <f:selectItem itemLabel="" itemValue=""/>
                                     <f:selectItems value="#{aplicacionGeneralMB.listaTipoPago}"/>
                                 </p:selectOneMenu>  
-                                <p:outputLabel  styleClass="campoNoObligatorio" value="Tipo Facturación"/> 
-                                <p:selectOneMenu id="IdTipoFacturacion" styleClass="campoFormulario" style="width: 150px;" value="#{contratosMB.tipoFacturacion}">                                    
+                                <p:outputLabel  styleClass="campoObligatorio" value="Tipo Facturación" title="Determina los tipos de documentos que se generan cuando se realiza la facturación"/> 
+                                <p:selectOneMenu id="IdTipoFacturacion" styleClass="campoFormulario" style="width: 300px;" value="#{contratosMB.tipoFacturacion}">                                    
                                     <f:selectItems value="#{contratosMB.listaTipoFacturacion}"/>
                                 </p:selectOneMenu>                                
-                                <p:outputLabel styleClass="campoNoObligatorio" value="Número Afiliados"/>
-                                    <pe:inputNumber decimalSeparator="," decimalPlaces="0"   styleClass="campoFormulario" minValue="0"  value="#{contratosMB.numeroAfiliados}"/>                                                                
+
                             </td>                            
                         </tr>                                                                                           
+                        <tr>
+                            <td>                                
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Número Afiliados"/>
+                                    <pe:inputNumber decimalSeparator="," decimalPlaces="0"   styleClass="campoFormulario" minValue="0"  value="#{contratosMB.numeroAfiliados}"/>                                                                
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Número RIP"/>
+                                <p:inputText   styleClass="campoFormulario" size="23" value="#{contratosMB.numeroRipContrato}" maxlength="10"/>                                     
+                                <p:outputLabel styleClass="campoNoObligatorio" value="Numeró Poliza"/>
+                                <p:inputText styleClass="campoFormulario" size="23" value="#{contratosMB.numeroPoliza}"  maxlength="10"/>
+                            </td>                            
+                        </tr>                                                                                           
+
                         <tr> 
                             <td>
 
@@ -122,9 +127,9 @@
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Valor Alerta"/>                                        
                                 <pe:inputNumber decimalSeparator="," styleClass="campoFormulario" value="#{contratosMB.valorAlarma}"/>
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Cod Tarifa pos"/> 
-                                <p:inputText   styleClass="campoFormulario" size="20" maxlength="3" value="#{contratosMB.tarifaPos}"/>
+                                <p:inputText   styleClass="campoFormulario" size="23" maxlength="3" value="#{contratosMB.tarifaPos}"/>
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Cod Tarifa no pos"/> 
-                                <p:inputText   styleClass="campoFormulario" size="20" maxlength="3" value="#{contratosMB.tarifaNoPos}"/>
+                                <p:inputText   styleClass="campoFormulario" size="23" maxlength="3" value="#{contratosMB.tarifaNoPos}"/>
                             </td>                                        
                         </tr>
                         <tr>
@@ -142,11 +147,11 @@
                         <tr>
                             <td>
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Cta por Cobrar"/>                            
-                                <p:inputText   styleClass="campoFormulario" disabled="false" value="#{contratosMB.cuentaPorCobrar}" maxlength="20"/>                                
+                                <p:inputText   styleClass="campoFormulario" disabled="false" value="#{contratosMB.cuentaPorCobrar}" size="23" maxlength="20"/>                                
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Cta Copago"/>
-                                <p:inputText   styleClass="campoFormulario" value="#{contratosMB.cuentaCopago}" maxlength="20"/>
+                                <p:inputText   styleClass="campoFormulario" value="#{contratosMB.cuentaCopago}" size="23" maxlength="20"/>
                                 <p:outputLabel styleClass="campoNoObligatorio" value="Cod Concepto"/>
-                                <p:inputText   styleClass="campoFormulario" value="#{contratosMB.codigoConcepto}" maxlength="5"/>
+                                <p:inputText   styleClass="campoFormulario" value="#{contratosMB.codigoConcepto}" size="23" maxlength="5"/>
                             </td>                                        
                         </tr>    
                         <tr> 
@@ -316,7 +321,7 @@
                                 pageLinks="5"
                                 selectionMode="single"
                                 resizableColumns="true">                                                                                               
-                                <p:column headerText="CODIGO" width="1" filterBy="#{contrato.codigoContrato}" filterMatchMode="contains">
+                                <p:column headerText="CODIGO" width="20" filterBy="#{contrato.codigoContrato}" filterMatchMode="contains">
                                     #{contrato.codigoContrato}
                                 </p:column>                                
                                 <p:column headerText="NOMBRE" width="90" filterBy="#{contrato.descripcion}" filterMatchMode="contains">
@@ -325,7 +330,10 @@
                                 <p:column headerText="ADMINISTRADORA" width="90" filterBy="#{contrato.idAdministradora.razonSocial}" filterMatchMode="contains">
                                     #{contrato.idAdministradora.razonSocial}
                                 </p:column>                                
-                                <p:column headerText="VIGENCIA" width="90" filterBy="#{contrato.vigencia}" filterMatchMode="contains">
+                                <p:column headerText="TIPO" width="60" filterBy="#{contrato.tipoContrato.descripcion}" filterMatchMode="contains">
+                                    #{contrato.tipoContrato.descripcion}
+                                </p:column>                                
+                                <p:column headerText="VIGENCIA" width="40" filterBy="#{contrato.vigencia}" filterMatchMode="contains">
                                     #{contrato.vigencia}
                                 </p:column>                                
                             </p:dataTable>  
