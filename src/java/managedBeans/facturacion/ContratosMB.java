@@ -135,8 +135,8 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
     //---------------------------------------------------
     //-----------------FUNCIONES CONTRATOS --------------
     //--------------------------------------------------- 
-    public void btnNuevoContrato(){
-        contratoSeleccionado=null;
+    public void btnNuevoContrato() {
+        contratoSeleccionado = null;
         limpiarFormularioContratos();
     }
     
@@ -149,7 +149,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
         if (listaManuales == null) {//agregar manual 
             listaManuales = new ArrayList<>();
         }
-        if (contratoSeleccionado!=null && contratoSeleccionado.getIdManualTarifario() != null) {
+        if (contratoSeleccionado != null && contratoSeleccionado.getIdManualTarifario() != null) {
             listaManuales.add(contratoSeleccionado.getIdManualTarifario());
         }
         tituloTabContratos = "Nuevo Contrato";
@@ -238,7 +238,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
             imprimirMensaje("Error", "No se ha seleccionado ningún contrato de la tabla", FacesMessage.SEVERITY_ERROR);
             return;
         }
-        contratoSeleccionado=contratoSeleccionadoTabla;
+        contratoSeleccionado = contratoSeleccionadoTabla;
         limpiarFormularioContratos();
         contratoSeleccionado = contratoFacade.find(contratoSeleccionadoTabla.getIdContrato());
         codigo = contratoSeleccionado.getCodigoContrato();
@@ -561,7 +561,7 @@ public class ContratosMB extends MetodosGenerales implements Serializable {
         if (validarNoVacio(tipoPago)) {
             listaTipoFacturacion = cargarClasificacion("TipoFacturacion");//carga todos los tipo de factuaracion
             for (int i = 0; i < listaTipoFacturacion.size(); i++) {
-                if (clasificacionesFachada.find(Integer.parseInt(tipoPago)).getDescripcion().compareTo("Capitado") == 0) {//tipo pago es Capitado
+                if (clasificacionesFachada.find(Integer.parseInt(tipoPago)).getDescripcion().compareTo("Capitado") == 0) {//tipo pago es capitado
                     if (listaTipoFacturacion.get(i).getLabel().compareTo("Orden de Servicio") == 0
                             || listaTipoFacturacion.get(i).getLabel().compareTo("Orden de Servicio Extramural") == 0
                             || listaTipoFacturacion.get(i).getLabel().compareTo("Recibo de Caja") == 0

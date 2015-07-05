@@ -131,7 +131,7 @@ public class AplicacionGeneralMB {
     private List<SelectItem> listaTipoConsulta;
     private List<SelectItem> listaTipoPago;
     private List<SelectItem> listaTipoFacturacion;
-    private List<SelectItem> listaTipoContrato;
+    //private List<SelectItem> listaTipoContrato;
     private List<HcTipoReg> listaTipoRegistroClinico;
 
     private List<FacServicio> listaServicios;
@@ -359,7 +359,7 @@ public class AplicacionGeneralMB {
             cargarClasificacion(ClasificacionesEnum.TipoAfiliado);
             cargarClasificacion(ClasificacionesEnum.TipoAdministradora);
             cargarClasificacion(ClasificacionesEnum.TipoConsulta);
-            cargarClasificacion(ClasificacionesEnum.TipoContrato);
+            //cargarClasificacion(ClasificacionesEnum.TipoContrato);
             cargarClasificacion(ClasificacionesEnum.TipoConsumo);
             cargarClasificacion(ClasificacionesEnum.TipoDiagnosticoConsulta);
             cargarClasificacion(ClasificacionesEnum.TipoEdad);
@@ -501,9 +501,9 @@ public class AplicacionGeneralMB {
             case TipoPago:
                 listaTipoPago = cargarClasificacion(maestro.toString());
                 break;
-            case TipoContrato:
-                listaTipoContrato = cargarClasificacion(maestro.toString());
-                break;
+//            case TipoContrato:
+//                listaTipoContrato = cargarClasificacion(maestro.toString());
+//                break;
             case TipoConsumo:
                 listaTipoConsumo = cargarClasificacion(maestro.toString());
                 break;
@@ -883,13 +883,13 @@ public class AplicacionGeneralMB {
         this.listaTipoFacturacion = listaTipoFacturacion;
     }
 
-    public List<SelectItem> getListaTipoContrato() {
-        return listaTipoContrato;
-    }
-
-    public void setListaTipoContrato(List<SelectItem> listaTipoContrato) {
-        this.listaTipoContrato = listaTipoContrato;
-    }
+//    public List<SelectItem> getListaTipoContrato() {
+//        return listaTipoContrato;
+//    }
+//
+//    public void setListaTipoContrato(List<SelectItem> listaTipoContrato) {
+//        this.listaTipoContrato = listaTipoContrato;
+//    }
 
     public List<CfgInsumo> getListaInsumos() {
         return listaInsumos;

@@ -194,11 +194,12 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     private List<EstructuraFacturaPaciente> listaRegistrosFactura;
     private List<EstructuraReciboCaja> listaRegistrosReciboCaja;
     private final SimpleDateFormat formateadorFecha = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private final SimpleDateFormat formateadorFechaSinHora = new SimpleDateFormat("dd-MM-yyyy");
     private final DecimalFormat formateadorDecimal = new DecimalFormat("0.00");
     private boolean disableControlesBuscarFactura = true;
     private boolean facturarComoParticular = false;//saber si se debe cargar el manual tarifario propio o el de la administradora particular
     private boolean facturarComoParticularDisabled = false;//si administradora no es particular se puede facturar como administradora
-    private String msjBtnFacturarParticular = "Particular: NO";
+    private String msjBtnFacturarParticular = "Facturar como particular: NO";
     private boolean cargandoDesdeTab = false;
 
     //------- CONSUMOS --------------
@@ -332,6 +333,9 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     private int cantidadPaquete = 1;
     private double valorUnitarioPaquete = 0;
     private double valorFinalPaquete = 0;
+
+    private List<FacContrato> listaContratosAplican;//contratos que se pueden aplicar para la facturacion
+    private String idContratoActual;
 
     //---------------------------------------------------
     //------------- FUNCIONES INICIALES  ----------------
@@ -471,6 +475,13 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
                 return true;
             }
         }
+    }
+
+    public void cambiaContrato() {//funcion cuando se selecciona otro contrato del listado
+        contratoActual = contratoFacade.find(Integer.parseInt(idContratoActual));
+        determinarCopagoCuotaModeradora();
+        determinarImpuestos();
+        cargarListaTiposDocumento();
     }
 
     public void cambiaCaja() {//funcion cuando se selecciona otra caja del listado
@@ -789,88 +800,117 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     }
 
     private boolean validarManualTarifario() {
-        //System.out.println("validarManualTarifario");
         contratoActual = null;
         FacAdministradora administradoraParticular = administradoraFacade.find(1);
-        FacContrato contratoParticular;
+        FacContrato contratoParticular = null;
+        //PACIENTE TENGA REGIMEN Y ADMINISTRADORA------------------------------
+        if (pacienteSeleccionado.getRegimen() == null || pacienteSeleccionado.getIdAdministradora() == null) {
+            mensajeConfiguracion = "No se puede facturar: \n"
+                    + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                    + "Razón: El paciente no tiene régimen ó administradora";
+            return false;
+        }
 
-        //--------EXISTENCIA DE MANUAL TARIFARIO PARTICULAR------------------------------
-        if (administradoraParticular != null) {//validar que exista la administradora particular y tenga manual tarifario
-            if (administradoraParticular.getRazonSocial().compareTo("PARTICULAR") == 0) {//la primer administradora debe ser PARTICULAR (no puede ser otra)
-                if (administradoraParticular.getFacContratoList() != null && !administradoraParticular.getFacContratoList().isEmpty()) {//debe tener un contrato
-                    contratoParticular = contratoFacade.find(administradoraParticular.getFacContratoList().get(0).getIdContrato());
-                    if (contratoParticular.getIdManualTarifario() == null) {//debe contar con el manual tarifario                    
-                        mensajeConfiguracion = "No se puede facturar: \n"
-                                + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
-                                + "Administradora: " + administradoraParticular.getRazonSocial() + " \n"
-                                + "Contrato: " + contratoParticular.getDescripcion() + " \n"
-                                + "Razón: El contrato no tiene manual tarifario";
-                        return false;
-                    }
-                } else {
+        //EXISTENCIA DE ADMINISTRADORA PARTICULAR------------------------------
+        if (pacienteSeleccionado.getIdAdministradora().getIdAdministradora() != 1) {//ADMINISTRADORA PACIENTE NO ES PARTICULAR, SE DEBEN REALIZAR LAS CORESPONDIENTES VALIDACIONES
+            //EXISTENCIA DE ADMINISTRADORA PARTICULAR------------------------------
+            if (administradoraParticular == null) {//validar que exista la administradora particular y tenga manual tarifario
+                mensajeConfiguracion = "No se puede facturar: \n"
+                        + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                        + "Razón: Es obligatorio que exista una administradora PARTICULAR";
+                return false;
+            }
+            //PRIMER ADMINISTRADORA SEA PARTICULAR----------------------------------
+            if (administradoraParticular.getRazonSocial().compareTo("PARTICULAR") != 0) {//la primer administradora debe ser PARTICULAR (no puede ser otra)
+                mensajeConfiguracion = "No se puede facturar: \n"
+                        + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                        + "Razón: La primer administradora ( id = 1 ) debe llamarse PARTICULAR obligatoriamente";
+                return false;
+            }
+            //ADMINISTRADORA PARTICULAR TENGA CONTRATOS ----------------------------
+            if (administradoraParticular.getFacContratoList() == null || administradoraParticular.getFacContratoList().isEmpty()) {//debe tener un contrato
+                mensajeConfiguracion = "No se puede facturar: \n"
+                        + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                        + "Administradora: " + administradoraParticular.getRazonSocial() + " \n"
+                        + "Razón: La administradora no tiene contratos";
+                return false;
+            }
+            //CONTRATOS DE ADMINISTRADORA PARTICULAR TENGAN MANUALES TARIFARIOS-----        
+            for (FacContrato contrato : administradoraParticular.getFacContratoList()) {
+                if (contrato.getIdManualTarifario() == null) {//debe contar con el manual tarifario                    
                     mensajeConfiguracion = "No se puede facturar: \n"
                             + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
                             + "Administradora: " + administradoraParticular.getRazonSocial() + " \n"
-                            + "Razón: La administradora no tiene contratos";
+                            + "Contrato: " + contrato.getDescripcion() + " \n"
+                            + "Razón: El contrato no tiene manual tarifario";
                     return false;
                 }
-            } else {
-                mensajeConfiguracion = "No se puede facturar: \n"
-                        + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
-                        + "Razón: La primer administradora debe llamarse PARTICULAR obligatoriamente";
-                return false;
+                contratoParticular = contrato;//se usa el primer contrato cuando es administradora particular
+                break;
             }
-        } else {
+        }
+
+        //ADMINISTRADORA PACIENTE TENGA CONTRATOS ----------------------------
+        if (pacienteSeleccionado.getIdAdministradora().getFacContratoList() == null || pacienteSeleccionado.getIdAdministradora().getFacContratoList().isEmpty()) {//debe tener un contrato
             mensajeConfiguracion = "No se puede facturar: \n"
                     + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
-                    + "Razón: Es obligatorio que exista una administradora PARTICULAR";
+                    + "Administradora: " + pacienteSeleccionado.getIdAdministradora().getRazonSocial() + " \n"
+                    + "Razón: La administradora no tiene contratos";
             return false;
         }
-        //--------DETERMINAR SI USAR MANUAL DE PACIENTE O PARTICULAR------------------------------
-        administradoraActual = null;
-        if (pacienteSeleccionado.getIdAdministradora() != null) {//SE VALIDA QUE SE PUEDA OBTENER EL MANUAL TARIFARIO            
-            administradoraActual = pacienteSeleccionado.getIdAdministradora();
-
-            if (administradoraActual.getFacContratoList() != null && !administradoraActual.getFacContratoList().isEmpty()) {
-                contratoActual = administradoraActual.getFacContratoList().get(0);
-                if (contratoActual.getIdManualTarifario() != null) {
-                    if (contratoActual.getIdManualTarifario().getIdManualTarifario() == 1) {//si manual tarifario particular, no se necesita la opcion facturar como particular
-                        facturarComoParticularDisabled = true;
-                        msjBtnFacturarParticular = "Particular: SI";
-                        facturarComoParticular = true;
+        //CONTRATOS DE ADMINISTRADORA PACIENTE TENGAN MANUAL TARIFARIO:        
+        listaContratosAplican = new ArrayList<>();
+        if (pacienteSeleccionado.getIdAdministradora().getIdAdministradora() == 1) {//ADMINISTRADORA PACIENTE ES PARTICULAR (NO IMPORTA REGIMEN PACIENTE)
+            contratoParticular = null;
+            for (FacContrato contrato : pacienteSeleccionado.getIdAdministradora().getFacContratoList()) {
+                if (contrato.getIdManualTarifario() != null) {
+                    listaContratosAplican.add(contrato);
+                    if (contratoParticular == null) {//SE ASIGNA EL PRIMER CONTRATO QUE TENGA LA ADMINISTRADORA
+                        contratoParticular = contrato;
                     }
-                    if (facturarComoParticular) {//se facturara como particular
-                        contratoActual = contratoParticular;
-                        manualTarifarioPaciente = contratoParticular.getIdManualTarifario();//se carga el manual tarifario particular                        
-                    } else {//se facturara segun el manual tarifario que tenga el contrato al que corresponde(no es el particular)
-                        manualTarifarioPaciente = contratoActual.getIdManualTarifario();
-                    }
-                    mensajeConfiguracion = null;
-                    determinarCopagoCuotaModeradora();
-                    determinarImpuestos();
-                    cargarListaTiposDocumento();
-                    return true;
-                } else {
-                    mensajeConfiguracion = "No se puede facturar: \n"
-                            + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
-                            + "Administradora: " + administradoraActual.getRazonSocial() + " \n"
-                            + "Contrato: " + contratoActual.getDescripcion() + " \n"
-                            + "Razón: Contrato no tiene manual tarifario";
-                    return false;
                 }
-            } else {
-                mensajeConfiguracion = "No se puede facturar: \n"
-                        + "Paciente: " + pacienteSeleccionado.nombreCompleto() + "\n"
-                        + "Administradora: " + administradoraActual.getRazonSocial() + "\n"
-                        + "Razón: la adminstradora no tiene ningún contrato";
-                return false;
             }
-        } else {
-            mensajeConfiguracion = "No se puede facturar : \n"
-                    + "Paciente " + pacienteSeleccionado.nombreCompleto() + "\n"
-                    + "Razón: El paciente no tiene administradora.";
+
+        } else {//ADMINISTRADORA DE PACIENTE NO ES PARTICULAR(SI IMPORTA EL REGIMEN)
+            for (FacContrato contrato : pacienteSeleccionado.getIdAdministradora().getFacContratoList()) {//System.err.println("TIPO CONTRATO: " + contrato.getTipoContrato().getDescripcion() + " - ID REGIMEN PACIENTE " + pacienteSeleccionado.getRegimen().getId() + " - ID TIPO CONTRATO " + contrato.getTipoContrato().getId());
+                if (Objects.equals(pacienteSeleccionado.getRegimen().getId(), contrato.getTipoContrato().getId())) {
+                    if (contrato.getIdManualTarifario() != null) {
+                        listaContratosAplican.add(contrato);
+                    }
+                }
+            }
+        }
+
+        if (listaContratosAplican.isEmpty()) {
+            mensajeConfiguracion = "No se puede facturar: \n"
+                    + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                    + "Administradora: " + pacienteSeleccionado.getIdAdministradora().getRazonSocial() + " \n"
+                    + "Razón: La administradora no tiene contratos de tipo " + pacienteSeleccionado.getRegimen().getDescripcion() + "\n"
+                    + "ó de tenerlo no tiene asociado un manual tarifario.";
             return false;
         }
+
+        //--------DETERMINAR SI USAR MANUAL DE PACIENTE O PARTICULAR------------------------------
+        administradoraActual = pacienteSeleccionado.getIdAdministradora();
+        contratoActual = listaContratosAplican.get(0);//ESCOGER PRIMERO QUE APAREZCA EN EL COMBO
+
+        if (contratoActual.getIdManualTarifario().getIdManualTarifario() == 1) {//si manual tarifario particular, no se necesita la opcion facturar como particular
+            facturarComoParticularDisabled = true;
+            msjBtnFacturarParticular = "Facturar como particular: SI";
+            facturarComoParticular = true;
+        }
+        if (facturarComoParticular) {//se facturara como particular
+            contratoActual = contratoParticular;
+            manualTarifarioPaciente = contratoParticular.getIdManualTarifario();//se carga el manual tarifario particular                        
+        } else {//se facturara segun el manual tarifario que tenga el contrato al que corresponde(no es el particular)
+            manualTarifarioPaciente = contratoActual.getIdManualTarifario();
+        }
+        mensajeConfiguracion = null;
+        determinarCopagoCuotaModeradora();
+        determinarImpuestos();
+        cargarListaTiposDocumento();
+        return true;
+
     }
 
     public void validarContrato() {
@@ -881,8 +921,8 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         } else {
             msjHtmlAdministradoraPaciente
                     = "Contrato no vigente: "
-                    + "<br/>Inicia: " + formateadorFecha.format(contratoActual.getFechaInicio())
-                    + "<br/>Finaliza: " + formateadorFecha.format(contratoActual.getFechaFinal());
+                    + "<br/>Inicia: " + formateadorFechaSinHora.format(contratoActual.getFechaInicio())
+                    + "<br/>Finaliza: " + formateadorFechaSinHora.format(contratoActual.getFechaFinal());
             estiloAdministradoraPaciente = "border-color: orange; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
         }
     }
@@ -979,7 +1019,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         limpiarFormularioFacturacion();
         facturarComoParticular = false;
         facturarComoParticularDisabled = false;
-        msjBtnFacturarParticular = "Particular: NO";
+        msjBtnFacturarParticular = "Facturar como particular: NO";
         cargarDatosPaciente();
         RequestContext.getCurrentInstance().update("IdFormFacturacion:IdpanelDatosPaciente");
         RequestContext.getCurrentInstance().update("IdFormFacturacion:IdTabView");
@@ -998,10 +1038,10 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         limpiarFormularioFacturacion();
         if (facturarComoParticular) {
             facturarComoParticular = false;
-            msjBtnFacturarParticular = "Particular: NO";
+            msjBtnFacturarParticular = "Facturar como particular: NO";
         } else {
             facturarComoParticular = true;
-            msjBtnFacturarParticular = "Particular: SI";
+            msjBtnFacturarParticular = "Facturar como particular: SI";
         }
         //System.out.println("CargarDatosPaciente desde confirmarCambioManualTarifario");
         cargarDatosPaciente();
@@ -1124,7 +1164,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         try (ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream()) {
             httpServletResponse.setContentType("application/pdf");
             ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-            JasperPrint jasperPrint = null;
+            JasperPrint jasperPrint;
             switch (tipoDocumentoFacturaSeleccionada) {
                 case "Recibo de Caja":
                     jasperPrint = JasperFillManager.fillReport(servletContext.getRealPath("facturacion/reportes/reciboCaja.jasper"), new HashMap(), beanCollectionDataSource);
@@ -1139,22 +1179,16 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     }
 
     private boolean cargarFuenteDeDatosFactura() {
+
         List<EstructuraItemsPaciente> listaItemsFactura = new ArrayList<>();
         listaRegistrosFactura = new ArrayList<>();
         EstructuraFacturaPaciente nuevaFactura = new EstructuraFacturaPaciente();
-                
-        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
-        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevaFactura.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
-        nuevaFactura.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
-        
-        //nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        //nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
-        //nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
+        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
+        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
         nuevaFactura.setTipoDocumento(facturaSeleccionada.getTipoDocumento().getDescripcion() + " No.");
         nuevaFactura.setCodigoDocumento("" + facturaSeleccionada.getCodigoDocumento());
-        //nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaSeleccionada.getIdPaciente().nombreCompleto());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaSeleccionada.getIdPaciente().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaSeleccionada.getIdPaciente().getIdentificacion());
@@ -1222,13 +1256,11 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
     private boolean cargarFuenteDeDatosReciboCaja() {
         listaRegistrosReciboCaja = new ArrayList<>();
         EstructuraReciboCaja nuevoReciboCaja = new EstructuraReciboCaja();
-        nuevoReciboCaja.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
-        nuevoReciboCaja.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
-        nuevoReciboCaja.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevoReciboCaja.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
-        nuevoReciboCaja.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
-
+        nuevoReciboCaja.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevoReciboCaja.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
+        nuevoReciboCaja.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
         nuevoReciboCaja.setCodigoDocumento("" + facturaSeleccionada.getCodigoDocumento());
+        nuevoReciboCaja.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
         nuevoReciboCaja.setClienteCiudad("<b>CIUDAD: </b>" + "-");
         nuevoReciboCaja.setFechaFactura("<b>FECHA : </b>" + formateadorFecha.format(facturaSeleccionada.getFechaElaboracion()));
         nuevoReciboCaja.setClienteAdministradora("<b>ADMINISTRADORA: </b>" + facturaSeleccionada.getIdPaciente().getIdAdministradora().getRazonSocial());
@@ -1237,8 +1269,8 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         nuevoReciboCaja.setCuotaModeradora(formateadorDecimal.format(facturaSeleccionada.getCuotaModeradora()));
         nuevoReciboCaja.setCopago(formateadorDecimal.format(facturaSeleccionada.getCopago()));
         nuevoReciboCaja.setBono("");
-        nuevoReciboCaja.setParticular("");        
-        nuevoReciboCaja.setObservaciones(facturaSeleccionada.getObservacion());
+        nuevoReciboCaja.setParticular("");
+        nuevoReciboCaja.setObservaciones("");
         String t = formateadorDecimal.format(facturaSeleccionada.getValorTotal());
         t = t.replace(".", ",");
         if (t.contains(",")) {
@@ -3302,6 +3334,22 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
 
     public void setEstiloTurnoCita(String estiloTurnoCita) {
         this.estiloTurnoCita = estiloTurnoCita;
+    }
+
+    public List<FacContrato> getListaContratosAplican() {
+        return listaContratosAplican;
+    }
+
+    public void setListaContratosAplican(List<FacContrato> listaContratosAplican) {
+        this.listaContratosAplican = listaContratosAplican;
+    }
+
+    public String getIdContratoActual() {
+        return idContratoActual;
+    }
+
+    public void setIdContratoActual(String idContratoActual) {
+        this.idContratoActual = idContratoActual;
     }
 
 }
