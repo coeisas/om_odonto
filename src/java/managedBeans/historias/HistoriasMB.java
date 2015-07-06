@@ -6,6 +6,7 @@ import javax.faces.bean.SessionScoped;
 import beans.utilidades.MetodosGenerales;
 import beans.utilidades.NodoArbolHistorial;
 import beans.utilidades.TipoNodoEnum;
+import beans.utilidades.LazyPacienteDataModel;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -61,6 +62,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.TreeNode;
 
 @ManagedBean(name = "historiasMB")
@@ -101,8 +103,8 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     //-----------------ENTIDADES ------------------------
     //---------------------------------------------------
     private HcTipoReg tipoRegistroClinicoActual;
-    //private LazyDataModel<CfgPacientes> listaPacientes;
-    private List<CfgPacientes> listaPacientes;
+    private LazyDataModel<CfgPacientes> listaPacientes;
+    //private List<CfgPacientes> listaPacientes;
     private List<CfgPacientes> listaPacientesFiltro;
     private CfgPacientes pacienteSeleccionadoTabla;
     private CfgPacientes pacienteSeleccionado;
@@ -197,10 +199,10 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     @PostConstruct
     public void inicializar() {
         recargarMaestrosTxtPredefinidos();
-        //listaPacientes = new LazyPacienteDataModel(pacientesFacade);
-        listaPacientes = pacientesFacade.buscarOrdenado();
-        listaPacientesFiltro = new ArrayList<>();
-        listaPacientesFiltro.addAll(listaPacientes);
+        listaPacientes = new LazyPacienteDataModel(pacientesFacade);
+        //listaPacientes = pacientesFacade.buscarOrdenado();
+        //listaPacientesFiltro = new ArrayList<>();
+        //listaPacientesFiltro.addAll(listaPacientes);
         listaTipoRegistroClinico = tipoRegCliFacade.buscarTiposRegstroActivos();
         listaPrestadores = usuariosFacade.buscarUsuariosParaHistorias();
         seleccionaTodosRegCliHis();
@@ -1163,20 +1165,20 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     //---------------------------------------------------
     //-----------------FUNCIONES GET SET ----------------
     //---------------------------------------------------
-//    public LazyDataModel<CfgPacientes> getListaPacientes() {
-//        return listaPacientes;
-//    }
-//
-//    public void setListaPacientes(LazyDataModel<CfgPacientes> listaPacientes) {
-//        this.listaPacientes = listaPacientes;
-//    }
-    public List<CfgPacientes> getListaPacientes() {
+    public LazyDataModel<CfgPacientes> getListaPacientes() {
         return listaPacientes;
     }
 
-    public void setListaPacientes(List<CfgPacientes> listaPacientes) {
+    public void setListaPacientes(LazyDataModel<CfgPacientes> listaPacientes) {
         this.listaPacientes = listaPacientes;
     }
+//    public List<CfgPacientes> getListaPacientes() {
+//        return listaPacientes;
+//    }
+//
+//    public void setListaPacientes(List<CfgPacientes> listaPacientes) {
+//        this.listaPacientes = listaPacientes;
+//    }
 
     public List<CfgPacientes> getListaPacientesFiltro() {
         return listaPacientesFiltro;
