@@ -333,7 +333,7 @@
 				<rectangle radius="10">
 					<reportElement uuid="3dc8551e-a7ac-4d75-b1d2-d35c2605e1b1" positionType="Float" x="0" y="0" width="515" height="62"/>
 				</rectangle>
-				<image scaleImage="FillFrame">
+				<image scaleImage="FillFrame" onErrorType="Blank">
 					<reportElement uuid="9c3bbc6e-8311-410d-a87e-f822b43f3dd0" positionType="Float" x="7" y="3" width="83" height="53"/>
 					<imageExpression><![CDATA[$F{dato70}]]></imageExpression>
 				</image>
@@ -525,7 +525,7 @@
 					<textFieldExpression><![CDATA[$F{dato55}]]></textFieldExpression>
 				</textField>
 			</frame>
-			<image scaleImage="FillFrame">
+			<image scaleImage="FillFrame" onErrorType="Blank">
 				<reportElement uuid="9c3bbc6e-8311-410d-a87e-f822b43f3dd0" positionType="Float" x="23" y="75" width="204" height="79"/>
 				<imageExpression><![CDATA[$F{dato74}]]></imageExpression>
 			</image>
@@ -557,7 +557,7 @@
 					<reportElement uuid="eab9670c-6faa-4f32-b945-3933c1079775" x="0" y="0" width="252" height="1"/>
 				</line>
 			</frame>
-			<image scaleImage="FillFrame">
+			<image scaleImage="FillFrame" onErrorType="Blank">
 				<reportElement uuid="9c3bbc6e-8311-410d-a87e-f822b43f3dd0" positionType="Float" x="287" y="75" width="204" height="79"/>
 				<imageExpression><![CDATA[$F{dato68}]]></imageExpression>
 			</image>

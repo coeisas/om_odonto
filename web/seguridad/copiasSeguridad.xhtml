@@ -30,21 +30,25 @@
                     title="Nueva copia de seguridad" value="&nbsp;"                                        
                     styleClass="icon-new fg-lightBlue bg-white no-border"
                     oncomplete="PF('dialogNew').show()"
-                    update=":IdForm2:IdDialogNew :IdFormCopias:IdMensajeUsuarios"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                 
                 &nbsp;
                 <p:commandButton                     
                     title="Eliminar copia de seguridad" value="&nbsp;"                                        
                     styleClass="icon-cancel fg-lightBlue bg-white no-border" 
-                    oncomplete="PF('dialogDelete').show()"
-                    update=":IdForm2:IdDialogEdit :IdFormCopias:IdMensajeUsuarios"
+                    actionListener="#{copiasSeguridadMB.clickBtnEliminarCopia}"                    
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
                 <p:commandButton 
                     title="Restaurar copia de seguridad" value="&nbsp;"                                        
                     styleClass="icon-database fg-lightBlue bg-white no-border" 
-                    oncomplete="PF('dialogEdit').show()"
-                    update=":IdForm2:IdDialogEdit :IdFormCopias:IdMensajeUsuarios"
+                    actionListener="#{copiasSeguridadMB.clickBtnRestaurarCopia}"                    
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                &nbsp;
+                <p:commandButton 
+                    title="Descargar copia seguridad" value="&nbsp;"                                        
+                    styleClass="icon-download fg-lightBlue bg-white no-border" 
+                    actionListener="#{copiasSeguridadMB.clickBtnDescargarCopia}"
+                    update=":IdForm2:IdDialogDownload"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
             </div>
             <br/>
@@ -138,6 +142,28 @@
                     actionListener="#{copiasSeguridadMB.eliminarCopiaDeSeguridad}"
                     value="Eliminar" 
                     update=":IdFormCopias:IdTabView:IdSearchTable :IdFormCopias:IdMensajeUsuarios"/>   
+
+                <br/><br/>
+            </p:dialog>
+            <!-- DIALOGO DESCARGAR-->
+            <p:dialog                                                         
+                id="IdDialogDownload"
+                modal="true"
+                resizable="false"
+                header="Descargar copia de seguridad" 
+                widgetVar="dialogDownload"> 
+                <br/>
+                <p:inputTextarea 
+                    value="Se procedera a descargar la copia de seguridad: #{copiasSeguridadMB.nombreCopiaDescargar} " 
+                    readonly="true" 
+                    style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 50px; width: 220px;"/>
+                <br/><br/>
+                <h:commandButton 
+                    value="Descargar"                     
+                    onclick="PF('dialogDownload').hide()"
+                    title="Descargar copia de seguridad">  
+                    <p:fileDownload value="#{copiasSeguridadMB.fileBackup}"/>  
+                </h:commandButton>                                         
 
                 <br/><br/>
             </p:dialog>

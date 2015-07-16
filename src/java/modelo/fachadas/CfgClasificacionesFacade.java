@@ -38,6 +38,15 @@ public class CfgClasificacionesFacade extends AbstractFacade<CfgClasificaciones>
         }
     }
 
+    public CfgClasificaciones buscarPorMaestroDescripcion(String maestro, String descripcion) {
+        try {
+            String hql = "SELECT c FROM CfgClasificaciones c WHERE c.maestro.maestro = :maestro AND c.descripcion = :descripcion";
+            return (CfgClasificaciones) getEntityManager().createQuery(hql).setParameter("maestro", maestro).setParameter("descripcion", descripcion).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public List<Object> listaClasificaciones() {
         try {
             String hql = "SELECT DISTINCT c.maestro FROM CfgClasificaciones c ORDER BY c.maestro ASC";

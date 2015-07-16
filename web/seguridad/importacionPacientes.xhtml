@@ -1,0 +1,424 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"      
+      xmlns:pe='http://primefaces.org/ui/extensions'>  
+    <h:head>        
+        <title>Importar pacientes</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>   
+        <script type="text/javascript">
+            function pageInactive() {//muestra la pagina deshabilitada                    
+                document.getElementById('IdInactivityLayer').style.display = "block";
+            }
+            function pageActive() {//muestra la pagina habilitada                
+                document.getElementById('IdInactivityLayer').style.display = "none";
+            }
+        </script> 
+    </h:head>
+    <h:body>
+        <div class="InactivityLayer" id="IdInactivityLayer"> <h2>PROCESANDO POR FAVOR ESPERE</h2></div>            
+        <h:form id="IdFormPrincipal">             
+
+            <p:growl id="IdMensajePacientes"  showDetail="true" sticky="false" autoUpdate="true" life="2000"  />            
+            <!--===================================================================================-->
+            <br/>                            
+            <p:tabView style=" width: 99%;" id="IdTabView" >                 
+                <p:tab title="Importar Pacientes">  
+                    <table style="margin: 20px; margin-left: auto; margin-right: auto;">
+
+                        <tr>
+                            <td>
+                                <p:fileUpload                                         
+                                    id="IdBtnFileSelect"                                        
+                                    fileUploadListener="#{importacionPacientesMB.importarPacientes}"                                          
+                                    mode="advanced"                                           
+                                    cancelLabel="Cancelar"
+                                    onstart="pageInactive();"                                    
+                                    oncomplete="pageActive();"
+                                    uploadLabel="Iniciar validación"                                        
+                                    label="Seleccionar archivo"
+                                    sizeLimit="50000000"                                    
+                                    invalidFileMessage="Solo se aceptan archivos xlsx."
+                                    invalidSizeMessage="El tamaño del archivo debe ser inferior a 5MB"                                    
+                                    allowTypes="/(\.|\/)(xlsx)$/">                                        
+                                </p:fileUpload>
+                            </td>
+                            <td>
+                                <p:commandButton 
+                                    title="Ayuda sobre importacion" value="&nbsp;"
+                                    oncomplete="PF('wvDialogoayuda').show()"
+                                    styleClass="icon-help fg-lightBlue bg-white no-border"                     
+                                    style="font-size: 20px; width: 20px; height: 20px;"/>
+                            </td>
+                        </tr>                        
+                        <tr>
+                            <td colspan="2">
+                                <p:dataTable 
+                                    id="IdTablaErrores" 
+                                    var="error" 
+                                    rendered="#{importacionPacientesMB.renderedTablaErrores}"
+                                    widgetVar="wvTablaErrores"
+                                    value="#{importacionPacientesMB.listaErrores}" 
+                                    rowKey="#{error.columna1}"
+                                    paginator="true"                                    
+                                    rows="10"                                    
+                                    paginatorPosition="bottom"                                
+                                    emptyMessage="No hay errores"
+                                    scrollable="true" 
+                                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                    pageLinks="5"
+                                    resizableColumns="true">  
+                                    <f:facet name="header">
+                                        TABLA DE ERRORES
+                                    </f:facet>
+                                    <p:column headerText="FILA" style=" width: 10px;" filterBy="#{error.columna2}" filterMatchMode="contains">  
+                                        #{error.columna2}  
+                                    </p:column>                                
+                                    <p:column headerText="COLUMNA" style=" width: 50px;" filterBy="#{error.columna3}" filterMatchMode="contains">  
+                                        #{error.columna3}  
+                                    </p:column>                                
+                                    <p:column headerText="VALOR" style="width: 200px; white-space: normal" filterBy="#{error.columna4}" filterMatchMode="contains">  
+                                        #{error.columna4}                                        
+                                    </p:column>                                
+                                    <p:column headerText="DESCRIPCION" style="width: 200px; white-space: normal" filterBy="#{error.columna5}" filterMatchMode="contains">  
+                                        #{error.columna5}  
+                                    </p:column>                                
+                                </p:dataTable>  
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:dataTable 
+                                    id="IdTablaAcciones" 
+                                    var="accion" 
+                                    rendered="#{importacionPacientesMB.renderedTablaAcciones}"
+                                    widgetVar="wvTablaAcciones"
+                                    value="#{importacionPacientesMB.listaAcciones}" 
+                                    rowKey="#{accion.columna1}"
+                                    paginator="true"
+                                    rows="10"                                    
+                                    paginatorPosition="bottom"                                
+                                    emptyMessage="No hay acciones"
+                                    scrollable="true" 
+                                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
+                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"                                
+                                    pageLinks="5"
+                                    resizableColumns="true">  
+                                    <f:facet name="header">
+                                        TABLA DE ACCIONES A REALIZAR 
+                                    </f:facet>
+                                    <p:column headerText="PACIENTE" style=" width: 20px;" filterBy="#{accion.columna2}" filterMatchMode="contains">  
+                                        #{accion.columna2}  
+                                    </p:column>                                
+                                    <p:column headerText="IDENTIFICACION" style=" width: 50px;" filterBy="#{accion.columna3}" filterMatchMode="contains">  
+                                        #{accion.columna3}  
+                                    </p:column>                                                                    
+                                    <p:column headerText="VARIABLE" style=" width: 50px;" filterBy="#{accion.columna4}" filterMatchMode="contains">  
+                                        #{accion.columna4}  
+                                    </p:column>                   
+                                    <!-- p:column headerText="COD ANTES" style=" width: 50px;" filterBy="# {error.columna5}" filterMatchMode="contains">  
+                                        # {error.columna5}  
+                                    </p:column-->                    
+                                    <p:column headerText="VALOR ANTES" style=" width: 150px;" filterBy="#{accion.columna6}" filterMatchMode="contains">  
+                                        #{accion.columna6}  
+                                    </p:column>                      
+                                    <!-- p:column headerText="COD NUEVO" style=" width: 50px;" filterBy="# {error.columna7}" filterMatchMode="contains">  
+                                        # {error.columna7}  
+                                    </p:column-->                    
+                                    <p:column headerText="VALOR NUEVO" style=" width: 150px;" filterBy="#{accion.columna8}" filterMatchMode="contains">  
+                                        #{accion.columna8}  
+                                    </p:column>                                                                    
+                                </p:dataTable>  
+                                <br/>
+                                <p:commandButton 
+                                    value="Realizar importación" 
+                                    actionListener="#{importacionPacientesMB.realizarImportacion}" 
+                                    onstart="pageInactive();"                                    
+                                    oncomplete="pageActive();"
+                                    update="IdTabView"
+                                    rendered="#{importacionPacientesMB.renderedTablaAcciones}"/>
+                            </td>
+                        </tr>
+                    </table>
+                </p:tab>                
+                <p:tab title="Exportar pacientes">  
+                    <table style="margin: 20px; margin-left: auto; margin-right: auto; text-align: center;">
+                        <tr>                           
+                            <td>
+                                <p:inputTextarea 
+                                    value="Descarga de archivo Excel con la información de todos los pacientes de la entidad" 
+                                    readonly="true" 
+                                    style="text-align: match-parent; background: #ebf4fb; font-size: 13px; font-weight: 900; height: 40px; width: 320px;"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h:commandLink >  
+                                    <p:commandButton 
+                                        title="Exportar pacientes en archivo xlsx" value="&nbsp;"
+                                        type="button"
+                                        styleClass="icon-file-excel fg-lightBlue bg-white no-border"                     
+                                        style="font-size: 40px; width: 40px; height: 40px;"/>                            
+                                    <p:dataTable id="IdTablaPacientes" rendered="false"/>
+                                    <pe:exporter type="xlsx" target="IdTablaPacientes" fileName="pacientes" postProcessor="#{importacionPacientesMB.postProcessXLS}"  />  
+                                </h:commandLink>  
+                            </td>
+                        </tr>
+                    </table>
+                </p:tab>
+            </p:tabView>             
+            <p:dialog id="IdDialogoAyuda" header="AYUDA IMPORTACION" widgetVar="wvDialogoayuda" resizable="false" modal="true" width="600" height="400" >  
+                <h2>Importaci&oacute;n de pacientes</h2>
+                <p> 
+                    <ul>
+                        <li>
+                            La importaci&oacute;n de pacientes hace referencia al registro de nuevos paciententes asi como 
+                            la actualización de pacientes ya existentes mediante el uso de un archivo Excel de extension
+                            xlsx.
+                        </li>
+                        <li>
+                            El archivo xlsx debe seguir obligatoriamente el mismo formato del archivo de exportaci&oacute;n de pacientes
+                        </li>
+                        <li>    
+                            Los archivos de importacion y exportacion contiene 40 variables(columnas), los nombres de cada
+                            columna debe ser identicos, y los valores que puede tomar cada variable pueden ser texto, fecha, y
+                            clasificaciones, estas ultimas son configurables mediante el sistema desde la sección de
+                            <b>clasificaciones</b>.
+                        </li>
+                    </ul>
+                </p>
+                <h2>Proceso de importaci&oacute;n</h2>
+                <p> 
+                    <ul>
+                        <li>Se hace uso del bot&oacute;n 'Seleccionar archivo' y se busca el archivo xlsx.</li>
+                        <li>Seleccionado el archivo se presiona el bot&oacute;n 'Iniciar validaci&oacute;n'.
+                            <ul>
+                                <li>
+                                    Si el archivo es correcto aparece una la 'Tabla de acciones a realizar' con las acciones que se realizar&aacute;n 
+                                    y tambi&eacute;n el bot&oacute;n 'realizar importaci&oacute;n'.
+                                </li>
+                                <li>
+                                    Si existe algun error en el archivo aparecer&aacute; la 'Tabla de errores' que indica: Fila, Columna y Descripci&oacute;n
+                                    del error.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>                    
+                </p>
+                <h2>Tabla de Errores</h2>
+                <p> 
+                    <ul>
+                        <li>
+                            Cuando existen inconsistencias en el archivo el sistema los toma como errores e informa 
+                            al usuario cuales son estos errores mediante una tabla con los siguientes datos:
+                            <ul>
+                                <li>FILA: fila del archivo xlsx donde se produce el error.</li>
+                                <li>COLUMNA: Numero y/o Nombre de la columna(cabecera) del archivo xlsx donde se produce el error.</li>
+                                <li>VALOR: Valor encontrado en el archivo xlsx y que esta provocando el error.</li>
+                                <li>DESCRIPCION: Razon por la cual el valor no es aceptado.</li>
+                            </ul>                    
+                        </li>
+                        <li>
+                            Los diferentes errores son:
+                            <ul>
+                                <li>La cabecera del archivo no es la esperada.</li>
+                                <li>Un nombre de columna no es el esperado.</li>
+                                <li>Variable IDENTIFICACION es obligatoria.</li>
+                                <li>Variable FECHA NACIMIENTO es obligatoria si es un paciente nuevo.</li>
+                                <li>Variable ADMINISTRADORA es obligatoria si es un paciente nuevo.</li>
+                                <li>Cuando la variable es una clasificacion y no se encuentra dentro de las clasificaciones de Openmedical.</li>
+                                <li>Una fecha no sigue el formato yyyy-MM-dd.</li>                                
+                            </ul>                    
+                        </li>
+                        <li>
+                            Cuando la tabla de errores aparece el usuario debe realizar las correcciones solicitadas para 
+                            permitir realizar la importación
+                        </li>
+                    </ul>
+                </p>
+                <h2>Tabla de Acciones a realizar</h2>
+                <p> 
+                    <ul>
+                        <li>
+                            Cuando el archivo ha sido validado y no se ha encontrado ningun error aparece la 'Tabla 
+                            de acciones a realizar' la cual permite al usuario determinar cuales son las diferentes
+                            acciones que se realizaran en el sistema cuando se confirme la importacion de pacientes.
+                        </li>
+                        <li>La tabla muestra los siguientes datos:
+                            <ul>
+                                <li>PACIENTE: puede tomar los valores de: 
+                                    <ul>
+                                        <li>Nuevo: Cuando se trata de un paciente nuevo, indica que se registrara un nuevo paciente en el sistema </li>
+                                        <li>Existente: Cuando se trata de un paciente existente, por lo cual se actualizara su informacion </li>
+                                    </ul>
+                                </li>
+                                <li>IDENTIFICACION: Numero de identificacion correspondiente al paciente sea existente o nuevo.</li>
+                                <li>VARIABLE: Nombre de la columna en el archivo xlsx, tambien se interpreta como la informacion del paciente que se registra o actualiza.</li>                                
+                                <li>VALOR ANTES: Aparece si se trata de un paciente existente (se esta actualizando) e indica el valor que
+                                    se tiene antes de relizar la importacion.
+                                </li>                                
+                                <li>VALOR NUEVO: Este es valor definitivo con que quedara el paciente despues de realizar la importación. Tambien este
+                                    es el valor que viene en el archivo xlsx.</li>
+                            </ul>
+                        </li>
+                    </ul>                    
+                </p>
+                <h2>Validaci&oacute;n del archivo</h2>
+                <p>
+                    <ul>
+                        <li>Para determinar si se actualiza o registra un nuevo paciente se hace uso de la variable o 
+                            columna IDENTIFICACION que viene en el archivo xlsx, por tanto si la identificaci&oacute;n no existe en el sistema se crea un nuevo paciente</li>                        
+                        <li>Cuando se esta actualizando un paciente(o sea ya esta registrada la identificación) solo se actualizan las variables no vacias que vengan en el archivo, por ejemplo:
+                            si en el archivo no viene el g&eacute;nero entonces se deja el g&eacute;nero del paciente como lo tenga.
+                        </li>                                                
+                        <li> A continuación se especifica cuales son los valores aceptados que puede tomar cada una de las variables,
+                            aquellas variables que son clasificaciones se muestran en listas desplegables, se muestra el codigo
+                            y valor pero en el archivo xlsx no va el codigo solo el valor.</li>                        
+                        <li>Todas las clasificaciones aqui listadas pueden ser configurables desde la seccion de 'Clasificaciones' de Openmedical.
+                            <p:panelGrid columns="2">
+                                <p:column><h2>Variable</h2></p:column>
+                                <p:column><h2>Valores aceptados</h2></p:column>                                
+                                <p:outputLabel value="TIPO IDENTIFICACION"/>                                    
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoIdentificacion}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="IDENTIFICACION"/>
+                                <p:outputLabel value="Texto (Obligatorio)"/>
+                                <p:outputLabel value="LUGAR DE EXPEDICION"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="FECHA NACIMIENTO"/>
+                                <p:outputLabel value="Fecha en formato yyyy-MM-dd ejemplo: 2015-06-25, (Obligatorio si es un nuevo paciente)"/>
+                                <p:outputLabel value="EDAD"/>
+                                <p:outputLabel value="No importa, se calcula a partir de 'fecha de nacimiento', pero se debe seguir el formato del archivo de exportación de pacientes"/>
+
+                                <p:outputLabel value="GENERO"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaGenero}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="GRUPO SANGUINEO"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaGrupoSanguineo}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="PRIMER NOMBRE"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="SEGUNDO NOMBRE"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="PRIMER APELLIDO"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="SEGUNDO APELLIDO"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="OCUPACION"/>
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaOcupaciones}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="ESTADO CIVIL"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaGrupoSanguineo}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="TEL RESIDENCIA"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="TEL OFICINA"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="CELULAR"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="DEPARTAMENTO"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaDepartamentos}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="MUNICIPIO"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaMunicipios}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="ZONA"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaZona}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="DIRECCION"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="BARRIO"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="EMAIL"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="ACTIVO"/>
+                                <p:outputLabel value="SI - NO"/>
+                                <p:outputLabel value="ADMINISTRADORA"/>
+                                <p:column>
+                                    <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                        <f:selectItems var="ad" itemValue="#{ad.idAdministradora}" itemLabel="#{ad.razonSocial}" value="#{aplicacionGeneralMB.listaAdministradoras}"/>
+                                    </p:selectOneMenu>
+                                    (Obligatorio si es un nuevo paciente)
+                                </p:column>
+                                <p:outputLabel value="TIPO AFILIADO"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaTipoAfiliado}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="REGIMEN"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaRegimen}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="CATEGORIA PACIENTE"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaCategoriaPaciente}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="NIVEL"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEstrato}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="ETNIA"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEtnia}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="ESCOLARIDAD"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaEscolaridad}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="RESPONSABLE"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="TEL RESPONSABLE"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="PARENTESCO"/>
+
+                                <p:selectOneMenu style="width: 340px;" filter="true" filterMatchMode="contains">
+                                    <f:selectItems value="#{aplicacionGeneralMB.listaParentesco}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="ACOMPAÑANTE"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="TEL ACOMPAÑANTE"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="FECHA AFILIACION"/>
+                                <p:outputLabel value="Fecha en formato yyyy-MM-dd ejemplo: 2015-06-25"/>
+                                <p:outputLabel value="FECHA SISBEN"/>
+                                <p:outputLabel value="Fecha en formato yyyy-MM-dd ejemplo: 2015-06-25"/>
+                                <p:outputLabel value="CARNET"/>
+                                <p:outputLabel value="Texto"/>
+                                <p:outputLabel value="FECHA VENCE CARNET"/>
+                                <p:outputLabel value="Fecha en formato yyyy-MM-dd ejemplo: 2015-06-25"/>
+                                <p:outputLabel value="OBSERVACIONES"/>
+                                <p:outputLabel value="Texto"/>
+                            </p:panelGrid>
+                        </li>
+                    </ul>
+                </p>
+            </p:dialog>             
+        </h:form>
+    </h:body>
+</html>
+

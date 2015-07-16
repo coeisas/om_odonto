@@ -32,24 +32,18 @@
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
                 <p:commandButton                     
-                    title="Eliminar" value="&nbsp;"                                        
+                    title="Eliminar paciente" value="&nbsp;"                                        
                     styleClass="icon-cancel fg-lightBlue bg-white no-border" 
                     oncomplete="PF('dialogoEliminarPaciente').show()"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                 &nbsp;
                 <p:commandButton 
-                    title="Guardar" value="&nbsp;"
+                    title="Guardar/Actualizar paciente" value="&nbsp;"
                     styleClass="icon-floppy fg-lightBlue bg-white no-border" 
                     update=":IdFormPrincipal IdTabView"
                     actionListener="#{pacientesMB.guardarPaciente}"                    
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                            
                 &nbsp;
-                <!-- p:commandButton 
-                    title="Importar" value="&nbsp;"
-                    styleClass="icon-file-excel fg-lightBlue bg-white no-border"                     
-                    oncomplete="PF('dialogoImportarPacientes').show()"
-                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/ -->                            
-
             </div>
             <br/>            
             
@@ -359,39 +353,6 @@
                             <p:commandButton 
                                 value="Cancelar" 
                                 oncomplete="PF('dialogoEliminarPaciente').hide();"/>
-                        </p:column>
-                    </p:row>
-                </p:panelGrid>
-            </p:dialog> 
-            <p:dialog id="IdDialogoImportarPacientes" header="IMPORTAR PACIENTES" widgetVar="dialogoImportarPacientes" resizable="false" modal="true">  
-                <p:panelGrid id="panelImportarPacientes" styleClass="panelGridSinBordes" columns="1">
-                    <p:row>
-                        <p:column colspan="2">
-                            <p:fileUpload                                         
-                                id="IdBtnFileSelect"                                        
-                                fileUploadListener="#{pacientesMB.importarPacientes}"                                          
-                                mode="advanced"                                           
-                                cancelLabel="Cancelar"
-                                uploadLabel="Subir"                                        
-                                label="Archivo"
-                                sizeLimit="50000000"
-                                invalidFileMessage="Solo se aceptan archivos xlsx, csv y txt"
-                                invalidSizeMessage="El tamaño del archivo debe ser inferior a 5MB"
-                                update="IdMensajePacientes"
-                                allowTypes="/(\.|\/)(xlsx|csv|txt)$/">                                        
-                            </p:fileUpload>
-                        </p:column>
-                    </p:row>
-                    <p:row>
-                        <p:column>
-                            <p:commandButton 
-                                value="Importar" 
-                                oncomplete="PF('dialogoImportarPacientes').hide();"
-                                actionListener="#{pacientesMB.eliminarPaciente}"                        
-                                update=":IdFormPrincipal"/>
-                            <p:commandButton 
-                                value="Cancelar" 
-                                oncomplete="PF('dialogoImportarPacientes').hide();"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>

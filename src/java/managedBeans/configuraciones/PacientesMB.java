@@ -29,8 +29,8 @@ import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import beans.utilidades.MetodosGenerales;
-import javax.faces.event.ActionEvent;
 import modelo.fachadas.FacAdministradoraFacade;
+import org.apache.poi.xssf.usermodel.*;
 import org.primefaces.model.LazyDataModel;
 
 @ManagedBean(name = "pacientesMB")
@@ -213,19 +213,19 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
             return;
         }
         limpiarFormulario();        
-        pacienteSeleccionado=pacientesFachada.find(pacienteSeleccionadoTabla.getIdPaciente());
-        tituloTabPacientes = "Datos paciente: "+pacienteSeleccionado.nombreCompleto();
+        pacienteSeleccionado = pacientesFachada.find(pacienteSeleccionadoTabla.getIdPaciente());
+        tituloTabPacientes = "Datos paciente: " + pacienteSeleccionado.nombreCompleto();
         archivoFirma = null;
         archivoFoto = null;
         fotoTomadaWebCam = false;
 
         if (pacienteSeleccionado.getFirma() != null) {
-            urlFirma = "../imagenesOpenmedical/" +pacienteSeleccionado.getFirma().getUrlImagen();
+            urlFirma = "../imagenesOpenmedical/" + pacienteSeleccionado.getFirma().getUrlImagen();
         } else {
             urlFirma = firmaPorDefecto;
         }
         if (pacienteSeleccionado.getFoto() != null) {
-            urlFoto = "../imagenesOpenmedical/" +pacienteSeleccionado.getFoto().getUrlImagen();
+            urlFoto = "../imagenesOpenmedical/" + pacienteSeleccionado.getFoto().getUrlImagen();
         } else {
             urlFoto = fotoPorDefecto;
         }
@@ -398,7 +398,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
             moverArchivo(loginMB.getUrltmp() + nombreImagenEnTmp, loginMB.getUrlFirmas() + nuevaImagen.getId().toString() + extension);
             nuevaImagen.setNombre(nombreImagenReal);
             nuevaImagen.setNombreEnServidor(nuevaImagen.getId().toString() + extension);
-            nuevaImagen.setUrlImagen( loginMB.getBaseDeDatosActual() + "/firmas/" + nuevaImagen.getId().toString() + extension);
+            nuevaImagen.setUrlImagen(loginMB.getBaseDeDatosActual() + "/firmas/" + nuevaImagen.getId().toString() + extension);
             imagenesFacade.edit(nuevaImagen);
             nuevoPaciente.setFirma(nuevaImagen);
         }
@@ -417,7 +417,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
             moverArchivo(loginMB.getUrltmp() + nombreImagenEnTmp, loginMB.getUrlFotos() + nuevaImagen.getId().toString() + extension);
             nuevaImagen.setNombre(nombreImagenReal);
             nuevaImagen.setNombreEnServidor(nuevaImagen.getId().toString() + extension);
-            nuevaImagen.setUrlImagen( loginMB.getBaseDeDatosActual() + "/fotos/" + nuevaImagen.getId().toString() + extension);
+            nuevaImagen.setUrlImagen(loginMB.getBaseDeDatosActual() + "/fotos/" + nuevaImagen.getId().toString() + extension);
             imagenesFacade.edit(nuevaImagen);
             nuevoPaciente.setFoto(nuevaImagen);
         }
@@ -523,7 +523,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
                 moverArchivo(loginMB.getUrltmp() + nombreImagenEnTmp, loginMB.getUrlFirmas() + nuevaImagen.getId().toString() + extension);
                 nuevaImagen.setNombre(nombreImagenReal);
                 nuevaImagen.setNombreEnServidor(nuevaImagen.getId().toString() + extension);
-                nuevaImagen.setUrlImagen( loginMB.getBaseDeDatosActual() + "/firmas/" + nuevaImagen.getId().toString() + extension);
+                nuevaImagen.setUrlImagen(loginMB.getBaseDeDatosActual() + "/firmas/" + nuevaImagen.getId().toString() + extension);
                 imagenesFacade.edit(nuevaImagen);
                 pacienteSeleccionado.setFirma(nuevaImagen);
             }
@@ -540,7 +540,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
             if (pacienteSeleccionado.getFoto() != null) {//existe foto
                 moverArchivo(loginMB.getUrltmp() + nombreImagenEnTmp, loginMB.getUrlFotos() + pacienteSeleccionado.getFoto().getId() + extension);
                 pacienteSeleccionado.getFoto().setNombreEnServidor(pacienteSeleccionado.getFoto().getId() + extension);
-                pacienteSeleccionado.getFoto().setUrlImagen( loginMB.getBaseDeDatosActual() + "/fotos/" + pacienteSeleccionado.getFoto().getId() + extension);
+                pacienteSeleccionado.getFoto().setUrlImagen(loginMB.getBaseDeDatosActual() + "/fotos/" + pacienteSeleccionado.getFoto().getId() + extension);
                 imagenesFacade.edit(pacienteSeleccionado.getFoto());
             } else {//no existe foto
                 CfgImagenes nuevaImagen = new CfgImagenes();
@@ -550,7 +550,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
                 moverArchivo(loginMB.getUrltmp() + nombreImagenEnTmp, loginMB.getUrlFotos() + nuevaImagen.getId().toString() + extension);
                 nuevaImagen.setNombre(nombreImagenReal);
                 nuevaImagen.setNombreEnServidor(nuevaImagen.getId().toString() + ".png");
-                nuevaImagen.setUrlImagen( loginMB.getBaseDeDatosActual() + "/fotos/" + nuevaImagen.getId().toString() + extension);
+                nuevaImagen.setUrlImagen(loginMB.getBaseDeDatosActual() + "/fotos/" + nuevaImagen.getId().toString() + extension);
                 imagenesFacade.edit(nuevaImagen);
                 pacienteSeleccionado.setFoto(nuevaImagen);
             }
@@ -748,51 +748,6 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
         }
     }
 
-    public void findPaciente() {
-        if (!identificacion.isEmpty()) {
-            if (tipoIdentificacion == null || tipoIdentificacion.isEmpty()) {
-                imprimirMensaje("Error", "Especifique el tipo de docuemento", FacesMessage.SEVERITY_ERROR);
-                setPacienteSeleccionado(null);
-                return;
-            }
-            pacienteSeleccionado = pacientesFachada.findPacienteByTipIden(Integer.parseInt(tipoIdentificacion), identificacion);
-            if (pacienteSeleccionado == null) {
-                imprimirMensaje("Error", "No se encontro el paciente", FacesMessage.SEVERITY_ERROR);
-            } else {
-                setPacienteSeleccionado(pacienteSeleccionado);
-                loadServicios(null);
-            }
-        } else {
-            setPacienteSeleccionado(null);
-
-        }
-
-    }
-
-//    public void actualizarPaciente() {
-//        if (pacienteSeleccionado != null) {
-//            setIdentificacion(pacienteSeleccionado.getIdentificacion());
-//            setTipoIdentificacion(String.valueOf(pacienteSeleccionado.getTipoIdentificacion().getId()));
-//        }
-//    }
-
-    public void loadServicios(ActionEvent actionEvent) {
-        /*//ESTO LO DEJO POR ESTAR COMENTARIADO PERO !NO TIENE QUE IR AQUI!!!!!!!!!!!!!!!BEAN SE SESION!!!!!!!!!!!!!!
-         List<FacRelPacientesProgramas> lista = pacienteFacProgramaFacade.findProgramaByPaciente(pacienteSeleccionado.getId());
-         if (!lista.isEmpty()) {
-         listaServicios = new ArrayList();
-         for (FacRelPacientesProgramas facPrograma : lista) {
-         List<FacProgramaServicio> servicios = facProgramaServicioFacade.findByPrograma(facPrograma.getPrograma().getCodigoPrograma());
-         if (!servicios.isEmpty()) {
-         for (FacProgramaServicio facProgramaServicio : servicios) {
-         listaServicios.add(new SelectItem(facProgramaServicio.getCodigoServicio().getCodigoServicio(), facProgramaServicio.getCodigoServicio().getNombreServicio()));
-         }
-         }
-         }
-         }
-         */
-    }
-
     //---------------------------------------------------
     //-----------------FUNCIONES GET Y SET --------------
     //---------------------------------------------------
@@ -820,8 +775,6 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
         this.pacienteSeleccionadoTabla = pacienteSeleccionadoTabla;
     }
 
-    
-    
     public CfgPacientes getNuevoPaciente() {
         return nuevoPaciente;
     }

@@ -186,6 +186,14 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         RequestContext.getCurrentInstance().execute("PF('dialogoEliminarAdministradora').show();");
     }
 
+    public void copiarContratos() {
+        if (administradoraSeleccionada == null) {
+            imprimirMensaje("Error", "No se ha cargado ninguna administradora", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+        RequestContext.getCurrentInstance().execute("PF('dialogoCopiarContratos').show();");
+    }
+
     public void confirmarEliminarAdministradora() {
         if (administradoraSeleccionada == null) {
             imprimirMensaje("Error", "No se ha seleccionado ninguna administradora", FacesMessage.SEVERITY_ERROR);
@@ -333,9 +341,7 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         }
     }
 
-    public void copiarContratos() {
 
-    }
 
     //---------------------------------------------------
     //-----------------FUNCIONES GET Y SET --------------

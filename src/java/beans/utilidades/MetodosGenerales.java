@@ -23,6 +23,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.primefaces.model.UploadedFile;
+import org.apache.poi.xssf.usermodel.*;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  *
@@ -36,14 +39,34 @@ public class MetodosGenerales {
     @EJB
     CfgClasificacionesFacade clasFacade;
 
-    //---------------------------------------------------
-    //-----------------ENTIDADES -------------------------
-    //---------------------------------------------------
+    
     //---------------------------------------------------
     //-----------------VARIABLES -------------------------
     //---------------------------------------------------
-    List<String> listaTagsValidos = Arrays.asList("<strong>", "</strong>","<span style=\"font-weight: bold;\">","<span>", "</span>", "<p>", "</p>", "<b>", "</b>", "<ol>", "</ol>",
+    
+    
+    List<String> listaTagsValidos = Arrays.asList("<strong>", "</strong>", "<span style=\"font-weight: bold;\">", "<span>", "</span>", "<p>", "</p>", "<b>", "</b>", "<ol>", "</ol>",
             "<li>", "</li>", "<div>", "</div>", "<br>", "<div style=\"text-align: justify;\">");
+
+    
+    //---------------------------------------------------
+    //-----------------FUNCIONES -------------------------
+    //---------------------------------------------------    
+
+    //CREA UNA CELDA PARA UN DOCUEMNTO DE TIPO XLS
+    public void createCell(XSSFCellStyle cellStyle, XSSFRow fila, int position, String value) {
+        XSSFCell cell;
+        cell = fila.createCell((short) position);// Se crea una cell dentro de la fila                        
+        cell.setCellValue(new XSSFRichTextString(value));
+        cell.setCellStyle(cellStyle);
+    }
+
+    //CREA UNA CELDA PARA UN DOCUMENTO TIPO EXCEL
+    public void createCell(XSSFRow fila, int position, String value) {
+        XSSFCell cell;
+        cell = fila.createCell((short) position);// Se crea una cell dentro de la fila                        
+        cell.setCellValue(new XSSFRichTextString(value));
+    }
 
     public String corregirHtml(String in) {
         //corrige el html que viede de un editor primefaces y en ocasiones ingresa textos errorneos
@@ -170,6 +193,23 @@ public class MetodosGenerales {
         }
 
         return strReturn;
+    }
+
+    public String esFecha(String f, String format) {
+        /*
+         *  null=invalido ""=aceptado pero vacio "valor"=aceptado (valor para db)
+         */
+        if (f.trim().length() == 0) {
+            return "";
+        }
+        try {
+            DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
+            DateTimeFormatter fmt2 = DateTimeFormat.forPattern(format);
+            DateTime the_date = DateTime.parse(f, fmt2);//trata de convertir al formato "format"(me llega por parametro)
+            return fmt.print(the_date);//lo imprime en el formato "yyyy-MM-dd"
+        } catch (Throwable ex) {
+            return null;//invalida
+        }
     }
 
     public boolean fechaDentroDeRangoMas1Dia(Date inicioRango, Date finRango, Date fecBuscada) {

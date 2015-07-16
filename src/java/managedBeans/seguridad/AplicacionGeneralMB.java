@@ -29,14 +29,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PreDestroy;
 import javax.swing.Timer;
 import modelo.entidades.CfgConfiguraciones;
-import modelo.entidades.CfgCopiasSeguridad;
 import modelo.entidades.CfgInsumo;
 import modelo.entidades.CfgMedicamento;
 import modelo.entidades.CfgPerfilesUsuario;
@@ -110,6 +108,7 @@ public class AplicacionGeneralMB {
     private List<SelectItem> listaEscolaridad;
     private List<SelectItem> listaTipoAfiliado;
     private List<SelectItem> listaDepartamentos;
+    private List<SelectItem> listaMunicipios;
     private List<SelectItem> listaEspecialidades;
     private List<SelectItem> listaOcupaciones;
     private List<SelectItem> listaTipoTarifa;
@@ -183,7 +182,7 @@ public class AplicacionGeneralMB {
     }
 
     Timer timer = new Timer(3600000, new ActionListener() {//cada hora
-    //Timer timer = new Timer(60000, new ActionListener() {//cada minuto
+        //Timer timer = new Timer(60000, new ActionListener() {//cada minuto
         @Override
         public void actionPerformed(ActionEvent e) {
             actionsPerHour();
@@ -446,6 +445,8 @@ public class AplicacionGeneralMB {
                 break;
             case MotivoConsulta:
                 listaMotivoConsulta = cargarClasificacion(maestro.toString());
+            case Municipios:
+                listaMunicipios = cargarClasificacion(maestro.toString());
                 break;
             case Ocupacion:
                 listaOcupaciones = cargarClasificacion(maestro.toString());
@@ -890,7 +891,6 @@ public class AplicacionGeneralMB {
 //    public void setListaTipoContrato(List<SelectItem> listaTipoContrato) {
 //        this.listaTipoContrato = listaTipoContrato;
 //    }
-
     public List<CfgInsumo> getListaInsumos() {
         return listaInsumos;
     }
@@ -989,10 +989,18 @@ public class AplicacionGeneralMB {
 
     public List<SelectItem> getListaClasificacionEvento() {
         return listaClasificacionEvento;
-}
+    }
 
     public void setListaClasificacionEvento(List<SelectItem> listaClasificacionEvento) {
         this.listaClasificacionEvento = listaClasificacionEvento;
+    }
+
+    public List<SelectItem> getListaMunicipios() {
+        return listaMunicipios;
+    }
+
+    public void setListaMunicipios(List<SelectItem> listaMunicipios) {
+        this.listaMunicipios = listaMunicipios;
     }
 
 }

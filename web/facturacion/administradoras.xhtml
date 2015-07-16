@@ -42,6 +42,12 @@
                     styleClass="icon-floppy fg-lightBlue bg-white no-border" 
                     actionListener="#{administradorasMB.guardarAdministradora}"               
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                    
+                &nbsp;
+                <p:commandButton 
+                    title="Copiar contratos" value="&nbsp;"
+                    styleClass="icon-copy fg-lightBlue bg-white no-border" 
+                    actionListener="#{administradorasMB.copiarContratos}"               
+                    style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                    
             </div>
             <br/>
             <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView">  
@@ -225,6 +231,24 @@
                     </tr>
                 </table>
             </p:dialog> 
+            <p:dialog id="IdDialogoCopiarContratos" header="COPIAR CONTRATOS" widgetVar="dialogoCopiarContratos" resizable="false" modal="true">  
+                <table>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoObligatorio" value="Prefijo"/>
+                        </td>
+                        <td>
+                            <p:inputText   styleClass="campoFormulario" size="20" value="#{administradorasMB.codigoAdminstradora}"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <p:commandButton 
+                    value="Eliminar" 
+                    oncomplete="PF('dialogoEliminarAdministradora').hide();"
+                    actionListener="#{administradorasMB.confirmarEliminarAdministradora}"/>
+
+            </p:dialog>
             <p:dialog id="IdDialogoEliminarSede" header="ELIMINAR ADMINISTRADORA" widgetVar="dialogoEliminarAdministradora" resizable="false" modal="true">  
                 <p:panelGrid id="panelEliminarAdministradora" styleClass="panelGridSinBordes" columns="1">
                     <h:outputText value="¿ Confirma La eliminacion de esta sede?"/>                    

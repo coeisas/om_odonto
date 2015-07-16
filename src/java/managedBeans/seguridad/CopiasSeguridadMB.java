@@ -6,6 +6,8 @@ package managedBeans.seguridad;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,6 +28,9 @@ import modelo.entidades.CfgConfiguraciones;
 import modelo.entidades.CfgCopiasSeguridad;
 import modelo.fachadas.CfgConfiguracionesFacade;
 import modelo.fachadas.CfgCopiasSeguridadFacade;
+import org.primefaces.context.RequestContext;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 /**
  * This class allows you to manage everything related to the backs of all the
@@ -48,6 +53,8 @@ public class CopiasSeguridadMB {
     private CfgConfiguraciones configuracionActual;
     private String nombreCopiaSeguridad = "";//Nombre del la copia de seguridad.    
     private AplicacionGeneralMB aplicacionGeneralMB;
+    private StreamedContent fileBackup;
+    private String nombreCopiaDescargar = "";
 
     @PostConstruct
     public void inicializar() {
@@ -60,6 +67,28 @@ public class CopiasSeguridadMB {
 
     public CopiasSeguridadMB() {
         aplicacionGeneralMB = FacesContext.getCurrentInstance().getApplication().evaluateExpressionGet(FacesContext.getCurrentInstance(), "#{aplicacionGeneralMB}", AplicacionGeneralMB.class);
+    }
+
+    public void clickBtnDescargarCopia() {
+        if (copiaSeguridadSeleccionada == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Se debe seleccionar una copia de seguridad para realizar la descarga."));
+            return;
+        }
+        nombreCopiaDescargar = copiaSeguridadSeleccionada.getNombre();
+        RequestContext.getCurrentInstance().execute("PF('dialogDownload').show();");
+    }
+
+    public StreamedContent getFileBackup() {//DESCARGA DE ARCHIVO DE COPIA DE SEGURIDAD
+        InputStream input;
+        try {
+            File file = new File(copiaSeguridadSeleccionada.getRuta());
+            input = new FileInputStream(file);
+            fileBackup = new DefaultStreamedContent(input, "application/binary", file.getName());
+            return fileBackup;
+        } catch (FileNotFoundException ex) {
+            System.out.println("ERROR 001: " + ex.toString());
+        }
+        return null;
     }
 
     /**
@@ -173,6 +202,14 @@ public class CopiasSeguridadMB {
         }//System.out.println("Termina proceso " + description + " /////////////////////////////////////////");
     }
 
+    public void clickBtnRestaurarCopia() {
+        if (copiaSeguridadSeleccionada == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Se debe seleccionar una copia de seguridad para realizar la restauración"));
+            return;
+        }
+        RequestContext.getCurrentInstance().execute("PF('dialogEdit').show();");
+    }
+
     public void restaurarCopiaDeSeguridad() {
         /*
          * click sobre restaurar una copia de seguridad de od(sigeodep)
@@ -219,9 +256,14 @@ public class CopiasSeguridadMB {
         }
     }
 
-    /**
-     * Deletes a backup Crime Observatory (Sigeodep)
-     */
+    public void clickBtnEliminarCopia() {
+        if (copiaSeguridadSeleccionada == null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Se debe seleccionar una copia de seguridad para realizar la eliminación."));
+            return;
+        }
+        RequestContext.getCurrentInstance().execute("PF('dialogDelete').show();");
+    }
+
     public void eliminarCopiaDeSeguridad() {
         /*
          * click sobre eliminar un backup de od(sigeodep)
@@ -265,6 +307,14 @@ public class CopiasSeguridadMB {
 
     public void setNombreCopiaSeguridad(String nombreCopiaSeguridad) {
         this.nombreCopiaSeguridad = nombreCopiaSeguridad;
+    }
+
+    public String getNombreCopiaDescargar() {
+        return nombreCopiaDescargar;
+    }
+
+    public void setNombreCopiaDescargar(String nombreCopiaDescargar) {
+        this.nombreCopiaDescargar = nombreCopiaDescargar;
     }
 
 }
