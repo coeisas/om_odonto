@@ -47,7 +47,7 @@
                 <p:remoteCommand name="remoteCommand"  update=":IdFormManuales" />
             </div>
             <br/>            
-            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView" dynamic="true" rendered="#{manualesTarifariosMB.mostrarTabView}">  
+            <p:tabView id="IdTabView" styleClass="centrar-maximo" widgetVar="wvTabView" dynamic="true" rendered="#{manualesTarifariosMB.mostrarTabView}" activeIndex="0">  
                 <p:tab title="#{manualesTarifariosMB.tituloTabManual}">  
                     <br/>
                     <table style="margin-left: auto; margin-right: auto;" >                         
@@ -78,6 +78,12 @@
                         title="Quitar Servicio" value="&nbsp;"                                        
                         styleClass="icon-minus-2 fg-lightBlue bg-white no-border"
                         actionListener="#{manualesTarifariosMB.quitarServicio}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Editar Servicio" value="&nbsp;"                                        
+                        styleClass="icon-pencil fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoEditarServicio}"
                         style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                     <br/><br/>
 
@@ -154,6 +160,12 @@
                         styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
                         actionListener="#{manualesTarifariosMB.quitarPaquete}"
                         style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Editar Paquete" value="&nbsp;"                                        
+                        styleClass="icon-pencil fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoEditarPaquete}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                     <br/><br/>
                     <p:dataTable 
                         id="IdTablaPaqueteManual" 
@@ -213,6 +225,12 @@
                         title="Quitar Medicamento" value="&nbsp;"                                        
                         styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
                         actionListener="#{manualesTarifariosMB.quitarMedicamento}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Editar Medicamento" value="&nbsp;"                                        
+                        styleClass="icon-pencil fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoEditarMedicamento}"
                         style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                     <br/><br/>
                     <p:dataTable 
@@ -276,6 +294,12 @@
                         title="Quitar Insumo" value="&nbsp;"                                        
                         styleClass="icon-minus-2 fg-lightBlue bg-white no-border"                     
                         actionListener="#{manualesTarifariosMB.quitarInsumo}"
+                        style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
+                    &nbsp;
+                    <p:commandButton 
+                        title="Editar Insumo" value="&nbsp;"                                        
+                        styleClass="icon-pencil fg-lightBlue bg-white no-border"
+                        actionListener="#{manualesTarifariosMB.cargarDialogoEditarInsumo}"
                         style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/> 
                     <br/><br/>
                     <p:dataTable 
@@ -384,7 +408,7 @@
                 <p:panelGrid id="IdPanelAgregarServicio" styleClass="panelGridSinBordes" style="width: 520px;">
                     <p:row>                        
                         <p:column>
-                            <h:outputText styleClass="campoObligatorio" value="Servicio"/>                    
+                            <h:outputText styleClass="campoObligatorio" value="Servicio" title="Servicio que se agregara al manual tarifario"/>                    
                             <p:selectOneMenu styleClass="campoFormulario" style="width: 410px;" value="#{manualesTarifariosMB.idServicio}"  filter="true" filterMatchMode="contains">
                                 <p:ajax event="change"
                                         listener="#{manualesTarifariosMB.cambiaServicio}"
@@ -395,37 +419,37 @@
                     </p:row>
                     <p:row>
                         <p:column>
-                            <h:outputText styleClass="campoObligatorio" value="Tipo tarifa"/>
+                            <h:outputText styleClass="campoObligatorio" value="Tipo tarifa" title="Forma de calcular valor final, Si servicio tiene 'Factor SOAT' y/o 'Factor ISS' diferente de cero: aparecen tarifas SOAT y/o ISS"/>
                             <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{manualesTarifariosMB.tipoTarifa}">
                                 <p:ajax event="change"
                                         listener="#{manualesTarifariosMB.calcularValoresServicio}"
-                                        update="IdValorFinalServicio IdValorInicialServicio"/>                            
+                                        update="IdValorFinalServicio IdValorInicialServicio IdSelectUnidadValor"/>                            
                                 <f:selectItems value="#{manualesTarifariosMB.listaTipoTarifa}"/>       
                             </p:selectOneMenu>                    
-                            <h:outputText styleClass="campoNoObligatorio" value="Unidad de valor"/>
-                            <p:selectOneMenu styleClass="campoFormulario" style="width: 100px;" value="#{manualesTarifariosMB.unidadValor}">
+                            <h:outputText styleClass="campoNoObligatorio" value="Unidad de valor" title="Activa cuando tarifa es ISS o SOAT, permite saber AÑO, UVR, IVA usados (Se configura en sección: 'Unidad valor')"/>
+                            <p:selectOneMenu styleClass="campoFormulario" id="IdSelectUnidadValor" disabled="#{manualesTarifariosMB.disabledUnidadValor}" style="width: 100px;" value="#{manualesTarifariosMB.unidadValor}">
                                 <p:ajax event="change"
                                         listener="#{manualesTarifariosMB.calcularValoresServicio}"
                                         update="IdValorFinalServicio IdValorInicialServicio"/>
                                 <f:selectItems value="#{manualesTarifariosMB.listaUnidadesValor}" var="unidad" itemLabel="#{unidad.anio}" itemValue="#{unidad.anio}"/>
                             </p:selectOneMenu>
-                            <h:outputText          styleClass="campoNoObligatorio" value="Activo"/>
+                            <h:outputText          styleClass="campoNoObligatorio" value="Activo" title="Determinar si se usa o no cuando se haga uso del manual"/>
                             <p:selectBooleanButton  value="#{manualesTarifariosMB.activoServicio}" onLabel="SI" offLabel="NO" style="width:40px"/>
                         </p:column>
                     </p:row>
                     <p:row>
                         <p:column>
-                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Meta cumplimiento"/>                    
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Meta cumplimiento" title="Valor Informativo"/>                    
                             <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{manualesTarifariosMB.metaCumplimiento}"/>
-                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Periodicidad"/>                    
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Periodicidad" title="Valor Informativo" />                    
                             <pe:inputNumber  decimalSeparator="," decimalPlaces="0" minValue="0" value="#{manualesTarifariosMB.periodicidad}"/>
                         </p:column>
                     </p:row>
                     <p:row>
                         <p:column>
-                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Valor Inicial"/>                    
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Valor Inicial" title="Valor calculado automaticamente en base a: Costo servicio, Tarifa y Unidad de Valor (sin descuentos ni honorarios) "/>                    
                             <pe:inputNumber styleClass="campoFormulario" id="IdValorInicialServicio" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialServicio}" disabled="true"/>
-                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Descuento %"/>                    
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Descuento %" title="Número entre 0 y 100 que representa el porcetaje de descuento sobre el valor inicial que se desea aplicar."/>                    
                             <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoServicio}" decimalPlaces="2"  minValue="-100" maxValue="100" >
                                 <p:ajax event="blur"
                                         listener="#{manualesTarifariosMB.calcularValoresServicio}"
@@ -436,19 +460,19 @@
                     <p:row>
                         <p:column>                            
 
-                            <h:outputText   styleClass="campoNoObligatorio" value="Honorario médico"/>                    
+                            <h:outputText   styleClass="campoNoObligatorio" value="Honorario médico" title="Valor por concepto de honorario del medico que atiende"/>                    
                             <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{manualesTarifariosMB.honorarioMedico}" minValue="0">
                                 <p:ajax event="blur"
                                         listener="#{manualesTarifariosMB.calcularValoresServicio}"
                                         update="IdValorFinalServicio"/>
                             </pe:inputNumber>
-                            <h:outputText   styleClass="campoObligatorio" style="width: 95px;" value="Valor Final"/>                    
+                            <h:outputText   styleClass="campoObligatorio" style="width: 95px;" value="Valor Final" title="Se calcula asi: valor inicial - (valor inicial * (descuento/100)) + honorario medico. Pero el usuario puede ingresar cualquier valor si desea."/>                    
                             <pe:inputNumber  id="IdValorFinalServicio" styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{manualesTarifariosMB.valorFinalServicio}"/>                            
                         </p:column>
                     </p:row>
                     <p:row>
                         <p:column>
-                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación" title="Valor Informativo"/>
                             <p:inputTextarea styleClass="campoFormulario" style="width: 390px; height: 50px;" value="#{manualesTarifariosMB.observacionServicio}"/>
                         </p:column>
                     </p:row>
@@ -457,6 +481,70 @@
                             <p:commandButton 
                                 value="Agregar"                                                 
                                 actionListener="#{manualesTarifariosMB.agregarServicio}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoEditandoServicio" header="EDITAR SERVICIO DE MANUAL TARIFARIO" widgetVar="dialogoEditandoServicio" resizable="false" modal="true">
+                <p:panelGrid id="IdPanelEditandoServicio" styleClass="panelGridSinBordes" style="width: 520px;">
+                    <p:row>                        
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Servicio" title="Servicio que se agregara al manual tarifario"/>                    
+                            <p:inputText styleClass="campoFormulario" disabled="true" value="#{manualesTarifariosMB.nombreServicioEditando}" style="width: 410px;"/>                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Tipo tarifa" title="Forma de calcular valor final, Si servicio tiene 'Factor SOAT' y/o 'Factor ISS' diferente de cero: aparecen tarifas SOAT y/o ISS"/>
+                            <p:inputText styleClass="campoFormulario" disabled="true" value="#{manualesTarifariosMB.tipoTarifaEditando}" style="width: 100px;"/>
+                            <h:outputText styleClass="campoNoObligatorio" value="Unidad de valor" title="Activa cuando tarifa es ISS o SOAT, permite saber AÑO, UVR, IVA usados (Se configura en sección: 'Unidad valor')"/>
+                            <p:inputText styleClass="campoFormulario" disabled="true" value="#{manualesTarifariosMB.unidadValorEditando}" style="width: 90px;"/>                            
+                            <h:outputText          styleClass="campoNoObligatorio" value="Activo" title="Determinar si se usa o no cuando se haga uso del manual"/>
+                            <p:selectBooleanButton  value="#{manualesTarifariosMB.activoServicioEditando}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Meta cumplimiento" title="Valor Informativo"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="0" minValue="0"  value="#{manualesTarifariosMB.metaCumplimientoEditando}"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Periodicidad" title="Valor Informativo" />                    
+                            <pe:inputNumber  decimalSeparator="," decimalPlaces="0" minValue="0" value="#{manualesTarifariosMB.periodicidadEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 110px;" value="Valor Inicial" title="Valor calculado automaticamente en base a: Costo servicio, Tarifa y Unidad de Valor (sin descuentos ni honorarios) "/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialServicioEditando}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 85px;" value="Descuento %" title="Número entre 0 y 100 que representa el porcetaje de descuento sobre el valor inicial que se desea aplicar."/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoServicioEditando}" decimalPlaces="2"  minValue="-100" maxValue="100" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+
+                            <h:outputText   styleClass="campoNoObligatorio" value="Honorario médico" title="Valor por concepto de honorario del medico que atiende"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{manualesTarifariosMB.honorarioMedicoEditando}" minValue="0"/>
+                            <h:outputText   styleClass="campoObligatorio" style="width: 95px;" value="Valor Final" title="Se calcula asi: valor inicial - (valor inicial * (descuento/100)) + honorario medico. Pero el usuario puede ingresar cualquier valor si desea."/>                    
+                            <pe:inputNumber  id="IdValorFinalServicioEditando" styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" value="#{manualesTarifariosMB.valorFinalServicioEditando}"/>                            
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Nota: El cálculo automático del valor final no aplica cuando se esta editando." style="color: #bcbcbc"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación" title="Valor Informativo"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 390px; height: 50px;" value="#{manualesTarifariosMB.observacionServicioEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Actualizar"                                                 
+                                actionListener="#{manualesTarifariosMB.actualizarServicio}"/>
+
                         </p:column>
                     </p:row>
                 </p:panelGrid>
@@ -470,6 +558,7 @@
                         actionListener="#{manualesTarifariosMB.confirmarQuitarServicio}"/>
                 </p:panelGrid>
             </p:dialog>
+
             <p:dialog id="IdDialogoAgregarPaquete" header="AGREGAR PAQUETE A MANUAL TARIFARIO" widgetVar="dialogoAgregarPaquete" resizable="false" modal="true">  
                 <p:panelGrid id="IdPanelAgregarPaquete" styleClass="panelGridSinBordes">
                     <p:row>
@@ -518,6 +607,50 @@
                     </p:row>
                 </p:panelGrid>
             </p:dialog>
+            <p:dialog id="IdDialogoEditandoPaquete" header="EDITAR PAQUETE DE MANUAL TARIFARIO" widgetVar="dialogoEditandoPaquete" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelEditandoPaquete" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Paquete"/>                    
+                            <p:inputText styleClass="campoFormulario" disabled="true" value="#{manualesTarifariosMB.nombrePaqueteEditando}" style="width: 400px;"/>                                                        
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialPaqueteEditando}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoPaqueteEditando}" decimalPlaces="2"  minValue="-100" maxValue="100"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{manualesTarifariosMB.activoPaqueteEditando}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalPaqueteEditando" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorFinalPaqueteEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Nota: El cálculo automático del valor final no aplica cuando se esta editando." style="color: #bcbcbc"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText    styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{manualesTarifariosMB.observacionPaqueteEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Actualizar"                         
+                                actionListener="#{manualesTarifariosMB.actualizarPaquete}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
             <p:dialog id="IdDialogoQuitarPaquete" header="QUITAR PAQUETE A MANUAL TARIFARIO" widgetVar="dialogoQuitarPaquete" resizable="false" modal="true">  
                 <p:panelGrid id="panelQuitarPaquete" styleClass="panelGridSinBordes" columns="1">
                     <h:outputText value="¿ Confirma quitar el paquete del manual tarifario ?"/>                    
@@ -527,6 +660,7 @@
                         actionListener="#{manualesTarifariosMB.confirmarQuitarPaquete}"/>
                 </p:panelGrid>
             </p:dialog>
+
             <p:dialog id="IdDialogoAgregarMedicamento" header="AGREGAR MEDICAMENTO A MANUAL TARIFARIO" widgetVar="dialogoAgregarMedicamento" resizable="false" modal="true">  
                 <p:panelGrid id="IdPanelAgregarMedicamento" styleClass="panelGridSinBordes">
                     <p:row>
@@ -575,6 +709,50 @@
                     </p:row>
                 </p:panelGrid>
             </p:dialog>
+            <p:dialog id="IdDialogoEditandoMedicamento" header="EDITAR MEDICAMENTO DE MANUAL TARIFARIO" widgetVar="dialogoEditandoMedicamento" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelEditandoMedicamento" styleClass="panelGridSinBordes">
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Medicamento"/>                    
+                            <p:inputText styleClass="campoFormulario" disabled="true" value="#{manualesTarifariosMB.nombreMedicamentoEditando}" style="width: 400px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialMedicamentoEditando}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoMedicamentoEditando}" decimalPlaces="2"  minValue="-100" maxValue="100" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{manualesTarifariosMB.activoMedicamentoEditando}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>                                        
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalMedicamentoEditando" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorFinalMedicamentoEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Nota: El cálculo automático del valor final no aplica cuando se esta editando." style="color: #bcbcbc"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{manualesTarifariosMB.observacionMedicamentoEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column style="text-align: center;">
+                            <p:commandButton 
+                                value="Actualizar"                         
+                                actionListener="#{manualesTarifariosMB.actualizarMedicamento}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
             <p:dialog id="IdDialogoQuitarMedicamento" header="QUITAR MEDICAMENTO A MANUAL TARIFARIO" widgetVar="dialogoQuitarMedicamento" resizable="false" modal="true">  
                 <p:panelGrid id="panelQuitarMedicamento" styleClass="panelGridSinBordes" columns="1">
                     <h:outputText value="¿ Confirma quitar el medicamento del manual tarifario ?"/>                    
@@ -584,6 +762,7 @@
                         actionListener="#{manualesTarifariosMB.confirmarQuitarMedicamento}"/>
                 </p:panelGrid>
             </p:dialog>
+
             <p:dialog id="IdDialogoAgregarInsumo" header="AGREGAR INSUMO A MANUAL TARIFARIO" widgetVar="dialogoAgregarInsumo" resizable="false" modal="true">  
                 <p:panelGrid id="IdPanelAgregarInsumo" styleClass="panelGridSinBordes" >
                     <p:row>
@@ -628,6 +807,50 @@
                             <p:commandButton 
                                 value="Agregar"                         
                                 actionListener="#{manualesTarifariosMB.agregarInsumo}"/>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+            <p:dialog id="IdDialogoEditandoInsumo" header="EDITAR INSUMO DE MANUAL TARIFARIO" widgetVar="dialogoEditandoInsumo" resizable="false" modal="true">  
+                <p:panelGrid id="IdPanelEditandoInsumo" styleClass="panelGridSinBordes" >
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoObligatorio" value="Insumo"/>                    
+                            <p:inputText styleClass="campoFormulario" disabled="true" value="#{manualesTarifariosMB.nombreInsumoEditando}" style="width: 400px;"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Inicial"/>
+                            <pe:inputNumber styleClass="campoFormulario" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorInicialInsumoEditando}" disabled="true"/>
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Descuento %"/>                    
+                            <pe:inputNumber styleClass="campoFormulario" value="#{manualesTarifariosMB.descuentoInsumoEditando}" decimalPlaces="2"  minValue="-100" maxValue="100" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>                            
+                            <h:outputText   styleClass="campoNoObligatorio" style="width: 90px;" value="Activo"/>
+                            <p:selectBooleanButton styleClass="campoFormulario" value="#{manualesTarifariosMB.activoInsumoEditando}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            <h:outputText  styleClass="campoNoObligatorio" style="width: 90px;" value="Valor Final"/>
+                            <pe:inputNumber styleClass="campoFormulario" id="IdValorFinalInsumoEditando" decimalSeparator="," decimalPlaces="2" minValue="0" value="#{manualesTarifariosMB.valorFinalInsumoEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="Nota: El cálculo automático del valor final no aplica cuando se esta editando." style="color: #bcbcbc"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText styleClass="campoNoObligatorio" value="Observación"/>
+                            <p:inputTextarea styleClass="campoFormulario" style="width: 380px; height: 50px;" value="#{manualesTarifariosMB.observacionInsumoEditando}"/>
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:commandButton 
+                                value="Actualizar"                         
+                                actionListener="#{manualesTarifariosMB.actualizarInsumo}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>

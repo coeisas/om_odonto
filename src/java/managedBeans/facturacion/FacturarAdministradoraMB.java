@@ -126,6 +126,7 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
     private FilaDataTable facturaAdmiSeleccionadaTabla;
     private FacPeriodo periodoSeleccionado;
     private FacContrato contratoActual;
+    private FacContrato contratoTodos;//se usa cuando se quiere usar todos los contratos, tiene id=-1
     private FacConsecutivo consecutivoSeleccionado;
     private List<FacFacturaPaciente> listaFacturasDePacientes;//lista de facturas de pacientes para una administradora determinada
     //---------------------------------------------------
@@ -192,7 +193,8 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
     //---------------------------------------------------  
     @PostConstruct
     public void inicializar() {
-
+        contratoTodos = new FacContrato(-1);
+        contratoTodos.setDescripcion("TODOS");
         fechaInicial.setDate(1);
         fechaInicial.setMonth(calendarFechaFinalMasUnDia.get(Calendar.MONTH));
         fechaInicial.setYear(calendarFechaFinalMasUnDia.get(Calendar.YEAR) - 1900);
@@ -262,7 +264,9 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         nuevaFactura.setFechaInicial(fechaInicial);
         nuevaFactura.setFechaFinal(fechaFinal);
         nuevaFactura.setIdPeriodo(periodoSeleccionado);
-        nuevaFactura.setIdContrato(contratoActual);
+        if (contratoActual.getIdContrato() != -1) {
+            nuevaFactura.setIdContrato(contratoActual);
+        }
         //  tipo_ingreso
         //  numero_autorizacion
         //  fecha_autorizacion
@@ -339,9 +343,12 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
 
         administradoraActual = administradoraFacade.find(Integer.parseInt(idAdministradora));
         //determinar que facturas tiene una administradora en un rango de fechas determinado
-        String sql = "select * from fac_factura_paciente where id_administradora=" + idAdministradora + " AND "
-                + "id_contrato = " + idContrato + " AND "
-                + "facturada_en_admi = false AND "
+
+        String sql = "select * from fac_factura_paciente where id_administradora=" + idAdministradora + " AND ";
+        if (idContrato.compareTo("-1") != 0) {//No se requieren todos los contratos
+            sql = sql + "id_contrato = " + idContrato + " AND ";
+        }
+        sql = sql + "facturada_en_admi = false AND "
                 + "fecha_elaboracion >= to_date('" + formatoFechaSql.format(fechaInicial) + "','dd/MM/yyyy') AND "
                 + "fecha_elaboracion <= to_date('" + formatoFechaSql.format(calendarFechaFinalMasUnDia.getTime()) + "','dd/MM/yyyy')";
         listaFacturasDePacientes = facturaPacienteFacade.consultaNativaFacturas(sql);
@@ -481,11 +488,11 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
             }
         }
         if (facturasFueraDeRangoInt != 0) {
-            estiloNotas="color: blue; border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+            estiloNotas = "color: blue; border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
             notaFueraRango = "Se agregaron: " + facturasFueraDeRangoInt + " facturas(estaban fuera de rango)";
         }
         if (facturasSinAutorizacionCerradaInt != 0) {
-            estiloNotas="color: blue; border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
+            estiloNotas = "color: blue; border-color: gray; border-width: 2px; border-style: solid; border-radius: 7px 7px 7px 7px;";
             notaNoCerradas = "Existen: " + facturasSinAutorizacionCerradaInt + " facturas sin autorización cerrada";
         }
         listaServiciosFacturaFiltro.addAll(listaServiciosFactura);
@@ -621,13 +628,20 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
 
     public void cambiaAdministradora() {
         //se recarga la lista de contratos que contenga
+        listaContratos = new ArrayList<>();
+        List<FacContrato> listaContratosAux = new ArrayList<>();
+        contratoActual = null;
+        idContrato = "";
         if (!validarNoVacio(idAdministradora)) {
             imprimirMensaje("Error", "Se debe seleccionar una administradora", FacesMessage.SEVERITY_ERROR);
+            buscarItems();
+            RequestContext.getCurrentInstance().execute("remoteCommand();");
             return;
         }
         administradoraActual = administradoraFacade.find(Integer.parseInt(idAdministradora));
         listaContratos = administradoraActual.getFacContratoList();
         if (!listaContratos.isEmpty()) {
+            listaContratos.add(contratoTodos);//agrega el item TODOS
             contratoActual = listaContratos.get(0);
             idContrato = contratoActual.getIdContrato().toString();
         } else {
@@ -641,11 +655,16 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
 
     public void cambiaContrato() {
         if (validarNoVacio(idContrato)) {
-            contratoActual = contratoFacade.find(Integer.parseInt(idContrato));
+            if (idContrato.compareTo("-1") == 0) {
+                contratoActual = contratoTodos;
+            } else {
+                contratoActual = contratoFacade.find(Integer.parseInt(idContrato));
+            }
         } else {
             contratoActual = null;
         }
         buscarItems();
+        RequestContext.getCurrentInstance().execute("remoteCommand();");
     }
 
     private boolean cargarFuenteDeDatosAgrupada() {
@@ -658,16 +677,12 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         List<EstructuraItemsAdministradora> listaItemsFactura = new ArrayList<>();
         listaRegistrosParaPdf = new ArrayList<>();
         EstructuraFacturaAdministradora nuevaFactura = new EstructuraFacturaAdministradora();
-        
-        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
-        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevaFactura.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
-        nuevaFactura.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
-                
+        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
+        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
         nuevaFactura.setTipoDocumento(" FACTURA No.");
         nuevaFactura.setCodigoDocumento("" + facturaAdmiSeleccionada.getCodigoDocumento());
-        
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getRazonSocial());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getNumeroIdentificacion());
@@ -820,17 +835,13 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
 
         List<EstructuraItemsAdministradora> listaItemsFactura = new ArrayList<>();
         listaRegistrosParaPdf = new ArrayList<>();
-        EstructuraFacturaAdministradora nuevaFactura = new EstructuraFacturaAdministradora();      
-        
-        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getNomRepLegal());
-        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getTipoDoc().getDescripcion() + ":" + loginMB.getEmpresaActual().getNumIdentificacion() + " " + loginMB.getEmpresaActual().getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA                
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getRazonSocial());
-        nuevaFactura.setRegimenEmpresa("Consulta de optometría, monturas, lentes, accesorios, productos farmaceúticos.");
-        nuevaFactura.setPiePagina("CONSULTORIO: " + loginMB.getEmpresaActual().getDireccion() + " " + loginMB.getEmpresaActual().getCodMunicipio().getDescripcion() + "-" + loginMB.getEmpresaActual().getCodDepartamento().getDescripcion() + " TELEFONO: " + loginMB.getEmpresaActual().getTelefono1() + " WEBSITE: " + loginMB.getEmpresaActual().getWebsite());
-        
+        EstructuraFacturaAdministradora nuevaFactura = new EstructuraFacturaAdministradora();
+        nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
+        nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
+        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
         nuevaFactura.setTipoDocumento(" FACTURA No.");
         nuevaFactura.setCodigoDocumento("" + facturaAdmiSeleccionada.getCodigoDocumento());
-        
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getRazonSocial());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaAdmiSeleccionada.getIdAdministradora().getNumeroIdentificacion());
@@ -1274,6 +1285,5 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
     public void setEstiloNotas(String estiloNotas) {
         this.estiloNotas = estiloNotas;
     }
-    
-    
+
 }

@@ -31,8 +31,17 @@ public class FacContratoFacade extends AbstractFacade<FacContrato> {
 
     public List<FacContrato> buscarPorCodigo(String codigoContrato) {
         try {
-            String hql = "SELECT c FROM FacContrato c WHERE c.codigoContrato LIKE '" + codigoContrato+"'";
+            String hql = "SELECT c FROM FacContrato c WHERE c.codigoContrato LIKE '" + codigoContrato + "'";
             return getEntityManager().createQuery(hql).getResultList();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public FacContrato buscarPorNombre(String nombreContrato) {
+        try {
+            String hql = "SELECT c FROM FacContrato c WHERE c.descripcion LIKE '" + nombreContrato + "'";
+            return (FacContrato) getEntityManager().createQuery(hql).getSingleResult();
         } catch (Exception e) {
             return null;
         }

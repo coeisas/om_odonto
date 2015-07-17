@@ -14,8 +14,8 @@
     </h:head>
 
     <h:body>
-        #{contratosMB.inicializar()}
         <h:form id="IdFormContratos">                             
+        #{contratosMB.inicializar()}
             <p:growl id="IdMensajeContratos" showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
             <br/>            
             <div>
@@ -43,7 +43,6 @@
                     title="Guardar Contrato" value="&nbsp;"
                     styleClass="icon-floppy fg-lightBlue bg-white no-border" 
                     oncomplete="PF('wvTabView').select(0);"
-                    update=":IdFormContratos"
                     actionListener="#{contratosMB.guardarContrato}"
                     style="font-size: 20px; width: 20px; height: 20px; left: 20px; "/>                                            
             </div>
@@ -171,18 +170,19 @@
                         <tr>
                             <td colspan="5">
                                 <p:outputLabel styleClass="campoObligatorio" value="Manual Tarifario: "/>
-                                <p:selectOneMenu styleClass="campoFormulario" style="width: 300px;" value="#{contratosMB.idManualTarifario}"  filter="true" filterMatchMode="contains">                                                                                                
+                                <p:selectOneMenu styleClass="campoFormulario" style="width: 250px;" value="#{contratosMB.idManualTarifario}"  filter="true" filterMatchMode="contains">                                                                                                
                                     <f:selectItem itemValue="" itemLabel=""/>
                                     <f:selectItems value="#{contratosMB.listaManuales}" var="manual" itemLabel="#{manual.nombreManualTarifario}" itemValue="#{manual.idManualTarifario}" />
                                 </p:selectOneMenu>
-
-
-                                <p:outputLabel styleClass="campoNoObligatorio" value="IVA" />
-                                <p:selectBooleanButton styleClass="campoFormulario" value="#{contratosMB.iva}" onLabel="SI" offLabel="NO" style="width:40px"/>
-                                <p:outputLabel styleClass="campoNoObligatorio" value="CREE" />
-                                <p:selectBooleanButton styleClass="campoFormulario" value="#{contratosMB.cree}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                                <p:commandButton 
+                                    disabled="#{contratosMB.contratoSeleccionado == null}"
+                                    title="Copiar manual tarifario (Activo si se esta editando contrato existente)" value="&nbsp;"
+                                    styleClass="icon-copy fg-lightBlue bg-white no-border" 
+                                    actionListener="#{contratosMB.clickBtnCopiarManual}"               
+                                    style="font-size: 20px; width: 20px; height: 20px;"/>
                             </td>
                         </tr>
+                        <tr><td colspan="5">&nbsp;</td></tr>
                         <tr>
                             <td>&nbsp;</td>
                             <td><p:outputLabel styleClass="campoNoObligatorio" value="Cuota Moderadora" /></td>
@@ -239,66 +239,86 @@
                             <td>&nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>                                                
+                        <tr><td colspan="5">&nbsp;</td></tr>
+                        <tr>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="APLICA IVA" />
+                                <p:selectBooleanButton styleClass="campoFormulario" value="#{contratosMB.iva}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            </td>
+                            <td>
+                                <p:outputLabel styleClass="campoNoObligatorio" value="APLICA CREE" />
+                                <p:selectBooleanButton styleClass="campoFormulario" value="#{contratosMB.cree}" onLabel="SI" offLabel="NO" style="width:40px"/>
+                            </td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>       
                     </table>
                     <br/><br/>                    
                 </p:tab>
-
-                <p:tab title="#{contratosMB.tituloTabProgramas}" disabled="#{contratosMB.contratoSeleccionado == null}" rendered="false">   
-                    <br/><br/>
-                    <div style="margin-left: 15px;">
-                        <p:commandButton 
-                            title="Nuevo programa" value="&nbsp;"
-                            styleClass="icon-plus-2 fg-lightBlue bg-white no-border"                             
-                            actionListener="#{contratosMB.nuevoPrograma}"                    
-                            style="font-size: 20px; width: 20px; height: 20px; "/>                            
-                        &nbsp;                        
-                        <p:commandButton 
-                            title="Editar programa" value="&nbsp;"
-                            styleClass="icon-pencil fg-lightBlue bg-white no-border"                             
-                            actionListener="#{contratosMB.editarPrograma}"
-                            style="font-size: 20px; width: 20px; height: 20px; "/>                            
-                        &nbsp;                        
-                        <p:commandButton 
-                            title="Copiar Programas" value="&nbsp;"
-                            styleClass="icon-copy fg-lightBlue bg-white no-border"                             
-                            oncomplete="PF('dialogoCopiarProgramas').show();"
-                            style="font-size: 20px; width: 20px; height: 20px; "/>
-                    </div>
-                    <br/>
-                    <p:dataTable 
-                        id="IdTablaProgramas" 
-                        var="programa" 
-                        widgetVar="wvTablaProgramas"
-                        value="#{contratosMB.listaProgramas}" 
-                        rowKey="#{programa.idPrograma}"  
-                        selection="#{contratosMB.programaSeleccionado}" 
-                        paginator="true"
-                        style="width: 600px; height: 300px; margin-left: auto; margin-right: auto;"
-                        rows="10"                                    
-                        paginatorPosition="bottom"                                
-                        emptyMessage="No hay programas"
-                        scrollable="true" 
-                        currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
-                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                        pageLinks="5"
-                        selectionMode="single"
-                        resizableColumns="true">  
-                        <f:facet name="header">
-                            PROGRAMAS ASOCIADOS
-                        </f:facet>
-                        <p:column headerText="CODIGO" width="1" filterBy="#{programa.codigoPrograma}" filterMatchMode="contains">
-                            #{programa.codigoPrograma}
-                        </p:column>                                
-                        <p:column headerText="NOMBRE" width="90" filterBy="#{programa.nombrePrograma}" filterMatchMode="contains">
-                            #{programa.nombrePrograma}
-                        </p:column>                                
-                    </p:dataTable>  
-                    <br/>
-                </p:tab> 
             </p:tabView>
             <br/>
         </h:form>
         <h:form id="IdFormDialogs">
+            <p:dialog id="IdDialogoCopiarManual" header="COPIAR MANUAL TARIFARIO" widgetVar="dialogoCopiarManual" resizable="false" modal="true">  
+                <br/>
+                <table>                                        
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoObligatorio" value="Administradora: " style="width: 110px;"/>
+                        </td>
+                        <td>
+                            <p:selectOneMenu style="width: 480px;" value="#{contratosMB.idAdministradoraACopiar}"  filter="true" filterMatchMode="contains">
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{contratosMB.cambiaAdministradoraCopia}"                                                
+                                    render="IdListaContratosCopia IdManualCopia"/>
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoObligatorio" value="Contrato: " style="width: 110px;"/>
+                        </td>
+                        <td>
+                            <p:selectOneMenu id="IdListaContratosCopia" style="width: 480px;" value="#{contratosMB.idContratoACopiar}"  filter="true" filterMatchMode="contains">
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{contratosMB.cambiaContratoCopia}"                                                
+                                    render="IdManualCopia"/>
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{contratosMB.listaContratosCopia}" var="contrato" itemLabel="#{contrato.descripcion}" itemValue="#{contrato.idContrato}" />
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Manual asociado" style="width: 110px;" title="Se usa para agregarlo a los nombres de contratos y mauales a copiar"/>
+                        </td>
+                        <td>
+                            <p:inputText id="IdManualCopia" size="90" readonly="true" value="#{contratosMB.nombreManualContratoACopiar}"/>
+                        </td>
+                    </tr>                    
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoObligatorio" value="Nombre de copia" style="width: 110px;" title="Se usa para agregarlo a los nombres de contratos y mauales a copiar"/>
+                        </td>
+                        <td>
+                            <p:inputText size="90" value="#{contratosMB.nombreCopiaManual}"/>
+                        </td>
+                    </tr>                    
+                    <tr>
+                        <td colspan="2">
+                            <p:commandButton 
+                                value="Realizar copia"
+                                actionListener="#{contratosMB.copiarManual}"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+            </p:dialog>
             <p:dialog id="IdDialogoBuscarContratos" header="BUSCAR CONTRATO" widgetVar="dialogoBuscarContratos" resizable="false" modal="true">                
                 <table>
                     <tr>
@@ -359,50 +379,6 @@
                         actionListener="#{contratosMB.confirmarEliminarContrato}"/>
                 </p:panelGrid>
             </p:dialog>            
-            <p:dialog id="IdDialogoCopiarProgramas" header="COPIAR PROGRAMAS" widgetVar="dialogoCopiarProgramas" resizable="false" modal="true">                
-                <br/>
-                <p:outputLabel styleClass="campoObligatorio" value="Contrato: "/>
-                <p:selectOneMenu styleClass="campoFormulario" style="width: 480px;" value="#{contratosMB.idContratoACopiar}"  filter="true" filterMatchMode="contains">
-                    <f:ajax 
-                        event="change"
-                        listener="#{contratosMB.cambiaContratoCopia}"                                                
-                        render="IdTablaCopiarContratos"/>
-                    <f:selectItem itemLabel="" itemValue=""/>
-                    <f:selectItems value="#{contratosMB.listaContratos}" var="contrato" itemLabel="#{contrato.descripcion}" itemValue="#{contrato.idContrato}" />
-                </p:selectOneMenu>
-                <br/><br/><br/>
-                <p:dataTable 
-                    id="IdTablaCopiarProgramas" 
-                    var="programaCopia" 
-                    widgetVar="wvTablaCopiarProgramas"
-                    value="#{contratosMB.listaProgramasCopia}" 
-                    rowKey="#{programaCopia.idPrograma}"  
-                    selection="#{contratosMB.programasCopiaSeleccionados}" 
-                    paginator="true"
-                    style="width: 600px; height: 300px;"
-                    rows="10"                                    
-                    paginatorPosition="bottom"                                
-                    emptyMessage="No hay programas"
-                    scrollable="true" 
-                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
-                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                    pageLinks="5"
-                    selectionMode="multiple"
-                    resizableColumns="true">                                                                                               
-                    <p:column headerText="CODIGO" width="1" filterBy="#{programaCopia.codigoPrograma}" filterMatchMode="contains">
-                        #{programaCopia.codigoPrograma}
-                    </p:column>                                
-                    <p:column headerText="NOMBRE" width="90" filterBy="#{programaCopia.nombrePrograma}" filterMatchMode="contains">
-                        #{programaCopia.nombrePrograma}
-                    </p:column>                                
-                </p:dataTable>  
-                <br/><br/>
-                <p:commandButton 
-                    value="Copiar seleccionados"                                        
-                    update=":IdFormContratos"
-                    actionListener="#{contratosMB.copiarProgramas}"/>
-                <br/><br/>
-            </p:dialog>             
         </h:form>
     </h:body>
 </html>

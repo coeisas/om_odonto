@@ -38,5 +38,13 @@ public class FacManualTarifarioFacade extends AbstractFacade<FacManualTarifario>
             return null;
         }
     }
+    public FacManualTarifario buscarPorNombre(String nombreManual) {
+        try {
+            String hql = "SELECT c FROM FacManualTarifario c WHERE c.nombreManualTarifario LIKE '" + nombreManual + "'";
+            return (FacManualTarifario) getEntityManager().createQuery(hql).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 }
