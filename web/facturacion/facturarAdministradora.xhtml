@@ -50,7 +50,7 @@
                         <td>
                             <p:outputLabel styleClass="campoObligatorio" value="Contrato"/>
                             <p:selectOneMenu id="IdListaContratos" styleClass="campoFormulario" value="#{facturarAdministradoraMB.idContrato}" style="width: 340px;" filter="true" filterMatchMode="contains">
-                                <f:ajax event="change" listener="#{facturarAdministradoraMB.cambiaContrato}"/>
+                                <f:ajax event="change" listener="#{facturarAdministradoraMB.cambiaContrato}" render=":IdFormFacturacion"/>
                                 <!-- f:selectItem itemValue="-1" itemLabel="Todos"/ -->
                                 <f:selectItems value="#{facturarAdministradoraMB.listaContratos}" var="contrato" itemValue="#{contrato.idContrato}" itemLabel="#{contrato.descripcion}"/>
                             </p:selectOneMenu>                                                                    
@@ -337,7 +337,7 @@
                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                     pageLinks="5">                    
                     <p:ajax event="rowSelect" listener="#{facturarAdministradoraMB.seleccionFilaBuscarFactura}" update=":IdFormFacturacion:IdBtnPdfFactura :IdFormFacturacion:IdBtnPdfFactura2 :IdFormFacturacion:IdBtnAnularFactura :IdFormFacturacion:IdBtnRips"/>
-                    <p:column headerText="FECHA" width="95"> 
+                    <p:column headerText="FECHA" width="95" filterBy="#{factura.columna2}"> 
                         #{factura.columna2}
                     </p:column>  
                     <p:column headerText="NUMERO" width="40" filterBy="#{factura.columna3}">

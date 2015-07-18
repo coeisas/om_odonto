@@ -33,21 +33,29 @@ public abstract class AbstractFacade<T> {
         //}
     }
     
-    public int consultaNativaConteo(String sql) {
+    public List<Object> consultaNativaArreglo(String sql) {//consulta nativa que retorna una lista de listas
         try {            
-            return Integer.parseInt(getEntityManager().createNativeQuery(sql).getSingleResult().toString());            
+            return (List<Object>) getEntityManager().createNativeQuery(sql).getResultList();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    public int consultaNativaConteo(String sql) {
+        try {
+            return Integer.parseInt(getEntityManager().createNativeQuery(sql).getSingleResult().toString());
         } catch (Exception e) {
             return 0;
         }
     }
 
-    public List<Object> consultaNativaArreglo(String sql){//retorna un arreglo con cualquier consulta nativa especificada
-        try {
-            return em.createNativeQuery(sql).getResultList();
-        } catch (Exception e) {
-            return null;
-        }
-    }
+//    public List<Object> consultaNativaArreglo(String sql) {//retorna un arreglo con cualquier consulta nativa especificada
+//        try {
+//            return em.createNativeQuery(sql).getResultList();
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
 
     public AbstractFacade(Class<T> entityClass) {
         this.entityClass = entityClass;

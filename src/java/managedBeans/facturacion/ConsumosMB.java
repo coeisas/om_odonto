@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -279,8 +280,8 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             RequestContext.getCurrentInstance().execute("PF('dlgSeleccionarPaciente').show();");
         }
     }
-    
-    public void recargarPaciente(){//funcion que se llama cada vez que se carga completamente la pagina consumos.xhtml
+
+    public void recargarPaciente() {//funcion que se llama cada vez que se carga completamente la pagina consumos.xhtml
         if (pacienteSeleccionadoTabla != null) {
             cargarPaciente();
         }
@@ -291,35 +292,51 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
 
             pacienteSeleccionado = pacientesFacade.find(pacienteSeleccionadoTabla.getIdPaciente());
             identificacionPaciente = "";
-
-            //SE VALIDA QUE SE PUEDA OBTENER EL MANUAL TARIFARIO            
             mensajeConfiguracion = null;
-            if (pacienteSeleccionado.getIdAdministradora() != null) {
-                FacAdministradora ad = pacienteSeleccionado.getIdAdministradora();
-                if (ad.getFacContratoList() != null && !ad.getFacContratoList().isEmpty()) {
-                    FacContrato co = ad.getFacContratoList().get(0);
-                    if (co.getIdManualTarifario() != null) {
-                        manualTarifarioPaciente = co.getIdManualTarifario();
-                    } else {
-                        mensajeConfiguracion = "No se puede gestionar Consumos para : \n"
-                                + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
-                                + "Administradora: " + ad.getRazonSocial() + " \n"
-                                + "Contrato: " + co.getDescripcion() + " \n"
-                                + "Razón: Contrato no tiene manual tarifario";
-                    }
+            FacContrato contratoSeleccionado = null;
 
+            if (pacienteSeleccionado.getIdAdministradora() != null) {//SE VALIDA QUE SE PUEDA OBTENER EL MANUAL TARIFARIO
+                if (pacienteSeleccionado.getRegimen().getId() != null) {
+                    FacAdministradora ad = pacienteSeleccionado.getIdAdministradora();
+                    if (ad.getFacContratoList() != null && !ad.getFacContratoList().isEmpty()) {
+                        for (FacContrato contrato : ad.getFacContratoList()) {//BUSCO UN MANUAL QUE CORRESPONDA AL MISMO REGIMEN DEL PACIENTE
+                            if (Objects.equals(pacienteSeleccionado.getRegimen().getId(), contrato.getTipoContrato().getId())) {
+                                contratoSeleccionado = contrato;
+                            }
+                        }
+                        if (contratoSeleccionado == null) {
+                            mensajeConfiguracion = "No se puede gestionar Consumos para : \n"
+                                    + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                                    + "Administradora: " + ad.getRazonSocial() + " \n"
+                                    + "Razón: Ningún contrato es del tipo: " + pacienteSeleccionado.getRegimen();
+                        } else {
+                            if (contratoSeleccionado.getIdManualTarifario() != null) {//DETERMINAR SI CONTRATO SELECCIONADO TIENE MANUAL TARIFARIO
+                                manualTarifarioPaciente = contratoSeleccionado.getIdManualTarifario();
+                            } else {
+                                mensajeConfiguracion = "No se puede gestionar Consumos para : \n"
+                                        + "Paciente: " + pacienteSeleccionado.nombreCompleto() + " \n"
+                                        + "Administradora: " + ad.getRazonSocial() + " \n"
+                                        + "Contrato: " + contratoSeleccionado.getDescripcion() + " \n"
+                                        + "Razón: Contrato no tiene manual tarifario";
+                            }
+                        }
+                    } else {
+                        mensajeConfiguracion = "No se puede gestionar Consumos para: \n"
+                                + "Paciente: " + pacienteSeleccionado.nombreCompleto() + "\n"
+                                + "Administradora: " + ad.getRazonSocial() + "\n"
+                                + "Razón: la adminstradora no tiene ningún contrato";
+                    }
                 } else {
                     mensajeConfiguracion = "No se puede gestionar Consumos para: \n"
                             + "Paciente: " + pacienteSeleccionado.nombreCompleto() + "\n"
-                            + "Administradora: " + ad.getRazonSocial() + "\n"
-                            + "Razón: la adminstradora no tiene ningún contrato";
+                            + "Razón: El paciente no tiene régimen.";
                 }
             } else {
                 mensajeConfiguracion = "No se puede gestionar Consumos para : \n"
                         + "Paciente " + pacienteSeleccionado.nombreCompleto() + "\n"
                         + "Razón: El paciente no tiene administradora.";
             }
-            if (mensajeConfiguracion != null) {//no se pudo cargar manual tarifario
+            if (mensajeConfiguracion != null) {//APARECIO ERROR AL CARGAR MANUA TARIFARIO
                 pacienteSeleccionado = null;
                 identificacionPaciente = "";
                 RequestContext.getCurrentInstance().execute("PF('dlgSeleccionarPaciente').hide();");

@@ -5,7 +5,9 @@
  */
 package modelo.fachadas;
 
+import java.util.List;
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 import modelo.entidades.FacManualTarifarioInsumo;
 
 /**
@@ -19,4 +21,13 @@ public class FacManualTarifarioInsumoFacade extends AbstractFacade<FacManualTari
         super(FacManualTarifarioInsumo.class);
     }
     
+    public List<FacManualTarifarioInsumo> buscarPorManualTarifario(Integer idManual) {
+        Query query;
+        try {
+            query = getEntityManager().createQuery("SELECT m FROM FacManualTarifarioInsumo m WHERE m.facManualTarifario.idManualTarifario = :idManual ORDER BY m.facManualTarifarioInsumoPK.idInsumo").setParameter("idManual", idManual);
+            return query.getResultList();
+        } catch (Exception e) {
+            return null;
+}
+    }
 }

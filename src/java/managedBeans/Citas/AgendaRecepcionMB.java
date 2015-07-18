@@ -34,6 +34,7 @@ import modelo.entidades.CitCitas;
 import modelo.entidades.CitTurnos;
 import modelo.entidades.FacAdministradora;
 import modelo.entidades.FacConsumoServicio;
+import modelo.entidades.FacContrato;
 import modelo.entidades.FacManualTarifario;
 import modelo.entidades.FacManualTarifarioServicio;
 import modelo.fachadas.CfgClasificacionesFacade;
@@ -249,7 +250,7 @@ public class AgendaRecepcionMB extends MetodosGenerales implements Serializable 
                 setMaxTime(establerLimitesAgenda(aux));
                 setRenderAgenda(true);
                 setEvenModel(new LazyAgendaModel(getPrestadorActual().getIdUsuario(), sede, turnosfacade, citasFacade, "recepcionCitas"));
-            }else{
+            } else {
                 imprimirMensaje("Información", "El prestador no tiene agenda", FacesMessage.SEVERITY_WARN);
             }
         }
@@ -278,7 +279,7 @@ public class AgendaRecepcionMB extends MetodosGenerales implements Serializable 
             String[] vector = event.getTitle().split(" - ");
             idTurno = vector[0];
             seleccionarCita(Long.parseLong(idTurno));
-            if(citCita != null){
+            if (citCita != null) {
                 RequestContext context = RequestContext.getCurrentInstance();
                 context.update("formRecepcion:pdialog");
                 context.execute("PF('eventDialog').show()");
@@ -477,24 +478,45 @@ public class AgendaRecepcionMB extends MetodosGenerales implements Serializable 
         }
     }
 
-    private boolean agregarServicioPorCambioAEspera() {
-        //al cambiar de estado a 'espera' => servicio debe pasar a consumos
+    private boolean agregarServicioPorCambioAEspera() {//al cambiar de estado a 'espera' => servicio debe pasar a consumos
 
         CfgPacientes pacienteSeleccionado = citCita.getIdPaciente();
-        if (pacienteSeleccionado.getIdAdministradora() == null) {
-            imprimirMensaje("Alerta", "No se puede agregar el servicio a consumos: El paciente no tiene una Administradora asoicada", FacesMessage.SEVERITY_WARN);
-            return false;
-        }
-        if (pacienteSeleccionado.getIdAdministradora().getFacContratoList() == null || pacienteSeleccionado.getIdAdministradora().getFacContratoList().isEmpty()) {
-            imprimirMensaje("Alerta", "No se puede agregar el servicio a consumos: La administradora del paciente no tiene un Contrato asociado", FacesMessage.SEVERITY_WARN);
-            return false;
-        }
-        if (pacienteSeleccionado.getIdAdministradora().getFacContratoList().get(0).getIdManualTarifario() == null) {
-            imprimirMensaje("Alerta", "No se puede agregar el servicio a consumos: El contrato para este paciente no tiene un Manual Tarifario asociado", FacesMessage.SEVERITY_WARN);
-            return false;
-        }
-        FacManualTarifario manualTarifarioPaciente = pacienteSeleccionado.getIdAdministradora().getFacContratoList().get(0).getIdManualTarifario();
+        FacContrato contratoSeleccionado = null;
+        FacManualTarifario manualTarifarioPaciente = null;
+        String mensajeConfiguracion = null;
 
+        if (pacienteSeleccionado.getIdAdministradora() != null) {//SE VALIDA QUE SE PUEDA OBTENER EL MANUAL TARIFARIO
+            if (pacienteSeleccionado.getRegimen() != null) {
+                FacAdministradora ad = pacienteSeleccionado.getIdAdministradora();
+                if (ad.getFacContratoList() != null && !ad.getFacContratoList().isEmpty()) {
+                    for (FacContrato contrato : ad.getFacContratoList()) {//BUSCO UN MANUAL QUE CORRESPONDA AL MISMO REGIMEN DEL PACIENTE
+                        if (Objects.equals(pacienteSeleccionado.getRegimen().getId(), contrato.getTipoContrato().getId())) {
+                            contratoSeleccionado = contrato;
+                        }
+                    }
+                    if (contratoSeleccionado == null) {
+                        mensajeConfiguracion = "No se puede agregar el servicio a consumos por que ningún contrato es del tipo: " + pacienteSeleccionado.getRegimen().getDescripcion();
+                    } else {
+                        if (contratoSeleccionado.getIdManualTarifario() != null) {//DETERMINAR SI CONTRATO SELECCIONADO TIENE MANUAL TARIFARIO
+                            manualTarifarioPaciente = contratoSeleccionado.getIdManualTarifario();
+                        } else {
+                            mensajeConfiguracion = "No se puede agregar el servicio a consumos por que el contrato '" + contratoSeleccionado.getDescripcion() + "' no tiene manual tarifario";
+                        }
+                    }
+                } else {
+                    mensajeConfiguracion = "No se puede agregar el servicio a consumos por que la adminstradora no tiene ningún contrato";
+                }
+            } else {
+                mensajeConfiguracion = "No se puede agregar el servicio a consumos por paciente no tiene régimen";
+            }
+        } else {
+            mensajeConfiguracion = "No se puede agregar el servicio a consumos por que el paciente no tiene administradora.";
+        }
+        if (mensajeConfiguracion != null) {//APARECIO ERROR AL CARGAR MANUA TARIFARIO
+            imprimirMensaje("Alerta", mensajeConfiguracion, FacesMessage.SEVERITY_WARN);
+            return false;
+        }
+        //busco el servicio en el manual tarifario del paciente
         FacManualTarifarioServicio servicioEnManualTarifario = null;
         for (FacManualTarifarioServicio servicioManual : manualTarifarioPaciente.getFacManualTarifarioServicioList()) {
             if (Objects.equals(servicioManual.getFacServicio().getIdServicio(), citCita.getIdServicio().getIdServicio())) {
@@ -502,11 +524,11 @@ public class AgendaRecepcionMB extends MetodosGenerales implements Serializable 
                 break;
             }
         }
-        //busco el servicio en el manual tarifario del paciente
+
         if (servicioEnManualTarifario == null) {//servicio no se encuentra en el manual tarifario                
             imprimirMensaje("Alerta", "El servicio " + citCita.getIdServicio().getNombreServicio() + " no se encuentra en el manual tarifario " + manualTarifarioPaciente.getNombreManualTarifario(), FacesMessage.SEVERITY_WARN);
             return false;
-        } else {//servicio si esta en el manual trifario
+        } else {//servicio si esta en el manual tarifario
             FacConsumoServicio nuevoConsumoServicio = new FacConsumoServicio();
             nuevoConsumoServicio.setIdPaciente(pacienteSeleccionado);
             nuevoConsumoServicio.setIdPrestador(citCita.getIdPrestador());
@@ -518,7 +540,6 @@ public class AgendaRecepcionMB extends MetodosGenerales implements Serializable 
             nuevoConsumoServicio.setValorFinal(servicioEnManualTarifario.getValorFinal());
             consumoServicioFacade.create(nuevoConsumoServicio);
             return true;
-
         }
     }
 

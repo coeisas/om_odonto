@@ -5,7 +5,6 @@
  */
 package managedBeans.facturacion;
 
-import beans.enumeradores.ClasificacionesEnum;
 import beans.utilidades.FilaDataTable;
 import beans.utilidades.MetodosGenerales;
 import java.io.Serializable;
@@ -17,7 +16,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.model.SelectItem;
-import managedBeans.seguridad.LoginMB;
 import modelo.entidades.CfgInsumo;
 import modelo.entidades.CfgMedicamento;
 import modelo.entidades.FacManualTarifario;
@@ -88,7 +86,7 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
     private List<CfgInsumo> listaInsumos;
     private List<CfgMedicamento> listaMedicamentos;
     private List<FacPaquete> listaPaquetes;
-    
+
     private boolean mostrarTabView = false;//ocultar controles si no se tiene escogido un manual tarifario
 
     //---------------------------------------------------
@@ -125,9 +123,23 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
     private double honorarioMedico = 0;
     private String observacionServicio = "";
     private boolean activoServicio = true;
+    private boolean disabledUnidadValor = false;
     private List<SelectItem> listaTipoTarifa;
     private String tipoTarifa = "";
     private String unidadValor = "";
+    //editando servicio
+    private String idServicioEditando = "";
+    private String nombreServicioEditando = "";
+    private double valorFinalServicioEditando = 0;
+    private double valorInicialServicioEditando = 0;
+    private int metaCumplimientoEditando = 0;
+    private int periodicidadEditando = 0;
+    private double descuentoServicioEditando = 0;
+    private double honorarioMedicoEditando = 0;
+    private String observacionServicioEditando = "";
+    private boolean activoServicioEditando = true;
+    private String tipoTarifaEditando = "";
+    private String unidadValorEditando = "";
     //nuevo insumo
     private String idInsumo = "";
     private double valorFinalInsumo = 0;
@@ -135,6 +147,14 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
     private double descuentoInsumo = 0;
     private String observacionInsumo = "";
     private boolean activoInsumo = true;
+    //Editar insumo
+    private String idInsumoEditando = "";
+    private String nombreInsumoEditando = "";
+    private double valorFinalInsumoEditando = 0;
+    private double valorInicialInsumoEditando = 0;
+    private double descuentoInsumoEditando = 0;
+    private String observacionInsumoEditando = "";
+    private boolean activoInsumoEditando = true;
     //nuevo medicamento
     private String idMedicamento = "";
     private double valorFinalMedicamento = 0;
@@ -142,6 +162,14 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
     private double descuentoMedicamento = 0;
     private String observacionMedicamento = "";
     private boolean activoMedicamento = true;
+    //nuevo medicamento
+    private String idMedicamentoEditando = "";
+    private String nombreMedicamentoEditando = "";
+    private double valorFinalMedicamentoEditando = 0;
+    private double valorInicialMedicamentoEditando = 0;
+    private double descuentoMedicamentoEditando = 0;
+    private String observacionMedicamentoEditando = "";
+    private boolean activoMedicamentoEditando = true;
     //nuevo paquete
     private String idPaquete = "";
     private double valorFinalPaquete = 0;
@@ -149,6 +177,14 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
     private double descuentoPaquete = 0;
     private String observacionPaquete = "";
     private boolean activoPaquete = true;
+    //nuevo paquete
+    private String idPaqueteEditando = "";
+    private String nombrePaqueteEditando = "";
+    private double valorFinalPaqueteEditando = 0;
+    private double valorInicialPaqueteEditando = 0;
+    private double descuentoPaqueteEditando = 0;
+    private String observacionPaqueteEditando = "";
+    private boolean activoPaqueteEditando = true;
     //---------------------------------------------------
     //------------- FUNCIONES INICIALES  ----------------
     //---------------------------------------------------      
@@ -161,8 +197,8 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
     //--------------------------------------------------- 
     public void cargarManualTarifarioDesdeTab(String idAdministradora) {//cargar contrato desde el tab externo de Administradoras
     }
-    
-    public void clickBtnNuevoManual(){
+
+    public void clickBtnNuevoManual() {
         limpiarFormularioManualesTarifarios();
         mostrarTabView = true;
     }
@@ -197,11 +233,11 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         codigoManual = manualSeleccionado.getCodigoManualTarifario();
         nombreManual = manualSeleccionado.getNombreManualTarifario();
         tituloTabManual = "Datos Manual: " + nombreManual;
-        mostrarTabView=true;
+        mostrarTabView = true;
         RequestContext.getCurrentInstance().execute("PF('dialogoBuscarManualesTarifarios').hide();");
         //RequestContext.getCurrentInstance().execute("PF('wvTabView').select(0);");//seleccionar primer tab                                
         RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
-        
+
     }
 
     public void eliminarManualTarifario() {
@@ -222,6 +258,7 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
             listaManuales = manualTarifarioFacade.buscarOrdenado();
             limpiarFormularioManualesTarifarios();
             recargarFilasTablas();
+            mostrarTabView = false;
             RequestContext.getCurrentInstance().update("IdFormManuales");
             imprimirMensaje("Correcto", "El Manual Tarifario ha sido eliminado", FacesMessage.SEVERITY_INFO);
         } catch (Exception e) {
@@ -237,11 +274,11 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
             return;
         }
         if (manualSeleccionado == null) {
-            guardarNuevoManualTarifario();            
+            guardarNuevoManualTarifario();
         } else {
-            actualizarManualTarifarioExistente();            
+            actualizarManualTarifarioExistente();
         }
-        mostrarTabView=false;
+        mostrarTabView = false;
     }
 
     private void guardarNuevoManualTarifario() {
@@ -285,7 +322,7 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
 
         FilaDataTable nuevaFila;
         if (manualSeleccionado != null) {
-            List<FacManualTarifarioServicio> listaServiciosManualTarifario = manualSeleccionado.getFacManualTarifarioServicioList();
+            List<FacManualTarifarioServicio> listaServiciosManualTarifario = manualTarifarioServicioFacade.buscarPorManualTarifario(manualSeleccionado.getIdManualTarifario());
             for (FacManualTarifarioServicio servicioManual : listaServiciosManualTarifario) {//lista servicios
                 nuevaFila = new FilaDataTable();
                 nuevaFila.setColumna1(servicioManual.getFacManualTarifario().getIdManualTarifario().toString());
@@ -308,7 +345,8 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
                 listaServiciosManual.add(nuevaFila);
                 listaServiciosManualFiltro.add(nuevaFila);
             }
-            List<FacManualTarifarioPaquete> listaPaquetesManualTarifario = manualSeleccionado.getFacManualTarifarioPaqueteList();
+
+            List<FacManualTarifarioPaquete> listaPaquetesManualTarifario = manualTarifarioPaqueteFacade.buscarPorManualTarifario(manualSeleccionado.getIdManualTarifario());
             for (FacManualTarifarioPaquete paqueteManual : listaPaquetesManualTarifario) {//lista paquetes
                 nuevaFila = new FilaDataTable();
                 nuevaFila.setColumna1(paqueteManual.getFacManualTarifario().getIdManualTarifario().toString());
@@ -327,7 +365,8 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
                 listaPaquetesManual.add(nuevaFila);
                 listaPaquetesManualFiltro.add(nuevaFila);
             }
-            List<FacManualTarifarioInsumo> listaInsumosManualTarifario = manualSeleccionado.getFacManualTarifarioInsumoList();
+
+            List<FacManualTarifarioInsumo> listaInsumosManualTarifario = manualTarifarioInsumoFacade.buscarPorManualTarifario(manualSeleccionado.getIdManualTarifario());
             for (FacManualTarifarioInsumo insumoManual : listaInsumosManualTarifario) {//lista insumos
                 nuevaFila = new FilaDataTable();
                 nuevaFila.setColumna1(insumoManual.getFacManualTarifario().getIdManualTarifario().toString());
@@ -346,7 +385,8 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
                 listaInsumosManual.add(nuevaFila);
                 listaInsumosManualFiltro.add(nuevaFila);
             }
-            List<FacManualTarifarioMedicamento> listaMedicamentosManualTarifario = manualSeleccionado.getFacManualTarifarioMedicamentoList();
+
+            List<FacManualTarifarioMedicamento> listaMedicamentosManualTarifario = manualTarifarioMedicamentoFacade.buscarPorManualTarifario(manualSeleccionado.getIdManualTarifario());
             for (FacManualTarifarioMedicamento medicamentoManual : listaMedicamentosManualTarifario) {//lista medicamentos
                 nuevaFila = new FilaDataTable();
                 nuevaFila.setColumna1(medicamentoManual.getFacManualTarifario().getIdManualTarifario().toString());
@@ -415,10 +455,12 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         }
         listaTipoTarifa.add(new SelectItem("Especifica", "Especifica"));
         tipoTarifa = listaTipoTarifa.get(0).getValue().toString();
+
         calcularValoresServicio();
     }
 
     public void calcularValoresServicio() {
+        disabledUnidadValor = tipoTarifa.compareTo("Especifica") == 0;
         if (validarNoVacio(idServicio)) {
             FacServicio s = servicioFacade.find(Integer.parseInt(idServicio));
             switch (tipoTarifa) {
@@ -432,7 +474,7 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
                         valorInicialServicio = s.getFactorIss() * f.getSmlvd();
                         valorFinalServicio = valorInicialServicio - (valorInicialServicio * (descuentoServicio / 100)) + honorarioMedico;
                     } else {
-                        imprimirMensaje("Error", "No hay una unidad de valor para calcular el valor final", FacesMessage.SEVERITY_ERROR);
+                        imprimirMensaje("Alerta", "No hay una unidad de valor para calcular el valor final", FacesMessage.SEVERITY_WARN);
                     }
                     break;
                 case "ISS":
@@ -448,6 +490,36 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         }
     }
 
+//    public void calcularValoresServicioEditando() {
+//        if (validarNoVacio(idServicioEditando)) {
+//            FacServicio s = servicioFacade.find(Integer.parseInt(idServicioEditando));
+//            switch (tipoTarifa) {
+//                case "Especifica":
+//                    valorInicialServicioEditando = s.getValorParticular();
+//                    valorFinalServicioEditando = valorInicialServicioEditando - (valorInicialServicioEditando * (descuentoServicioEditando / 100)) + honorarioMedicoEditando;
+//                    break;
+//                case "SOAT":
+//                    if (validarNoVacio(unidadValorEditando)) {
+//                        FacUnidadValor f = unidadValorFacade.buscarPorAnio(Integer.parseInt(unidadValorEditando));
+//                        valorInicialServicioEditando = s.getFactorIss() * f.getSmlvd();
+//                        valorFinalServicioEditando = valorInicialServicioEditando - (valorInicialServicioEditando * (descuentoServicioEditando / 100)) + honorarioMedicoEditando;
+//                    } else {
+//                        imprimirMensaje("Alerta", "No hay una unidad de valor para calcular el valor final", FacesMessage.SEVERITY_WARN);
+//                    }
+//                    break;
+//                case "ISS":
+//                    if (validarNoVacio(unidadValorEditando)) {
+//                        FacUnidadValor f = unidadValorFacade.buscarPorAnio(Integer.parseInt(unidadValorEditando));
+//                        valorInicialServicioEditando = s.getFactorSoat() * f.getUvr();
+//                        valorFinalServicioEditando = valorInicialServicioEditando - (valorInicialServicioEditando * (descuentoServicioEditando / 100)) + honorarioMedicoEditando;
+//                    } else {
+//                        imprimirMensaje("Alerta", "No hay una unidad de valor para calcular el valor final", FacesMessage.SEVERITY_WARN);
+//                    }
+//                    break;
+//            }
+//        }
+//    }
+//
     public void cargarDialogoAgregarServicio() {
         listaServicios = servicioFacade.buscarNoEstanEnManual(manualSeleccionado.getIdManualTarifario());
         if (listaServicios != null && !listaServicios.isEmpty()) {
@@ -457,6 +529,38 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarServicio");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarServicio').show();");
 
+    }
+
+    public void cargarDialogoEditarServicio() {
+        if (servicioManualSeleccionado == null) {
+            imprimirMensaje("Error", "No se ha seleccionado ningún servicio de la tabla", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        FacManualTarifarioServicioPK llavePK = new FacManualTarifarioServicioPK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(servicioManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdServicio(servicioFacade.find(Integer.parseInt(servicioManualSeleccionado.getColumna2())).getIdServicio());
+        FacManualTarifarioServicio buscado = manualTarifarioServicioFacade.find(llavePK);
+
+        nombreServicioEditando = buscado.getFacServicio().getNombreServicio();
+        idServicioEditando = buscado.getFacServicio().getIdServicio().toString();
+        activoServicioEditando = buscado.getActivo();
+        descuentoServicioEditando = buscado.getDescuento();
+        honorarioMedicoEditando = buscado.getHonorarioMedico();
+        metaCumplimientoEditando = buscado.getMetaCumplimiento();
+        observacionServicioEditando = buscado.getObservacion();
+        periodicidadEditando = buscado.getPeriodicidad();
+        tipoTarifaEditando = buscado.getTipoTarifa();
+        if (buscado.getAnioUnidadValor() != null) {
+            unidadValorEditando = buscado.getAnioUnidadValor().getAnio().toString();
+        } else {
+            unidadValorEditando = "";
+        }
+        valorInicialServicioEditando = buscado.getValorInicial();
+        valorFinalServicioEditando = buscado.getValorFinal();
+
+        RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelEditandoServicio");
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoServicio').show();");
     }
 
     public void agregarServicio() {
@@ -488,8 +592,8 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         nuevoManualTarifarioServicio.setObservacion(observacionServicio);
         nuevoManualTarifarioServicio.setPeriodicidad(periodicidad);
         nuevoManualTarifarioServicio.setTipoTarifa(tipoTarifa);
-        if(validarNoVacio(unidadValor)){
-        nuevoManualTarifarioServicio.setAnioUnidadValor(unidadValorFacade.find(Integer.parseInt(unidadValor)));
+        if (validarNoVacio(unidadValor)) {
+            nuevoManualTarifarioServicio.setAnioUnidadValor(unidadValorFacade.find(Integer.parseInt(unidadValor)));
         }
         nuevoManualTarifarioServicio.setValorInicial(valorInicialServicio);
         nuevoManualTarifarioServicio.setValorFinal(valorFinalServicio);
@@ -497,6 +601,39 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         manualSeleccionado = manualTarifarioFacade.find(manualSeleccionado.getIdManualTarifario());//recargar el manual
         recargarFilasTablas();
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarServicio').hide(); PF('wvTablaServiciosManual').clearFilters(); PF('wvTablaServiciosManual').getPaginator().setPage(0);");
+        RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+        //imprimirMensaje("Correcto", "El servicio has sido adicionado al manual tarifario.", FacesMessage.SEVERITY_INFO);
+    }
+
+    public void actualizarServicio() {
+        if (validacionCampoVacio(idServicioEditando, "Servicio")) {
+            return;
+        }
+        if (validacionCampoVacio(tipoTarifaEditando, "Tipo tarifa")) {
+            return;
+        }
+        if (tipoTarifaEditando.compareTo("Especifica") != 0) {//si tarifa no es especifica se necesita unidad de valor
+            if (validacionCampoVacio(unidadValorEditando, "Unidad de valor")) {
+                return;
+            }
+        }
+
+        FacManualTarifarioServicioPK llavePK = new FacManualTarifarioServicioPK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(servicioManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdServicio(servicioFacade.find(Integer.parseInt(servicioManualSeleccionado.getColumna2())).getIdServicio());
+        FacManualTarifarioServicio buscado = manualTarifarioServicioFacade.find(llavePK);
+        buscado.setActivo(activoServicioEditando);
+        buscado.setDescuento(descuentoServicioEditando);
+        buscado.setHonorarioMedico(honorarioMedicoEditando);
+        buscado.setMetaCumplimiento(metaCumplimientoEditando);
+        buscado.setObservacion(observacionServicioEditando);
+        buscado.setPeriodicidad(periodicidadEditando);
+        buscado.setValorInicial(valorInicialServicioEditando);
+        buscado.setValorFinal(valorFinalServicioEditando);
+        manualTarifarioServicioFacade.edit(buscado);
+        manualSeleccionado = manualTarifarioFacade.find(manualSeleccionado.getIdManualTarifario());//recargar el manual
+        recargarFilasTablas();
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoServicio').hide(); PF('wvTablaServiciosManual').clearFilters(); PF('wvTablaServiciosManual').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
         //imprimirMensaje("Correcto", "El servicio has sido adicionado al manual tarifario.", FacesMessage.SEVERITY_INFO);
     }
@@ -549,6 +686,14 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         }
     }
 
+//    public void calcularValoresInsumoEditando() {
+//        if (validarNoVacio(idInsumoEditando)) {
+//            CfgInsumo p = insumoFacade.find(Integer.parseInt(idInsumoEditando));
+//            valorInicialInsumoEditando = p.getValor();
+//            valorFinalInsumoEditando = valorInicialInsumoEditando - (valorInicialInsumoEditando * (descuentoInsumoEditando / 100));
+//        }
+//    }
+//    
     public void cargarDialogoAgregarInsumo() {
         idInsumo = "";
         listaInsumos = insumoFacade.buscarNoEstanEnManual(manualSeleccionado.getIdManualTarifario());
@@ -559,6 +704,29 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarInsumo");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarInsumo').show();");
 
+    }
+
+    public void cargarDialogoEditarInsumo() {
+        if (insumoManualSeleccionado == null) {
+            imprimirMensaje("Error", "No se ha seleccionado ningún insumo de la tabla", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        FacManualTarifarioInsumoPK llavePK = new FacManualTarifarioInsumoPK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(insumoManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdInsumo(insumoFacade.find(Integer.parseInt(insumoManualSeleccionado.getColumna2())).getIdInsumo());
+        FacManualTarifarioInsumo buscado = manualTarifarioInsumoFacade.find(llavePK);
+
+        nombreInsumoEditando = buscado.getCfgInsumo().getNombreInsumo();
+        idInsumoEditando = buscado.getCfgInsumo().getIdInsumo().toString();
+        activoInsumoEditando = buscado.getActivo();
+        descuentoInsumoEditando = buscado.getDescuento();
+        observacionInsumoEditando = buscado.getObservacion();
+        valorInicialInsumoEditando = buscado.getValorInicial();
+        valorFinalInsumoEditando = buscado.getValorFinal();
+
+        RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelEditandoInsumo");
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoInsumo').show();");
     }
 
     public void agregarInsumo() {
@@ -585,6 +753,28 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         recargarFilasTablas();
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarInsumo').hide(); PF('wvTablaInsumosManual').clearFilters(); PF('wvTablaInsumosManual').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+    }
+
+    public void actualizarInsumo() {
+        if (validacionCampoVacio(idInsumoEditando, "Insumo")) {
+            return;
+        }
+
+        FacManualTarifarioInsumoPK llavePK = new FacManualTarifarioInsumoPK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(insumoManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdInsumo(insumoFacade.find(Integer.parseInt(insumoManualSeleccionado.getColumna2())).getIdInsumo());
+        FacManualTarifarioInsumo buscado = manualTarifarioInsumoFacade.find(llavePK);
+        buscado.setActivo(activoInsumoEditando);
+        buscado.setDescuento(descuentoInsumoEditando);
+        buscado.setObservacion(observacionInsumoEditando);
+        buscado.setValorInicial(valorInicialInsumoEditando);
+        buscado.setValorFinal(valorFinalInsumoEditando);
+        manualTarifarioInsumoFacade.edit(buscado);
+        manualSeleccionado = manualTarifarioFacade.find(manualSeleccionado.getIdManualTarifario());//recargar el manual
+        recargarFilasTablas();
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoInsumo').hide(); PF('wvTablaInsumosManual').clearFilters(); PF('wvTablaInsumosManual').getPaginator().setPage(0);");
+        RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+        //imprimirMensaje("Correcto", "El Insumo has sido adicionado al manual tarifario.", FacesMessage.SEVERITY_INFO);
     }
 
     public void quitarInsumo() {
@@ -635,6 +825,14 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         }
     }
 
+//    public void calcularValoresMedicamentoEditando() {
+//        if (validarNoVacio(idMedicamentoEditando)) {
+//            CfgMedicamento p = medicamentoFacade.find(Integer.parseInt(idMedicamentoEditando));
+//            valorInicialMedicamentoEditando = p.getValor();
+//            valorFinalMedicamentoEditando = valorInicialMedicamentoEditando - (valorInicialMedicamentoEditando * (descuentoMedicamentoEditando / 100));
+//        }
+//    }
+//
     public void cargarDialogoAgregarMedicamento() {
         idMedicamento = "";
         listaMedicamentos = medicamentoFacade.buscarNoEstanEnManual(manualSeleccionado.getIdManualTarifario());
@@ -645,6 +843,29 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarMedicamento");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarMedicamento').show();");
 
+    }
+
+    public void cargarDialogoEditarMedicamento() {
+        if (medicamentoManualSeleccionado == null) {
+            imprimirMensaje("Error", "No se ha seleccionado ningún medicamento de la tabla", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        FacManualTarifarioMedicamentoPK llavePK = new FacManualTarifarioMedicamentoPK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(medicamentoManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdMedicamento(medicamentoFacade.find(Integer.parseInt(medicamentoManualSeleccionado.getColumna2())).getIdMedicamento());
+        FacManualTarifarioMedicamento buscado = manualTarifarioMedicamentoFacade.find(llavePK);
+
+        nombreMedicamentoEditando = buscado.getCfgMedicamento().getNombreMedicamento();
+        idMedicamentoEditando = buscado.getCfgMedicamento().getIdMedicamento().toString();
+        activoMedicamentoEditando = buscado.getActivo();
+        descuentoMedicamentoEditando = buscado.getDescuento();
+        observacionMedicamentoEditando = buscado.getObservacion();
+        valorInicialMedicamentoEditando = buscado.getValorInicial();
+        valorFinalMedicamentoEditando = buscado.getValorFinal();
+
+        RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelEditandoMedicamento");
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoMedicamento').show();");
     }
 
     public void agregarMedicamento() {
@@ -671,6 +892,28 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         recargarFilasTablas();
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarMedicamento').hide(); PF('wvTablaMedicamentosManual').clearFilters(); PF('wvTablaMedicamentosManual').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+    }
+
+    public void actualizarMedicamento() {
+        if (validacionCampoVacio(idMedicamentoEditando, "Medicamento")) {
+            return;
+        }
+
+        FacManualTarifarioMedicamentoPK llavePK = new FacManualTarifarioMedicamentoPK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(medicamentoManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdMedicamento(medicamentoFacade.find(Integer.parseInt(medicamentoManualSeleccionado.getColumna2())).getIdMedicamento());
+        FacManualTarifarioMedicamento buscado = manualTarifarioMedicamentoFacade.find(llavePK);
+        buscado.setActivo(activoMedicamentoEditando);
+        buscado.setDescuento(descuentoMedicamentoEditando);
+        buscado.setObservacion(observacionMedicamentoEditando);
+        buscado.setValorInicial(valorInicialMedicamentoEditando);
+        buscado.setValorFinal(valorFinalMedicamentoEditando);
+        manualTarifarioMedicamentoFacade.edit(buscado);
+        manualSeleccionado = manualTarifarioFacade.find(manualSeleccionado.getIdManualTarifario());//recargar el manual
+        recargarFilasTablas();
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoMedicamento').hide(); PF('wvTablaMedicamentosManual').clearFilters(); PF('wvTablaMedicamentosManual').getPaginator().setPage(0);");
+        RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+        //imprimirMensaje("Correcto", "El Medicamento has sido adicionado al manual tarifario.", FacesMessage.SEVERITY_INFO);
     }
 
     public void quitarMedicamento() {
@@ -721,6 +964,14 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         }
     }
 
+//    public void calcularValoresPaqueteEditando() {
+//        if (validarNoVacio(idPaqueteEditando)) {
+//            FacPaquete p = paqueteFacade.find(Integer.parseInt(idPaqueteEditando));
+//            valorInicialPaqueteEditando = p.getValorPaquete();
+//            valorFinalPaqueteEditando = valorInicialPaqueteEditando - (valorInicialPaqueteEditando * (descuentoPaqueteEditando / 100));            
+//        }
+//    }
+//    
     public void cargarDialogoAgregarPaquete() {
         idPaquete = "";
         listaPaquetes = paqueteFacade.buscarNoEstanEnManual(manualSeleccionado.getIdManualTarifario());
@@ -730,6 +981,29 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         cambiaPaquete();
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarPaquete");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarPaquete').show();");
+    }
+
+    public void cargarDialogoEditarPaquete() {
+        if (paqueteManualSeleccionado == null) {
+            imprimirMensaje("Error", "No se ha seleccionado ningún paquete de la tabla", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+
+        FacManualTarifarioPaquetePK llavePK = new FacManualTarifarioPaquetePK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(paqueteManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdPaquete(paqueteFacade.find(Integer.parseInt(paqueteManualSeleccionado.getColumna2())).getIdPaquete());
+        FacManualTarifarioPaquete buscado = manualTarifarioPaqueteFacade.find(llavePK);
+
+        nombrePaqueteEditando = buscado.getFacPaquete().getNombrePaquete();
+        idPaqueteEditando = buscado.getFacPaquete().getIdPaquete().toString();
+        activoPaqueteEditando = buscado.getActivo();
+        descuentoPaqueteEditando = buscado.getDescuento();
+        observacionPaqueteEditando = buscado.getObservacion();
+        valorInicialPaqueteEditando = buscado.getValorInicial();
+        valorFinalPaqueteEditando = buscado.getValorFinal();
+        //System.out.println("valorFinalPaqueteEditando " + valorFinalPaqueteEditando);
+        RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelEditandoPaquete");
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoPaquete').show();");
     }
 
     public void agregarPaquete() {
@@ -756,6 +1030,28 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         recargarFilasTablas();
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarPaquete').hide(); PF('wvTablaPaquetesManual').clearFilters(); PF('wvTablaPaquetesManual').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+    }
+
+    public void actualizarPaquete() {
+        if (validacionCampoVacio(idPaqueteEditando, "Paquete")) {
+            return;
+        }
+
+        FacManualTarifarioPaquetePK llavePK = new FacManualTarifarioPaquetePK();
+        llavePK.setIdManualTarifario(manualTarifarioFacade.find(Integer.parseInt(paqueteManualSeleccionado.getColumna1())).getIdManualTarifario());
+        llavePK.setIdPaquete(paqueteFacade.find(Integer.parseInt(paqueteManualSeleccionado.getColumna2())).getIdPaquete());
+        FacManualTarifarioPaquete buscado = manualTarifarioPaqueteFacade.find(llavePK);
+        buscado.setActivo(activoPaqueteEditando);
+        buscado.setDescuento(descuentoPaqueteEditando);
+        buscado.setObservacion(observacionPaqueteEditando);
+        buscado.setValorInicial(valorInicialPaqueteEditando);
+        buscado.setValorFinal(valorFinalPaqueteEditando);
+        manualTarifarioPaqueteFacade.edit(buscado);
+        manualSeleccionado = manualTarifarioFacade.find(manualSeleccionado.getIdManualTarifario());//recargar el manual
+        recargarFilasTablas();
+        RequestContext.getCurrentInstance().execute("PF('dialogoEditandoPaquete').hide(); PF('wvTablaPaquetesManual').clearFilters(); PF('wvTablaPaquetesManual').getPaginator().setPage(0);");
+        RequestContext.getCurrentInstance().update("IdFormManuales:IdTabView");
+        //imprimirMensaje("Correcto", "El Paquete has sido adicionado al manual tarifario.", FacesMessage.SEVERITY_INFO);
     }
 
     public void quitarPaquete() {
@@ -1251,6 +1547,278 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
 
     public void setMostrarTabView(boolean mostrarTabView) {
         this.mostrarTabView = mostrarTabView;
+    }
+
+    public boolean isDisabledUnidadValor() {
+        return disabledUnidadValor;
+    }
+
+    public void setDisabledUnidadValor(boolean disabledUnidadValor) {
+        this.disabledUnidadValor = disabledUnidadValor;
+    }
+
+    public String getNombreServicioEditando() {
+        return nombreServicioEditando;
+    }
+
+    public void setNombreServicioEditando(String nombreServicioEditando) {
+        this.nombreServicioEditando = nombreServicioEditando;
+    }
+
+    public double getValorFinalServicioEditando() {
+        return valorFinalServicioEditando;
+    }
+
+    public void setValorFinalServicioEditando(double valorFinalServicioEditando) {
+        this.valorFinalServicioEditando = valorFinalServicioEditando;
+    }
+
+    public double getValorInicialServicioEditando() {
+        return valorInicialServicioEditando;
+    }
+
+    public void setValorInicialServicioEditando(double valorInicialServicioEditando) {
+        this.valorInicialServicioEditando = valorInicialServicioEditando;
+    }
+
+    public int getMetaCumplimientoEditando() {
+        return metaCumplimientoEditando;
+    }
+
+    public void setMetaCumplimientoEditando(int metaCumplimientoEditando) {
+        this.metaCumplimientoEditando = metaCumplimientoEditando;
+    }
+
+    public int getPeriodicidadEditando() {
+        return periodicidadEditando;
+    }
+
+    public void setPeriodicidadEditando(int periodicidadEditando) {
+        this.periodicidadEditando = periodicidadEditando;
+    }
+
+    public double getDescuentoServicioEditando() {
+        return descuentoServicioEditando;
+    }
+
+    public void setDescuentoServicioEditando(double descuentoServicioEditando) {
+        this.descuentoServicioEditando = descuentoServicioEditando;
+    }
+
+    public double getHonorarioMedicoEditando() {
+        return honorarioMedicoEditando;
+    }
+
+    public void setHonorarioMedicoEditando(double honorarioMedicoEditando) {
+        this.honorarioMedicoEditando = honorarioMedicoEditando;
+    }
+
+    public String getObservacionServicioEditando() {
+        return observacionServicioEditando;
+    }
+
+    public void setObservacionServicioEditando(String observacionServicioEditando) {
+        this.observacionServicioEditando = observacionServicioEditando;
+    }
+
+    public boolean isActivoServicioEditando() {
+        return activoServicioEditando;
+    }
+
+    public void setActivoServicioEditando(boolean activoServicioEditando) {
+        this.activoServicioEditando = activoServicioEditando;
+    }
+
+    public String getTipoTarifaEditando() {
+        return tipoTarifaEditando;
+    }
+
+    public void setTipoTarifaEditando(String tipoTarifaEditando) {
+        this.tipoTarifaEditando = tipoTarifaEditando;
+    }
+
+    public String getUnidadValorEditando() {
+        return unidadValorEditando;
+    }
+
+    public void setUnidadValorEditando(String unidadValorEditando) {
+        this.unidadValorEditando = unidadValorEditando;
+    }
+
+    public String getIdServicioEditando() {
+        return idServicioEditando;
+    }
+
+    public void setIdServicioEditando(String idServicioEditando) {
+        this.idServicioEditando = idServicioEditando;
+    }
+
+    public String getIdInsumoEditando() {
+        return idInsumoEditando;
+    }
+
+    public void setIdInsumoEditando(String idInsumoEditando) {
+        this.idInsumoEditando = idInsumoEditando;
+    }
+
+    public String getNombreInsumoEditando() {
+        return nombreInsumoEditando;
+    }
+
+    public void setNombreInsumoEditando(String nombreInsumoEditando) {
+        this.nombreInsumoEditando = nombreInsumoEditando;
+    }
+
+    public double getValorFinalInsumoEditando() {
+        return valorFinalInsumoEditando;
+    }
+
+    public void setValorFinalInsumoEditando(double valorFinalInsumoEditando) {
+        this.valorFinalInsumoEditando = valorFinalInsumoEditando;
+    }
+
+    public double getValorInicialInsumoEditando() {
+        return valorInicialInsumoEditando;
+    }
+
+    public void setValorInicialInsumoEditando(double valorInicialInsumoEditando) {
+        this.valorInicialInsumoEditando = valorInicialInsumoEditando;
+    }
+
+    public double getDescuentoInsumoEditando() {
+        return descuentoInsumoEditando;
+    }
+
+    public void setDescuentoInsumoEditando(double descuentoInsumoEditando) {
+        this.descuentoInsumoEditando = descuentoInsumoEditando;
+    }
+
+    public String getObservacionInsumoEditando() {
+        return observacionInsumoEditando;
+    }
+
+    public void setObservacionInsumoEditando(String observacionInsumoEditando) {
+        this.observacionInsumoEditando = observacionInsumoEditando;
+    }
+
+    public boolean isActivoInsumoEditando() {
+        return activoInsumoEditando;
+    }
+
+    public void setActivoInsumoEditando(boolean activoInsumoEditando) {
+        this.activoInsumoEditando = activoInsumoEditando;
+    }
+
+    public String getIdMedicamentoEditando() {
+        return idMedicamentoEditando;
+    }
+
+    public void setIdMedicamentoEditando(String idMedicamentoEditando) {
+        this.idMedicamentoEditando = idMedicamentoEditando;
+    }
+
+    public String getNombreMedicamentoEditando() {
+        return nombreMedicamentoEditando;
+    }
+
+    public void setNombreMedicamentoEditando(String nombreMedicamentoEditando) {
+        this.nombreMedicamentoEditando = nombreMedicamentoEditando;
+    }
+
+    public double getValorFinalMedicamentoEditando() {
+        return valorFinalMedicamentoEditando;
+    }
+
+    public void setValorFinalMedicamentoEditando(double valorFinalMedicamentoEditando) {
+        this.valorFinalMedicamentoEditando = valorFinalMedicamentoEditando;
+    }
+
+    public double getValorInicialMedicamentoEditando() {
+        return valorInicialMedicamentoEditando;
+    }
+
+    public void setValorInicialMedicamentoEditando(double valorInicialMedicamentoEditando) {
+        this.valorInicialMedicamentoEditando = valorInicialMedicamentoEditando;
+    }
+
+    public double getDescuentoMedicamentoEditando() {
+        return descuentoMedicamentoEditando;
+    }
+
+    public void setDescuentoMedicamentoEditando(double descuentoMedicamentoEditando) {
+        this.descuentoMedicamentoEditando = descuentoMedicamentoEditando;
+    }
+
+    public String getObservacionMedicamentoEditando() {
+        return observacionMedicamentoEditando;
+    }
+
+    public void setObservacionMedicamentoEditando(String observacionMedicamentoEditando) {
+        this.observacionMedicamentoEditando = observacionMedicamentoEditando;
+    }
+
+    public boolean isActivoMedicamentoEditando() {
+        return activoMedicamentoEditando;
+    }
+
+    public void setActivoMedicamentoEditando(boolean activoMedicamentoEditando) {
+        this.activoMedicamentoEditando = activoMedicamentoEditando;
+    }
+
+    public String getIdPaqueteEditando() {
+        return idPaqueteEditando;
+    }
+
+    public void setIdPaqueteEditando(String idPaqueteEditando) {
+        this.idPaqueteEditando = idPaqueteEditando;
+    }
+
+    public String getNombrePaqueteEditando() {
+        return nombrePaqueteEditando;
+    }
+
+    public void setNombrePaqueteEditando(String nombrePaqueteEditando) {
+        this.nombrePaqueteEditando = nombrePaqueteEditando;
+    }
+
+    public double getValorFinalPaqueteEditando() {
+        return valorFinalPaqueteEditando;
+    }
+
+    public void setValorFinalPaqueteEditando(double valorFinalPaqueteEditando) {
+        this.valorFinalPaqueteEditando = valorFinalPaqueteEditando;
+    }
+
+    public double getValorInicialPaqueteEditando() {
+        return valorInicialPaqueteEditando;
+    }
+
+    public void setValorInicialPaqueteEditando(double valorInicialPaqueteEditando) {
+        this.valorInicialPaqueteEditando = valorInicialPaqueteEditando;
+    }
+
+    public double getDescuentoPaqueteEditando() {
+        return descuentoPaqueteEditando;
+    }
+
+    public void setDescuentoPaqueteEditando(double descuentoPaqueteEditando) {
+        this.descuentoPaqueteEditando = descuentoPaqueteEditando;
+    }
+
+    public String getObservacionPaqueteEditando() {
+        return observacionPaqueteEditando;
+    }
+
+    public void setObservacionPaqueteEditando(String observacionPaqueteEditando) {
+        this.observacionPaqueteEditando = observacionPaqueteEditando;
+    }
+
+    public boolean isActivoPaqueteEditando() {
+        return activoPaqueteEditando;
+    }
+
+    public void setActivoPaqueteEditando(boolean activoPaqueteEditando) {
+        this.activoPaqueteEditando = activoPaqueteEditando;
     }
 
 }

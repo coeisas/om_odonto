@@ -45,4 +45,14 @@ public class FacManualTarifarioServicioFacade extends AbstractFacade<FacManualTa
         
     }    
     
+    public List<FacManualTarifarioServicio> buscarPorManualTarifario(Integer idManual){
+        Query query;
+        try{
+            query = getEntityManager().createQuery("SELECT m FROM FacManualTarifarioServicio m WHERE m.facManualTarifario.idManualTarifario = :idManual ORDER BY m.facManualTarifarioServicioPK.idServicio").setParameter("idManual", idManual);            
+            return query.getResultList();
+        }catch(Exception e){
+            return null;
+}
+    }    
+    
 }

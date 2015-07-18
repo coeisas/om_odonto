@@ -138,13 +138,11 @@
                             actionListener="#{administradorasMB.editarContrato}"
                             style="font-size: 20px; width: 20px; height: 20px; "/>
                         &nbsp;                        
-                        <!-- rendered="# {administradorasMB.administradoraSeleccionada != null}" -->
                         <p:commandButton 
-                            rendered="false"
-                            title="Copiar Contratos" value="&nbsp;"
+                            title="Copiar contratos" value="&nbsp;"
                             styleClass="icon-copy fg-lightBlue bg-white no-border"                             
-                            oncomplete="PF('dialogoCopiarContratos').show();"
-                            style="font-size: 20px; width: 20px; height: 20px; "/>
+                            actionListener="#{administradorasMB.clickBtnCopiarContratos}"               
+                            style="font-size: 20px; width: 20px; height: 20px;"/>                        
                     </div>
                     <br/>
                     <p:dataTable 
@@ -178,7 +176,8 @@
                             #{contrato.tipoContrato.descripcion}
                         </p:column>                                
                     </p:dataTable>  
-                    <br/>
+                    <p>Nota: Cuando hay mas de un contrato con igual 'TIPO CONTRATO' en consumos se usar&aacute; el primero que 
+                        se encuentre, y en 'Facturar paciente' se debe escoger cual usuar.</p>
                 </p:tab>
             </p:tabView>
         </h:form>
@@ -225,6 +224,55 @@
                     </tr>
                 </table>
             </p:dialog> 
+            <p:dialog id="IdDialogoCopiarContratos" header="COPIAR CONTRATOS" widgetVar="dialogoCopiarContratos" resizable="false" modal="true">  
+                <br/>
+                <table>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoObligatorio" value="Prefijo" style="width: 110px;" title="Se usa para agregarlo a los nombres de contratos y mauales a copiar"/>
+                        </td>
+                        <td>
+                            <p:inputText size="20" value="#{administradorasMB.prefijo}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p:outputLabel styleClass="campoObligatorio" value="Administradora: " style="width: 110px;"/>
+                        </td>
+                        <td>
+                            <p:selectOneMenu style="width: 480px;" value="#{administradorasMB.idAdministradoraACopiar}"  filter="true" filterMatchMode="contains">
+                                <f:ajax 
+                                    event="change"
+                                    listener="#{administradorasMB.cambiaAdministradoraCopia}"                                                
+                                    render="IdListaCopiarContratos"/>
+                                <f:selectItem itemLabel="" itemValue=""/>
+                                <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
+                            </p:selectOneMenu>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Contratos que se copiaran:" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p:selectOneListbox id="IdListaCopiarContratos" style="width: 600px; height: 200px; overflow: scroll;">
+                                <f:selectItems value="#{administradorasMB.listaContratosCopia}" var="contrato" itemLabel="#{contrato.codigoContrato} - #{contrato.descripcion}" itemValue="#{contrato.codigoContrato}" />                                
+                            </p:selectOneListbox>                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                <p:commandButton 
+                                value="Realizar copia"
+
+                                actionListener="#{administradorasMB.copiarContratos}"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+            </p:dialog>
             <p:dialog id="IdDialogoEliminarSede" header="ELIMINAR ADMINISTRADORA" widgetVar="dialogoEliminarAdministradora" resizable="false" modal="true">  
                 <p:panelGrid id="panelEliminarAdministradora" styleClass="panelGridSinBordes" columns="1">
                     <h:outputText value="¿ Confirma La eliminacion de esta sede?"/>                    
@@ -234,50 +282,7 @@
                         actionListener="#{administradorasMB.confirmarEliminarAdministradora}"/>
                 </p:panelGrid>
             </p:dialog>            
-            <p:dialog id="IdDialogoCopiarContratos" header="COPIAR CONTRATOS" widgetVar="dialogoCopiarContratos" resizable="false" modal="true">                
-                <br/>
-                <p:outputLabel styleClass="campoObligatorio" value="Administradora: "/>
-                <p:selectOneMenu styleClass="campoFormulario" style="width: 480px;" value="#{administradorasMB.idAdministradoraACopiar}"  filter="true" filterMatchMode="contains">
-                    <f:ajax 
-                        event="change"
-                        listener="#{administradorasMB.cambiaAdministradoraCopia}"                                                
-                        render="IdTablaCopiarContratos"/>
-                    <f:selectItem itemLabel="" itemValue=""/>
-                    <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}" />
-                </p:selectOneMenu>
-                <br/><br/><br/>
-                <p:dataTable 
-                    id="IdTablaCopiarContratos" 
-                    var="contratoCopia" 
-                    widgetVar="wvTablaCopiarContratos"
-                    value="#{administradorasMB.listaContratosCopia}" 
-                    rowKey="#{contratoCopia.idContrato}"  
-                    selection="#{administradorasMB.contratosCopiaSeleccionados}" 
-                    paginator="true"
-                    style="width: 600px; height: 300px;"
-                    rows="10"                                    
-                    paginatorPosition="bottom"                                
-                    emptyMessage="No hay contratos"
-                    scrollable="true" 
-                    currentPageReportTemplate="Mostrando {startRecord}-{endRecord} de {totalRecords}"
-                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                    pageLinks="5"
-                    selectionMode="multiple"
-                    resizableColumns="true">                                                                                               
-                    <p:column headerText="CODIGO" width="1" filterBy="#{contratoCopia.codigoContrato}" filterMatchMode="contains">
-                        #{contratoCopia.codigoContrato}
-                    </p:column>                                
-                    <p:column headerText="NOMBRE" width="90" filterBy="#{contratoCopia.descripcion}" filterMatchMode="contains">
-                        #{contratoCopia.descripcion}
-                    </p:column>                                
-                </p:dataTable>  
-                <br/><br/>
-                <p:commandButton 
-                    value="Copiar seleccionados"                                        
-                    update=":IdFormAdministradoras:IdTabView"
-                    actionListener="#{administradorasMB.copiarContratos}"/>
-                <br/><br/>
-            </p:dialog>             
+
         </h:form>
     </h:body>
 </html>

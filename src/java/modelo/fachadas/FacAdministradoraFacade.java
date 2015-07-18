@@ -39,8 +39,16 @@ public class FacAdministradoraFacade extends AbstractFacade<FacAdministradora> {
             return null;
         }
     }
+    public FacAdministradora buscarPorNombre(String nombre) {
+        try {
+            Query query = getEntityManager().createQuery("SELECT a FROM FacAdministradora a WHERE a.razonSocial = ?1").setParameter(1, nombre);
+            return (FacAdministradora) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-    public List<FacAdministradora> buscarAdmiFaltanFacturar() {
+    public List<FacAdministradora> buscarAdmiFaltanFacturar(){
         try {
             String hql = "SELECT a FROM FacAdministradora a WHERE a.anulada = FALSE and facturadaEnAmi = FALSE AND a.idAdministradora != 1";
             return getEntityManager().createQuery(hql).getResultList();

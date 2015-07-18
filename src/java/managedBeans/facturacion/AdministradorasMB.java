@@ -20,9 +20,23 @@ import managedBeans.seguridad.AplicacionGeneralMB;
 import modelo.entidades.CfgClasificaciones;
 import modelo.entidades.FacAdministradora;
 import modelo.entidades.FacContrato;
+import modelo.entidades.FacManualTarifario;
+import modelo.entidades.FacManualTarifarioInsumo;
+import modelo.entidades.FacManualTarifarioInsumoPK;
+import modelo.entidades.FacManualTarifarioMedicamentoPK;
+import modelo.entidades.FacManualTarifarioPaquetePK;
+import modelo.entidades.FacManualTarifarioServicioPK;
+import modelo.entidades.FacManualTarifarioMedicamento;
+import modelo.entidades.FacManualTarifarioPaquete;
+import modelo.entidades.FacManualTarifarioServicio;
 import modelo.fachadas.CfgClasificacionesFacade;
 import modelo.fachadas.FacAdministradoraFacade;
 import modelo.fachadas.FacContratoFacade;
+import modelo.fachadas.FacManualTarifarioFacade;
+import modelo.fachadas.FacManualTarifarioInsumoFacade;
+import modelo.fachadas.FacManualTarifarioMedicamentoFacade;
+import modelo.fachadas.FacManualTarifarioPaqueteFacade;
+import modelo.fachadas.FacManualTarifarioServicioFacade;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -39,9 +53,19 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
     @EJB
     FacAdministradoraFacade administradoraFacade;
     @EJB
-    FacContratoFacade ContratoFacade;
+    FacContratoFacade contratoFacade;
+    @EJB
+    FacManualTarifarioFacade manualTarifarioFacade;
     @EJB
     CfgClasificacionesFacade clasificacionesFachada;
+    @EJB
+    FacManualTarifarioServicioFacade manualTarifarioServicioFacade;
+    @EJB
+    FacManualTarifarioInsumoFacade manualTarifarioInsumoFacade;
+    @EJB
+    FacManualTarifarioMedicamentoFacade manualTarifarioMedicamentoFacade;
+    @EJB
+    FacManualTarifarioPaqueteFacade manualTarifarioPaqueteFacade;
     //---------------------------------------------------
     //-----------------ENTIDADES -------------------------
     //---------------------------------------------------
@@ -53,14 +77,13 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
     private List<FacContrato> listaContratos;//lista de contratos asociados a una administradora cargada
 
     private FacAdministradora administradoraCopiaSeleccionada;
-    private List<FacContrato> contratosCopiaSeleccionados;//contrato seleccionado cuando se quiere copiar contratos    
     private List<FacContrato> listaContratosCopia;//lista de contratos de una administradora cuando se quiere copiar contratos
     //---------------------------------------------------
     //-----------------VARIABLES ------------------------
     //---------------------------------------------------
 
-    private String idAdministradoraACopiar = "";//identificador de la administradora a ala cual se le copearan los contratos
-
+    private String idAdministradoraACopiar = "";//identificador de la administradora a ala cual se le copiaran los contratos
+    private String prefijo = "";
     private String activeIndex = "0";
     private String tituloTabAdministradora = "Nueva Administradora";
     private String tituloTabContratos = "Contratos (0)";
@@ -99,6 +122,8 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         listaContratos = new ArrayList<>();
         contratoSeleccionado = null;
         idAdministradoraACopiar = "";
+        prefijo="";
+        listaContratosCopia= new ArrayList<>();
 
         listaAdministradoras = administradoraFacade.buscarOrdenado();
         tituloTabAdministradora = "Nueva Administradora";
@@ -123,10 +148,11 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         codigoRubro = "";
         codigoConcepto = "";
     }
-    public void recargarSiHaySeleccionado(){
+
+    public void recargarSiHaySeleccionado() {
         //se usa esta funcion cuando se crea un manua tarifario y al volver a contratos esten cargados los datos
-        if(administradoraSeleccionada!=null){
-            administradoraSeleccionadaTabla=administradoraSeleccionada;
+        if (administradoraSeleccionada != null) {
+            administradoraSeleccionadaTabla = administradoraSeleccionada;
             cargarAdministradora();
         }        
     }
@@ -184,6 +210,180 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
             return;
         }
         RequestContext.getCurrentInstance().execute("PF('dialogoEliminarAdministradora').show();");
+    }
+
+    public void clickBtnCopiarContratos() {
+        if (administradoraSeleccionada == null) {
+            imprimirMensaje("Error", "No se ha cargado ninguna administradora", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+        RequestContext.getCurrentInstance().execute("PF('dialogoCopiarContratos').show();");
+    }
+
+    public void copiarContratos() {
+        if (validacionCampoVacio(prefijo, "Prefijo")) {
+            return;
+        }
+        if (validacionCampoVacio(idAdministradoraACopiar, "Administradora")) {
+            return;
+        }
+        if (listaContratosCopia == null || listaContratosCopia.isEmpty()) {
+            imprimirMensaje("Error", "La administradora seleccionada no tiene contratos", FacesMessage.SEVERITY_ERROR);
+            return;
+        }
+        FacContrato contratoAux;
+        FacManualTarifario manualAux;
+        FacManualTarifarioInsumo nuevoManualTarifarioInsumo;
+        FacManualTarifarioMedicamento nuevoManualTarifarioMedicamento;
+        FacManualTarifarioPaquete nuevoManualTarifarioPaquete;
+        FacManualTarifarioServicio nuevoManualTarifarioServicio;
+
+        //validar que no existan contratos ni manuales con igual nombre
+        for (FacContrato contrato : listaContratosCopia) {
+            contratoAux = contratoFacade.buscarPorNombre(prefijo + contrato.getDescripcion());
+            if (contratoAux != null) {
+                imprimirMensaje("Error", "Ya existe un contrato con el igual nombre, debe escoger otro prefijo", FacesMessage.SEVERITY_ERROR);
+                return;
+            }
+            if (contrato.getIdManualTarifario() != null) {
+                manualAux = manualTarifarioFacade.buscarPorNombre(prefijo + contrato.getIdManualTarifario().getNombreManualTarifario());
+                if (manualAux != null) {
+                    imprimirMensaje("Error", "Ya existe un manual tarifario con el igual nombre, debe escoger otro prefijo", FacesMessage.SEVERITY_ERROR);
+                    return;
+                }
+            }
+        }
+        //realizar la copia de contratos y manuales
+        for (FacContrato contrato : listaContratosCopia) {
+            manualAux = null;
+            if (contrato.getIdManualTarifario() != null) {
+
+                manualAux = new FacManualTarifario();
+                manualAux.setCodigoManualTarifario(prefijo + contrato.getIdManualTarifario().getCodigoManualTarifario());
+                manualAux.setNombreManualTarifario(prefijo + contrato.getIdManualTarifario().getNombreManualTarifario());
+                manualTarifarioFacade.create(manualAux);
+                manualAux = manualTarifarioFacade.find(manualAux.getIdManualTarifario());
+
+                for (FacManualTarifarioInsumo manualTarifarioInsumo : contrato.getIdManualTarifario().getFacManualTarifarioInsumoList()) {
+                    nuevoManualTarifarioInsumo = new FacManualTarifarioInsumo();
+                    FacManualTarifarioInsumoPK llavePK = new FacManualTarifarioInsumoPK();
+                    llavePK.setIdManualTarifario(manualAux.getIdManualTarifario());
+                    llavePK.setIdInsumo(manualTarifarioInsumo.getFacManualTarifarioInsumoPK().getIdInsumo());
+                    nuevoManualTarifarioInsumo.setFacManualTarifarioInsumoPK(llavePK);
+                    nuevoManualTarifarioInsumo.setActivo(manualTarifarioInsumo.getActivo());
+                    nuevoManualTarifarioInsumo.setDescuento(manualTarifarioInsumo.getDescuento());
+                    nuevoManualTarifarioInsumo.setObservacion(manualTarifarioInsumo.getObservacion());
+                    nuevoManualTarifarioInsumo.setValorInicial(manualTarifarioInsumo.getValorInicial());
+                    nuevoManualTarifarioInsumo.setValorFinal(manualTarifarioInsumo.getValorFinal());
+                    manualTarifarioInsumoFacade.create(nuevoManualTarifarioInsumo);
+                }
+
+                for (FacManualTarifarioMedicamento manualTarifarioMedicamento : contrato.getIdManualTarifario().getFacManualTarifarioMedicamentoList()) {
+                    nuevoManualTarifarioMedicamento = new FacManualTarifarioMedicamento();
+                    FacManualTarifarioMedicamentoPK llavePK = new FacManualTarifarioMedicamentoPK();
+                    llavePK.setIdManualTarifario(manualAux.getIdManualTarifario());
+                    llavePK.setIdMedicamento(manualTarifarioMedicamento.getFacManualTarifarioMedicamentoPK().getIdMedicamento());
+                    nuevoManualTarifarioMedicamento.setFacManualTarifarioMedicamentoPK(llavePK);
+                    nuevoManualTarifarioMedicamento.setActivo(manualTarifarioMedicamento.getActivo());
+                    nuevoManualTarifarioMedicamento.setDescuento(manualTarifarioMedicamento.getDescuento());
+                    nuevoManualTarifarioMedicamento.setObservacion(manualTarifarioMedicamento.getObservacion());
+                    nuevoManualTarifarioMedicamento.setValorInicial(manualTarifarioMedicamento.getValorInicial());
+                    nuevoManualTarifarioMedicamento.setValorFinal(manualTarifarioMedicamento.getValorFinal());
+                    manualTarifarioMedicamentoFacade.create(nuevoManualTarifarioMedicamento);
+                }
+
+                for (FacManualTarifarioPaquete manualTarifarioPaquete : contrato.getIdManualTarifario().getFacManualTarifarioPaqueteList()) {
+                    nuevoManualTarifarioPaquete = new FacManualTarifarioPaquete();
+                    FacManualTarifarioPaquetePK llavePK = new FacManualTarifarioPaquetePK();
+                    llavePK.setIdManualTarifario(manualAux.getIdManualTarifario());
+                    llavePK.setIdPaquete(manualTarifarioPaquete.getFacManualTarifarioPaquetePK().getIdPaquete());
+                    nuevoManualTarifarioPaquete.setFacManualTarifarioPaquetePK(llavePK);
+                    nuevoManualTarifarioPaquete.setActivo(manualTarifarioPaquete.getActivo());
+                    nuevoManualTarifarioPaquete.setDescuento(manualTarifarioPaquete.getDescuento());
+                    nuevoManualTarifarioPaquete.setObservacion(manualTarifarioPaquete.getObservacion());
+                    nuevoManualTarifarioPaquete.setValorInicial(manualTarifarioPaquete.getValorInicial());
+                    nuevoManualTarifarioPaquete.setValorFinal(manualTarifarioPaquete.getValorFinal());                    
+                    manualTarifarioPaqueteFacade.create(nuevoManualTarifarioPaquete);
+                }
+
+                for (FacManualTarifarioServicio manualTarifarioServicio : contrato.getIdManualTarifario().getFacManualTarifarioServicioList()) {
+                    nuevoManualTarifarioServicio = new FacManualTarifarioServicio();
+                    FacManualTarifarioServicioPK llavePK = new FacManualTarifarioServicioPK();
+                    llavePK.setIdManualTarifario(manualAux.getIdManualTarifario());
+                    llavePK.setIdServicio(manualTarifarioServicio.getFacManualTarifarioServicioPK().getIdServicio());
+                    nuevoManualTarifarioServicio.setFacManualTarifarioServicioPK(llavePK);
+                    nuevoManualTarifarioServicio.setActivo(manualTarifarioServicio.getActivo());
+                    nuevoManualTarifarioServicio.setDescuento(manualTarifarioServicio.getDescuento());
+                    nuevoManualTarifarioServicio.setObservacion(manualTarifarioServicio.getObservacion());
+                    nuevoManualTarifarioServicio.setValorInicial(manualTarifarioServicio.getValorInicial());
+                    nuevoManualTarifarioServicio.setValorFinal(manualTarifarioServicio.getValorFinal());
+                    nuevoManualTarifarioServicio.setMetaCumplimiento(manualTarifarioServicio.getMetaCumplimiento());
+                    nuevoManualTarifarioServicio.setPeriodicidad(manualTarifarioServicio.getPeriodicidad());
+                    nuevoManualTarifarioServicio.setHonorarioMedico(manualTarifarioServicio.getHonorarioMedico());
+                    nuevoManualTarifarioServicio.setTipoTarifa(manualTarifarioServicio.getTipoTarifa());
+                    nuevoManualTarifarioServicio.setAnioUnidadValor(manualTarifarioServicio.getAnioUnidadValor());
+                    manualTarifarioServicioFacade.create(nuevoManualTarifarioServicio);
+                }
+            }
+            contratoAux = new FacContrato();
+            contratoAux.setIdManualTarifario(manualAux);
+            contratoAux.setAplicarCree(contrato.getAplicarCree());
+            contratoAux.setAplicarIva(contrato.getAplicarIva());
+            contratoAux.setC1(contrato.getC1());
+            contratoAux.setCm1(contrato.getCm1());
+            contratoAux.setCm2(contrato.getCm2());
+            contratoAux.setCm3(contrato.getCm3());
+            contratoAux.setCm4(contrato.getCm4());
+            contratoAux.setCm5(contrato.getCm5());
+            contratoAux.setCmb(contrato.getCmb());
+            contratoAux.setCmc(contrato.getCmc());
+            contratoAux.setCodigoConcepto(contrato.getCodigoConcepto());
+            contratoAux.setCodigoConceptoDescuento(contrato.getCodigoConceptoDescuento());
+            contratoAux.setCodigoContrato(prefijo + contrato.getCodigoContrato());
+            contratoAux.setCodigoTarifaNopos(contrato.getCodigoTarifaNopos());
+            contratoAux.setCodigoTarifaPos(contrato.getCodigoTarifaPos());
+            contratoAux.setCp1(contrato.getCp1());
+            contratoAux.setCp2(contrato.getCp2());
+            contratoAux.setCp3(contrato.getCp3());
+            contratoAux.setCp4(contrato.getCp4());
+            contratoAux.setCp5(contrato.getCp5());
+            contratoAux.setCpb(contrato.getCpb());
+            contratoAux.setCpc(contrato.getCpc());
+            contratoAux.setCuentaCobrar(contrato.getCuentaCobrar());
+            contratoAux.setCuentaCopago(contrato.getCuentaCopago());
+            contratoAux.setDescripcion(prefijo + contrato.getDescripcion());
+            contratoAux.setFechaFinal(contrato.getFechaFinal());
+            contratoAux.setFechaInicio(contrato.getFechaInicio());
+            contratoAux.setIdAdministradora(administradoraSeleccionada);
+            contratoAux.setInsumosPorcentaje1(contrato.getInsumosPorcentaje1());
+            contratoAux.setInsumosPorcentaje2(contrato.getInsumosPorcentaje2());
+            contratoAux.setInsumosPorcentaje3(contrato.getInsumosPorcentaje3());
+            contratoAux.setMedicamentoValor1(contrato.getMedicamentoValor1());
+            contratoAux.setMedicamentoValor2(contrato.getMedicamentoValor2());
+            contratoAux.setMedicamentoValor3(contrato.getMedicamentoValor3());
+            contratoAux.setNumeroAfiliados(contrato.getNumeroAfiliados());
+            contratoAux.setNumeroPoliza(contrato.getNumeroPoliza());
+            contratoAux.setNumeroRipContrato(contrato.getNumeroRipContrato());
+            contratoAux.setObservacionContrato(contrato.getObservacionContrato());
+            contratoAux.setObservacionFacturacion(contrato.getObservacionFacturacion());
+            contratoAux.setPorcentajeDescuentoServicios(contrato.getPorcentajeDescuentoServicios());
+            contratoAux.setPorcentejeDescuentoEntidad(contrato.getPorcentejeDescuentoEntidad());
+            contratoAux.setRip(contrato.getRip());
+            contratoAux.setTipoContrato(contrato.getTipoContrato());
+            contratoAux.setTipoFacturacion(contrato.getTipoFacturacion());
+            contratoAux.setTipoPago(contrato.getTipoPago());
+            contratoAux.setUpc(contrato.getUpc());
+            contratoAux.setValorAlarma(contrato.getValorAlarma());
+            contratoAux.setValorContrato(contrato.getValorContrato());
+            contratoAux.setValorMensual(contrato.getValorMensual());
+            contratoAux.setValorValidacionMensual(contrato.getValorValidacionMensual());
+            contratoAux.setVigencia(contrato.getVigencia());
+            contratoFacade.create(contratoAux);
+        }
+        imprimirMensaje("Correcto", "La copia de contratos y manuales tarifarios se ha realizado", FacesMessage.SEVERITY_ERROR);
+        RequestContext.getCurrentInstance().update("IdFormAdministradoras");
+        RequestContext.getCurrentInstance().update("IdMensajeAdministradoras");
+        RequestContext.getCurrentInstance().execute("PF('dialogoCopiarContratos').hide()");
     }
 
     public void confirmarEliminarAdministradora() {
@@ -313,6 +513,7 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         }
 
     }
+
     public void editarContrato() {//se invoca funcion javaScript(cargarTab -> home.xhtml) que carga la pestaña de contratos y selecciona la administradora especificada
         if (contratoSeleccionado != null) {
             RequestContext.getCurrentInstance().execute("window.parent.cargarTab('Contratos','facturacion/contratos.xhtml','idContrato;" + contratoSeleccionado.getIdContrato() + "')");
@@ -321,20 +522,15 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         }
 
     }
+
     public void cambiaAdministradoraCopia() {//cambia la administradora de la cual se van a copiar los contratos
-        contratosCopiaSeleccionados = null;
+        listaContratosCopia = new ArrayList<>();
         if (validarNoVacio(idAdministradoraACopiar)) {
             administradoraCopiaSeleccionada = administradoraFacade.find(Integer.parseInt(idAdministradoraACopiar));
             if (administradoraCopiaSeleccionada != null) {
                 listaContratosCopia = administradoraCopiaSeleccionada.getFacContratoList();
-            } else {
-                listaContratosCopia = new ArrayList<>();
             }
         }
-    }
-
-    public void copiarContratos() {
-
     }
 
     //---------------------------------------------------
@@ -540,22 +736,6 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
         this.listaContratos = listaContratos;
     }
 
-    public FacAdministradora getAdministradoraCopiaSeleccionada() {
-        return administradoraCopiaSeleccionada;
-    }
-
-    public void setAdministradoraCopiaSeleccionada(FacAdministradora administradoraCopiaSeleccionada) {
-        this.administradoraCopiaSeleccionada = administradoraCopiaSeleccionada;
-    }
-
-    public List<FacContrato> getContratosCopiaSeleccionados() {
-        return contratosCopiaSeleccionados;
-    }
-
-    public void setContratosCopiaSeleccionados(List<FacContrato> contratosCopiaSeleccionados) {
-        this.contratosCopiaSeleccionados = contratosCopiaSeleccionados;
-    }
-
     public List<FacContrato> getListaContratosCopia() {
         return listaContratosCopia;
     }
@@ -578,6 +758,14 @@ public class AdministradorasMB extends MetodosGenerales implements Serializable 
 
     public void setTituloTabContratos(String tituloTabContratos) {
         this.tituloTabContratos = tituloTabContratos;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+}
+
+    public void setPrefijo(String prefijo) {
+        this.prefijo = prefijo;
     }
 
 }
