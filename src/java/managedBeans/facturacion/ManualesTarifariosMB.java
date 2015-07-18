@@ -1001,7 +1001,7 @@ public class ManualesTarifariosMB extends MetodosGenerales implements Serializab
         observacionPaqueteEditando = buscado.getObservacion();
         valorInicialPaqueteEditando = buscado.getValorInicial();
         valorFinalPaqueteEditando = buscado.getValorFinal();
-        System.out.println("valorFinalPaqueteEditando " + valorFinalPaqueteEditando);
+        //System.out.println("valorFinalPaqueteEditando " + valorFinalPaqueteEditando);
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelEditandoPaquete");
         RequestContext.getCurrentInstance().execute("PF('dialogoEditandoPaquete').show();");
     }

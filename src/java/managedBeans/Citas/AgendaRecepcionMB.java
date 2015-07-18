@@ -486,24 +486,28 @@ public class AgendaRecepcionMB extends MetodosGenerales implements Serializable 
         String mensajeConfiguracion = null;
 
         if (pacienteSeleccionado.getIdAdministradora() != null) {//SE VALIDA QUE SE PUEDA OBTENER EL MANUAL TARIFARIO
-            FacAdministradora ad = pacienteSeleccionado.getIdAdministradora();
-            if (ad.getFacContratoList() != null && !ad.getFacContratoList().isEmpty()) {
-                for (FacContrato contrato : ad.getFacContratoList()) {//BUSCO UN MANUAL QUE CORRESPONDA AL MISMO REGIMEN DEL PACIENTE
-                    if (Objects.equals(pacienteSeleccionado.getRegimen().getId(), contrato.getTipoContrato().getId())) {
-                        contratoSeleccionado = contrato;
-        }
-        }
-                if (contratoSeleccionado == null) {
-                    mensajeConfiguracion = "No se puede agregar el servicio a consumos por que ningún contrato es del tipo: " + pacienteSeleccionado.getRegimen().getDescripcion();
-                } else {
-                    if (contratoSeleccionado.getIdManualTarifario() != null) {//DETERMINAR SI CONTRATO SELECCIONADO TIENE MANUAL TARIFARIO
-                        manualTarifarioPaciente = contratoSeleccionado.getIdManualTarifario();
-                    } else {
-                        mensajeConfiguracion = "No se puede agregar el servicio a consumos por que el contrato '" + contratoSeleccionado.getDescripcion() + "' no tiene manual tarifario";
+            if (pacienteSeleccionado.getRegimen() != null) {
+                FacAdministradora ad = pacienteSeleccionado.getIdAdministradora();
+                if (ad.getFacContratoList() != null && !ad.getFacContratoList().isEmpty()) {
+                    for (FacContrato contrato : ad.getFacContratoList()) {//BUSCO UN MANUAL QUE CORRESPONDA AL MISMO REGIMEN DEL PACIENTE
+                        if (Objects.equals(pacienteSeleccionado.getRegimen().getId(), contrato.getTipoContrato().getId())) {
+                            contratoSeleccionado = contrato;
+                        }
                     }
+                    if (contratoSeleccionado == null) {
+                        mensajeConfiguracion = "No se puede agregar el servicio a consumos por que ningún contrato es del tipo: " + pacienteSeleccionado.getRegimen().getDescripcion();
+                    } else {
+                        if (contratoSeleccionado.getIdManualTarifario() != null) {//DETERMINAR SI CONTRATO SELECCIONADO TIENE MANUAL TARIFARIO
+                            manualTarifarioPaciente = contratoSeleccionado.getIdManualTarifario();
+                        } else {
+                            mensajeConfiguracion = "No se puede agregar el servicio a consumos por que el contrato '" + contratoSeleccionado.getDescripcion() + "' no tiene manual tarifario";
+                        }
+                    }
+                } else {
+                    mensajeConfiguracion = "No se puede agregar el servicio a consumos por que la adminstradora no tiene ningún contrato";
                 }
             } else {
-                mensajeConfiguracion = "No se puede agregar el servicio a consumos por que la adminstradora no tiene ningún contrato";
+                mensajeConfiguracion = "No se puede agregar el servicio a consumos por paciente no tiene régimen";
             }
         } else {
             mensajeConfiguracion = "No se puede agregar el servicio a consumos por que el paciente no tiene administradora.";
