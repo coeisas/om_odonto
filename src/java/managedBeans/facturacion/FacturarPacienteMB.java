@@ -1185,10 +1185,13 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         EstructuraFacturaPaciente nuevaFactura = new EstructuraFacturaPaciente();
         nuevaFactura.setTituloFactura(loginMB.getEmpresaActual().getRazonSocial());
         nuevaFactura.setRegimenEmpresa(loginMB.getEmpresaActual().getRegimen());
-        nuevaFactura.setNitEmpresa("NIT. " + loginMB.getEmpresaActual().getNumIdentificacion());
+        nuevaFactura.setNitEmpresa(loginMB.getEmpresaActual().getNomRepLegal() + " NIT. " + loginMB.getEmpresaActual().getNumIdentificacion() + " - " + loginMB.getEmpresaActual().getDv());
         nuevaFactura.setTipoDocumento(facturaSeleccionada.getTipoDocumento().getDescripcion() + " No.");
         nuevaFactura.setCodigoDocumento("" + facturaSeleccionada.getCodigoDocumento());
-        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1() + " - Tel2: " + loginMB.getEmpresaActual().getTelefono2() + " - " + loginMB.getEmpresaActual().getWebsite());
+        nuevaFactura.setSubtituloFactura(loginMB.getEmpresaActual().getDireccion() + " - Tel1: " + loginMB.getEmpresaActual().getTelefono1());
+        if (!loginMB.getEmpresaActual().getTelefono2().isEmpty()) {
+            nuevaFactura.setSubtituloFactura(nuevaFactura.getSubtituloFactura().concat(" - Tel2: " + loginMB.getEmpresaActual().getTelefono2()));
+        }
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaSeleccionada.getIdPaciente().nombreCompleto());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaSeleccionada.getIdPaciente().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaSeleccionada.getIdPaciente().getIdentificacion());
