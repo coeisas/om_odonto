@@ -95,7 +95,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="8" isBold="true"/>
 				</textElement>
-				<text><![CDATA[F.CANCELACION]]></text>
+				<text><![CDATA[CANCELACION]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="450" y="18" width="50" height="15" uuid="69c547eb-e3f0-40fa-8478-c43ef404d2a7"/>
@@ -134,7 +134,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{prestadorPN} + " " + ($F{prestadorSN} == null ? "" : $F{prestadorSN} + " ") + $F{prestadorPA} + " " +($F{prestadorSA} == null ? "" : $F{prestadorSA})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{prestadorPN}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="207" y="0" width="111" height="20" uuid="53f82a0b-e2d6-4d9c-9746-cb2ba423aa24"/>

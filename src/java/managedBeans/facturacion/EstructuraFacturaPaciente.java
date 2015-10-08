@@ -20,6 +20,7 @@ public class EstructuraFacturaPaciente { //clase que contiene los datos para una
     private String tipoDocumento = "";//Factura, Orden, Recibo...
     private String codigoDocumento = "";
     private String subtituloFactura = "";//direccion-telefonos-email
+    private String clienteAdministradora = "";//administradora del paciente guardada en la cita.
     private String clienteNombre = "";
     private String clienteDireccion = "";
     private String clienteIdentificacion = "";//Nit o C.C.
@@ -273,6 +274,14 @@ public class EstructuraFacturaPaciente { //clase que contiene los datos para una
 
     public void setPiePagina(String piePagina) {
         this.piePagina = piePagina;
+    }
+
+    public String getClienteAdministradora() {
+        return clienteAdministradora;
+    }
+
+    public void setClienteAdministradora(String clienteAdministradora) {
+        this.clienteAdministradora = clienteAdministradora;
     }
 
 }

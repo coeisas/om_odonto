@@ -158,7 +158,7 @@
                     </table>
                 </p:panel>
                 <br/>
-                <p:schedule id="schTurnos" draggable="false" resizable="false" value="#{citasMB.evenModel}" widgetVar="agenda" locale="es" timeZone="America/Bogota" timeFormat="hh:mm" allDaySlot="false" rendered="#{citasMB.hayPrestadorSeleccionado}">
+                <p:schedule id="schTurnos" draggable="false" resizable="false" value="#{citasMB.evenModel}" minTime="#{citasMB.minTime}" maxTime="#{citasMB.maxTime}" widgetVar="agenda" locale="es" timeZone="America/Bogota" timeFormat="hh:mm" allDaySlot="false" rendered="#{citasMB.hayPrestadorSeleccionado}" view="agendaDay" rightHeaderTemplate="agendaDay">
                     <p:ajax event="eventSelect" listener="#{citasMB.onEventSelect}" update="@none"/>
                 </p:schedule>
                 <p:dialog id="pdialog" widgetVar="eventDialog" header="Detalles de la cita" modal="true" resizable="false">

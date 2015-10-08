@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6ede5320-0d6d-4c4a-88e9-5b051aaf0bc6">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="314"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="logoEmpresa" class="java.lang.String"/>
@@ -65,7 +65,7 @@
 				<text><![CDATA[Identificacion]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="142" y="2" width="148" height="15" uuid="64dfbf33-4b18-44a9-994e-3197d254c746"/>
+				<reportElement x="142" y="2" width="146" height="15" uuid="64dfbf33-4b18-44a9-994e-3197d254c746"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -79,7 +79,7 @@
 				<text><![CDATA[Administradora]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="290" y="2" width="132" height="15" uuid="8da8449a-49dd-46b6-8cb0-af05fc1b33f6"/>
+				<reportElement x="288" y="2" width="132" height="15" uuid="8da8449a-49dd-46b6-8cb0-af05fc1b33f6"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="10" isBold="true"/>
 				</textElement>
@@ -111,18 +111,18 @@
 				<textFieldExpression><![CDATA[$F{pacienteTipoDoc}+" "+$F{pacienteNumDoc}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="142" y="0" width="148" height="16" uuid="efefba26-0e08-4fc1-bbad-350dace44599"/>
+				<reportElement x="142" y="0" width="146" height="16" uuid="efefba26-0e08-4fc1-bbad-350dace44599"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pacientePN}+ " " + ($F{pacienteSN}==null?"":$F{pacienteSN}) + " " +$F{pacientePA}+ " " + ($F{pacienteSA}==null?"":$F{pacienteSA})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pacientePN}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="290" y="0" width="132" height="16" uuid="430e8af8-6f84-47a8-9e43-e0846f360978"/>
+				<reportElement x="288" y="0" width="132" height="16" uuid="430e8af8-6f84-47a8-9e43-e0846f360978"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{prestadorPN}+ " " + ($F{prestadorSN}==null?"":$F{prestadorSN}) + " " +$F{prestadorPA}+ " " + ($F{prestadorSA}==null?"":$F{prestadorSA})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{prestadorPN}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="422" y="0" width="89" height="16" uuid="a409afd1-58ef-4776-8f2d-fe0a3d1d56d6"/>

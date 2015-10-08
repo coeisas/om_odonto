@@ -33,6 +33,7 @@ import beans.utilidades.MetodosGenerales;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -105,6 +106,8 @@ public class CitasMB extends MetodosGenerales implements Serializable {
     private boolean rendBtnReservar = false;
     private boolean rendBtnElegir = false;
     private boolean renderizarbotones = false;//renderiza los botones de recordatorio, cancelar cita y facturar
+    private String minTime;
+    private String maxTime;
 
     private List<CitCitas> listaCitas;
     // lista para reportes
@@ -686,8 +689,25 @@ public class CitasMB extends MetodosGenerales implements Serializable {
     }
 
     public void loadEvents() {
+        Object[] horas = turnosFacade.MinDateMaxDate(prestadorSeleccionado.getIdUsuario(), sede);
+        if (horas[0] != null) {
+            setMinTime(establerLimitesAgenda((Date) horas[0]));
+            Date aux = (Date) horas[1];
+            if (aux.getMinutes() > 0) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(aux);
+                calendar.add(Calendar.HOUR_OF_DAY, 1);
+                aux = calendar.getTime();
+            }
+            setMaxTime(establerLimitesAgenda(aux));
+        }
         setEvenModel(new LazyAgendaModel(prestadorSeleccionado.getIdUsuario(), sede, turnosFacade, citasFacade, "citaUnica"));
     }
+    
+    private String establerLimitesAgenda(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("ha");
+        return format.format(date);
+    }    
 
     public void onEventSelect(SelectEvent selectEvent) {
         setEvent((ScheduleEvent) selectEvent.getObject());
@@ -1093,6 +1113,22 @@ public class CitasMB extends MetodosGenerales implements Serializable {
 
     public void setRendBtnAutorizacion(boolean rendBtnAutorizacion) {
         this.rendBtnAutorizacion = rendBtnAutorizacion;
+    }
+
+    public String getMinTime() {
+        return minTime;
+    }
+
+    public void setMinTime(String minTime) {
+        this.minTime = minTime;
+    }
+
+    public String getMaxTime() {
+        return maxTime;
+    }
+
+    public void setMaxTime(String maxTime) {
+        this.maxTime = maxTime;
     }
 
 }

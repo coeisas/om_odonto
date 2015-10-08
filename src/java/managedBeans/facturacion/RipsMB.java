@@ -562,6 +562,7 @@ public class RipsMB extends MetodosGenerales implements Serializable {
                             } else {
                                 nuevoregistroRipUS.setCodMunRes("");
                             }
+                            nuevoregistroRipUS.setRipsAlmacenados(ripAlmacenado);
                             ripsUsFacade.create(nuevoregistroRipUS);
                         }
                     }

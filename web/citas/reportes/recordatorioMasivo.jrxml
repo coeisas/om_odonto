@@ -43,7 +43,7 @@
 			</rectangle>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="5" y="14" width="172" height="13" uuid="5524b8ca-43ff-4048-b7b5-b9537e875fb2"/>
-				<textFieldExpression><![CDATA[$F{pacientePN} + " " + $F{pacientePA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pacientePN}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="5" y="1" width="172" height="13" uuid="5c837014-bd74-4c1d-8c85-1d77f3150f6f"/>

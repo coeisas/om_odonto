@@ -66,14 +66,14 @@ public class LazyAgendaModel extends LazyScheduleModel {
                 estilo = "disponible";
             } else if (turno.getEstado().equals("asignado") || turno.getEstado().equals("en_espera") || turno.getEstado().equals("atendido")) {
                 estilo = "asignado";
+                CitCitas c = citasFacade.findCitasByTurno(turno.getIdTurno());
+                if (c != null) {
+                    title = title.concat(" - " + c.getIdPaciente().nombreCompleto());
+                }
             } else if (turno.getEstado().equals("no_disponible")) {
                 estilo = "no_disponible";
             } else {
                 estilo = "reservado";
-            }
-            CitCitas c = citasFacade.findCitasByTurno(turno.getIdTurno());
-            if (c != null) {
-                title = title.concat(" - " + c.getIdPaciente().nombreCompleto());
             }
             finaliza.setHours(turno.getHoraFin().getHours());
             finaliza.setMinutes(turno.getHoraFin().getMinutes());

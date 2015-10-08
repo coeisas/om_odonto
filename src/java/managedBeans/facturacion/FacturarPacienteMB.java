@@ -1192,6 +1192,7 @@ public class FacturarPacienteMB extends MetodosGenerales implements Serializable
         if (!loginMB.getEmpresaActual().getTelefono2().isEmpty()) {
             nuevaFactura.setSubtituloFactura(nuevaFactura.getSubtituloFactura().concat(" - Tel2: " + loginMB.getEmpresaActual().getTelefono2()));
         }
+        nuevaFactura.setClienteAdministradora("<b>ADMINISTRADORA: </b>"+facturaSeleccionada.getIdAdministradora().getRazonSocial());
         nuevaFactura.setClienteNombre("<b>NOMBRE: </b>" + facturaSeleccionada.getIdPaciente().nombreCompleto());
         nuevaFactura.setClienteDireccion("<b>DIRECCION: </b>" + facturaSeleccionada.getIdPaciente().getDireccion());
         nuevaFactura.setClienteIdentificacion("<b>IDENTIFICACION: </b>" + facturaSeleccionada.getIdPaciente().getIdentificacion());

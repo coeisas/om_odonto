@@ -344,7 +344,7 @@ public class FacturarAdministradoraMB extends MetodosGenerales implements Serial
         administradoraActual = administradoraFacade.find(Integer.parseInt(idAdministradora));
         //determinar que facturas tiene una administradora en un rango de fechas determinado
 
-        String sql = "select * from fac_factura_paciente where id_administradora=" + idAdministradora + " AND ";
+        String sql = "select * from fac_factura_paciente where id_administradora=" + idAdministradora + " AND anulada = FALSE AND ";
         if (idContrato.compareTo("-1") != 0) {//No se requieren todos los contratos
             sql = sql + "id_contrato = " + idContrato + " AND ";
         }

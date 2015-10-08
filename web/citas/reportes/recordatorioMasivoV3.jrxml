@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="500" leftMargin="56" rightMargin="56" topMargin="42" bottomMargin="28" uuid="6f2de57c-beea-4c9f-9a76-098c102e6eed">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="199"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="parameter1" class="java.lang.String"/>
 	<parameter name="logoEmpresa" class="java.lang.String"/>
@@ -48,7 +48,7 @@
 			</rectangle>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="14" width="280" height="13" uuid="5524b8ca-43ff-4048-b7b5-b9537e875fb2"/>
-				<textFieldExpression><![CDATA[$F{pacientePN} + " " + ($F{pacienteSN} == null ? "" : $F{pacienteSN} + " ") + $F{pacientePA}+ " " + ($F{pacienteSA} == null ? "" : $F{pacienteSA})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pacientePN}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="0" y="1" width="275" height="13" uuid="5c837014-bd74-4c1d-8c85-1d77f3150f6f"/>
@@ -141,7 +141,7 @@
 			</line>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="238" y="0" width="262" height="13" uuid="6c9d88c0-2634-47b9-9612-7b3ac76d36a2"/>
-				<textFieldExpression><![CDATA[$F{prestadorPN} + " " + $F{prestadorPA}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{prestadorPN}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="EEE, dd-MMM-yyyy" isBlankWhenNull="true">
 				<reportElement x="1" y="0" width="132" height="13" uuid="a153226e-c7f0-4799-a97c-dc67d4695d4a"/>

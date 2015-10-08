@@ -117,7 +117,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pacientePN}+ " " + ($F{pacienteSN}==null?"":$F{pacienteSN}) + " " +$F{pacientePA}+ " " + ($F{pacienteSA}==null?"":$F{pacienteSA})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{pacientePN}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

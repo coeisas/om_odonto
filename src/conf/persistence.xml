@@ -8,5 +8,5 @@
     <properties>
       <property name="eclipselink.canonicalmodel.subpackage" value="otro1"/>
     </properties>
-  </persistence-unit>  
+  </persistence-unit>
 </persistence>

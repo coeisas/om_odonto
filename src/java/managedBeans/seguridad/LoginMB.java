@@ -122,7 +122,7 @@ public class LoginMB extends MetodosGenerales implements Serializable {
         if (rutaCarpetaImagenes.compareTo("windows") == 0) {
             rutaCarpetaImagenes = "C:/imagenesOpenmedical/";
         } else {
-            rutaCarpetaImagenes = "/home/imagenesOpenmedical/";
+            rutaCarpetaImagenes = "/home/mario/NetBeansProjects/OPTICA TUQUERRES Julio30/imagenesOpenmedical/";
         }
     }
 

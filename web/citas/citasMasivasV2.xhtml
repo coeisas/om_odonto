@@ -290,7 +290,7 @@
                     <p:column width="10%"><p:commandButton icon="ui-icon-trash" title="Quitar Turno" actionListener="#{citasMasivasV2MB.quitarTurno}" update="@none"><f:attribute name="turno" value="#{turnoselect}"/></p:commandButton></p:column>
                     <p:column headerText="Fecha" style="width: 15%">
                         <h:outputText value="#{turnoselect.fecha}">
-                            <f:convertDateTime locale="es_CO" pattern="MM/dd/yyyy"/>
+                            <f:convertDateTime locale="es_CO" pattern="dd/MM/yyyy"/>
                         </h:outputText>
                     </p:column>
                     <p:column headerText="Hora Inicial" style="width: 15%">

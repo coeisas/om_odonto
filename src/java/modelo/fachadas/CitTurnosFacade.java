@@ -351,7 +351,7 @@ public class CitTurnosFacade extends AbstractFacade<CitTurnos> {
             query.setParameter(4, end);
             return query.getResultList();
         } catch (Exception e) {
-            return null;
+            return new ArrayList();
         }
 
     }

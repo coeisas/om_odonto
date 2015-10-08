@@ -94,7 +94,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     private int motivoConsulta;
     private List<CitCitas> listaCitas;
     private boolean renderizarListaTurnos = false;
-
+    
     private CitCitas citaSeleccionada;
     private List<CitTurnos> listaTurnosSeleccionado;
     private List<CitTurnos> listaTurnosSeleccionadosRespaldo;
@@ -119,46 +119,46 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     int totalTurnosSeleccionables;//total turnos para un unico servicio
 
     private int sede;
-
+    
     @EJB
     CfgPacientesFacade pacientesFachada;
-
+    
     @EJB
     CfgUsuariosFacade usuariosFachada;
-
+    
     @EJB
     FacServicioFacade facServicioFacade;
-
+    
     @EJB
     CitCitasFacade citasFacade;
-
+    
     @EJB
     CitTurnosFacade turnosFacade;
-
+    
     @EJB
     CfgClasificacionesFacade clasificacionesFachada;
-
+    
     @EJB
     CitAutorizacionesFacade autorizacionesFacade;
-
+    
     @EJB
     CitAutorizacionesServiciosFacade autorizacionesServiciosFacade;
-
+    
     @EJB
     CfgConsultoriosFacade consultoriosFacade;
-
+    
     public CitasMasivasV2MB() {
     }
-
+    
     @PostConstruct
     public void init() {
         setListaPacientes(new LazyPacienteDataModel(pacientesFachada));
         setListaServicios((List<SelectItem>) new ArrayList());
         crearlistaServicios();
         root = createCheckboxDocuments();
-
+        diassemana = new ArrayList();
         //setListaPrestadores(prestadoresFachada.findAll());       
-        setListaTurnos((new LazyTurnosDataModel(turnosFacade, idsPrestadores(), horaIni, horaFin, getDiassemana())));
+//        setListaTurnos((new LazyTurnosDataModel(turnosFacade, idsPrestadores(), horaIni, horaFin, getDiassemana())));
         cargarEspecialidadesPrestadores();
         setListaCitas((List<CitCitas>) new ArrayList());
         listaTurnosSeleccionado = new ArrayList();
@@ -212,9 +212,9 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             setHayPacienteSeleccionado(false);
         }
         limpiarServicioMotivoConsulta();
-
+        
     }
-
+    
     public void actualizarPaciente() {
         listaTurnosSeleccionadosRespaldo.clear();
         listaControlSesionesAutorizadas.clear();
@@ -222,7 +222,6 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         listaTurnosSeleccionado.clear();
         listaCitas.clear();
         listaTurnosSeleccionado.clear();
-        getListaTurnosSeleccionadosRespaldo().clear();
         RequestContext.getCurrentInstance().update("result");
         if (pacienteSeleccionado != null) {
             setHayPacienteSeleccionado(true);
@@ -233,17 +232,17 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             setDisplayPaciente("block");
             setTipoIdentificacion(String.valueOf(pacienteSeleccionado.getTipoIdentificacion().getId()));
         }
-
+        
         limpiarServicioMotivoConsulta();
     }
-
+    
     private void crearlistaServicios() {
         List<FacServicio> servicios = facServicioFacade.buscarActivos();
         for (FacServicio servicio : servicios) {
             getListaServicios().add(new SelectItem(servicio.getIdServicio(), servicio.getNombreServicio()));
         }
     }
-
+    
     public void switchDiferenteServicio() {
         listaTurnosSeleccionado.clear();
         listaServiciosSeleccionados.clear();
@@ -257,7 +256,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
         RequestContext.getCurrentInstance().update("tabprincipal:formCita");
     }
-
+    
     public void abrirTabAutorizaciones() {
         RequestContext.getCurrentInstance().execute("window.parent.cargarTab('Autorizaciones','citas/autorizaciones.xhtml','idPaciente;" + pacienteSeleccionado.getIdPaciente().toString() + ";idServicio;" + String.valueOf(idServicio) + "')");
     }
@@ -331,7 +330,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
 //        FacesMessage msg = new FacesMessage("Turno Selected", turno.getIdTurno().toString());
 //        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
-
+    
     private void ordenarListaTurnos() {
         Collections.sort(listaTurnosSeleccionadosRespaldo, new Comparator<CitTurnos>() {
             @Override
@@ -345,7 +344,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         });
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
     }
-
+    
     public void onRowUnselect(UnselectEvent event) {
         CitTurnos turno = (CitTurnos) event.getObject();
         if (getListaTurnosSeleccionadosRespaldo().size() > 0) {
@@ -388,12 +387,12 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
                 }
             }
         }
-
+        
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
 //        FacesMessage msg = new FacesMessage("Turno Unselected", turno.getIdTurno().toString());
 //        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
-
+    
     public void insertarServicio() {
         if (pacienteSeleccionado.getIdAdministradora() != null) {
             FacServicio servicio = facServicioFacade.buscarPorIdServicio(idServicio);
@@ -442,7 +441,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().execute("PF('dlgServicio').hide()");
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
     }
-
+    
     public void quitarTurno(ActionEvent event) {
         CitTurnos t = (CitTurnos) event.getComponent().getAttributes().get("turno");
         listaTurnosSeleccionado.remove(t);
@@ -475,7 +474,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().update("idFormTurnosSeleccionados");
     }
-
+    
     private CtrlSesionesAutorizadas determinarSesionesPendiente(FacServicio servicio) {
         CtrlSesionesAutorizadas ctrlSesionesAutorizadas = null;
         for (CtrlSesionesAutorizadas csa : listaControlSesionesAutorizadas) {
@@ -486,7 +485,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         return ctrlSesionesAutorizadas;
     }
-
+    
     private TurnoServicio buscarTurnoServicio(int idTurno) {
         for (TurnoServicio ts : listaTurnoServicio) {
             if (idTurno == ts.getTurno()) {
@@ -508,7 +507,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             }
         }
     }
-
+    
     private List<Integer> idsPrestadores() {
         List<Integer> ids = new ArrayList();
         List<CfgUsuarios> prestadores = usuariosFachada.findPrestadores();
@@ -529,7 +528,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             imprimirMensaje("Error", "Necesita ingresar el paciente", FacesMessage.SEVERITY_ERROR);
             return;
         }
-
+        
         if (pacienteSeleccionado.getIdAdministradora() == null) {
             imprimirMensaje("Error", "El paciente no tiene asignado una Admnistradora y tampoco esta especificado como Particular", FacesMessage.SEVERITY_ERROR);
             return;
@@ -590,7 +589,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
                 nuevaCita.setIdPaquete(null);
                 FacAdministradora facAdministradora = pacienteSeleccionado.getIdAdministradora();
                 nuevaCita.setIdAdministradora(facAdministradora);
-
+                
                 if (!pacienteSeleccionado.getIdAdministradora().getCodigoAdministradora().equals("1")) {
                     CitAutorizaciones autorizacion = autorizacionesFacade.findAutorizacion(pacienteSeleccionado.getIdPaciente(), id_servicio, pacienteSeleccionado.getIdAdministradora().getIdAdministradora());
                     if (autorizacion != null) {
@@ -688,7 +687,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
 //                RequestContext context = RequestContext.getCurrentInstance();
 //                context.update("autorizar");
             }
-
+            
         } else {
             autorizacionvalidada = false;
             autorizacionrequerida = false;
@@ -699,7 +698,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().update("formCita");
     }
-
+    
     public void crearAutorizacion() {
         System.out.println("creando autorizacion");
         if (pacienteSeleccionado == null) {
@@ -718,12 +717,12 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         if (idServicio == 0) {
             imprimirMensaje("Error", "No ha seleccionado un servicio", FacesMessage.SEVERITY_ERROR);
             return;
-
+            
         }
         if (sesionesAutorizadas == 0) {
             imprimirMensaje("Error", "Ingrese el numero de sesiones autorizadas", FacesMessage.SEVERITY_ERROR);
             return;
-
+            
         }
         if (numAutorizacion.isEmpty()) {
             imprimirMensaje("Error", "Ingrese el numero de autorizacion", FacesMessage.SEVERITY_ERROR);
@@ -741,7 +740,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         autorizacion.setIdUsuarioCreador(loginMB.getUsuarioActual());
         autorizacion.setCerrada(false);
         autorizacionesFacade.create(autorizacion);
-
+        
         CitAutorizacionesServicios autorizacionServicio = new CitAutorizacionesServicios();
         autorizacionServicio.setFacServicio(facServicioFacade.find(idServicio));
         autorizacionServicio.setSesionesAutorizadas(sesionesAutorizadas);
@@ -753,7 +752,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         validarAutorizacion(1);
         imprimirMensaje("Información", "Autorizacion creada correctamente", FacesMessage.SEVERITY_INFO);
     }
-
+    
     public void limpiarServicioMotivoConsulta() {
         setIdServicio(0);
         setMotivoConsulta(0);
@@ -762,7 +761,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         //setListaCitas(null);
         //listaCitas = new ArrayList();
     }
-
+    
     public void liberarCampos(int ban) {
         if (ban == 1) {
             listaTurnosSeleccionado.clear();
@@ -775,6 +774,10 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             setDisplayPaciente("none");
             setMotivoConsulta(0);
             setIdServicio(0);
+            setHoraIni(null);
+            setHoraFin(null);
+            diassemana.clear();
+            setRenderizarListaTurnos(false);
         }
         //setIdPrestador(0);
         //idPaciente = 0;
@@ -785,15 +788,16 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         autorizacionvalidada = false;
         RequestContext.getCurrentInstance().update("tabprincipal:formDatosPaciente");
         RequestContext.getCurrentInstance().update("tabprincipal:formdisponibilidad");
+        RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
         RequestContext.getCurrentInstance().update("tabprincipal:formCita");
-
+        
     }
-
+    
     public void seleccionarCita(ActionEvent actionEvent) {
         int id_cita = (int) actionEvent.getComponent().getAttributes().get("id_cita");
         citaSeleccionada = citasFacade.find(id_cita);
     }
-
+    
     public void cancelarCita(ActionEvent actionEvent) {
         //System.out.println(motivoCancelacion + " - " + descripcionCancelacion);
         if (!citaSeleccionada.getCancelada() && !citaSeleccionada.getAtendida()) {
@@ -825,7 +829,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             imprimirMensaje("Error", "Cita " + citaSeleccionada.getIdCita() + " ya se encuentra cancelada o atendida", FacesMessage.SEVERITY_ERROR);
         }
         setDescripcionCancelacion(null);
-
+        
     }
 
     //-------------------------------------------------------------------
@@ -840,7 +844,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
                 //listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana());
                 //turnos importando la sede por la cual se inicio sesion
                 listaTurnos = new LazyTurnosDataModel(turnosFacade, idsprestadores, horaIni, horaFin, getDiassemana(), sede);
-
+                
                 setListaTurnos(listaTurnos);
             } else {
                 setListaTurnos(null);
@@ -850,7 +854,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().update("tabprincipal:formturnos");
     }
-
+    
     boolean diadisponible(int dia) {
         boolean ban = false;
         for (Integer i : getDiassemana()) {
@@ -861,7 +865,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         return ban;
     }
-
+    
     public void guardarDisponibilidad() {
         if (horaFin != null && horaIni != null) {
             if (horaFin.compareTo(horaIni) < 0) {
@@ -879,13 +883,13 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     public TreeNode createCheckboxDocuments() {
         List<CfgClasificaciones> listaespecialidades = usuariosFachada.findEspecialidades();
         root = new CheckboxTreeNode(new ObjetTnode(0, null, "Prestadores", false), null);
-
+        
         for (CfgClasificaciones ce : listaespecialidades) {
             if (ce != null) {
                 List<CfgUsuarios> listaprestadores = usuariosFachada.findPrestadorByEspecialidad(ce.getId());
                 if (listaprestadores.size() > 0) {
                     TreeNode especialidad = new CheckboxTreeNode(new ObjetTnode(0, ce.getId().toString(), ce.getDescripcion().toUpperCase(), false), root);
-
+                    
                     for (CfgUsuarios p : listaprestadores) {
                         String fullname = p.getPrimerNombre() + " " + (p.getSegundoNombre() != null ? p.getSegundoNombre() : "") + " " + p.getPrimerApellido() + " " + (p.getSegundoApellido() != null ? p.getSegundoApellido() : "");
                         TreeNode prestadores = new CheckboxTreeNode(new ObjetTnode(p.getIdUsuario(), null, fullname, true), especialidad);
@@ -893,10 +897,10 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
                 }
             }
         }
-
+        
         return root;
     }
-
+    
     public void onTabChange(TabChangeEvent event) {
         if (event.getTab().getTitle().equals("Prestadores")) {
             if (pacienteSeleccionado == null) {
@@ -914,7 +918,7 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
             RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
         }
     }
-
+    
     public void displaySelectedMultiple(NodeSelectEvent event) {
         if (pacienteSeleccionado != null) {
             if (selectedNodes != null && selectedNodes.length > 0) {
@@ -936,15 +940,10 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
     }
-
+    
     public void displayUnSelectedMultiple(NodeUnselectEvent event) {
         if (selectedNodes != null && selectedNodes.length > 0) {
-            idsprestadores.clear();
-            for (TreeNode node : selectedNodes) {
-                if (!node.getData().toString().equals("0")) {
-                    getIdsprestadores().add(Integer.parseInt(node.getData().toString()));
-                }
-            }
+            quitarIdPrestadorDeseleccionado(Integer.parseInt(event.getTreeNode().getData().toString()));
             setRenderizarListaTurnos(true);
             loadTurnos();
         } else {
@@ -953,6 +952,17 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().update("tabprincipal:formprestadores");
     }
+    
+    private void quitarIdPrestadorDeseleccionado(int id) {
+        Integer aux = null;
+        for (Integer i : idsprestadores) {
+            if (i == id) {
+                aux = i;
+                break;
+            }
+        }
+        idsprestadores.remove(aux);
+    }
 
     //-------------------------------------------------------------------
     //----------------------GETTERS AND SETTERS--------------------------
@@ -960,247 +970,247 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     public String getTipoIdentificacion() {
         return tipoIdentificacion;
     }
-
+    
     public void setTipoIdentificacion(String tipoIdentificacion) {
         this.tipoIdentificacion = tipoIdentificacion;
     }
-
+    
     public String getIdentificacion() {
         return identificacion;
     }
-
+    
     public void setIdentificacion(String identificacion) {
         this.identificacion = identificacion;
     }
-
+    
     public CfgPacientes getPacienteSeleccionado() {
         return pacienteSeleccionado;
     }
-
+    
     public void setPacienteSeleccionado(CfgPacientes pacienteSeleccionado) {
         this.pacienteSeleccionado = pacienteSeleccionado;
     }
-
+    
     public String getDisplayPaciente() {
         return displayPaciente;
     }
-
+    
     public void setDisplayPaciente(String displayPaciente) {
         this.displayPaciente = displayPaciente;
     }
-
+    
     public boolean isHayPacienteSeleccionado() {
         return hayPacienteSeleccionado;
     }
-
+    
     public void setHayPacienteSeleccionado(boolean hayPacienteSeleccionado) {
         this.hayPacienteSeleccionado = hayPacienteSeleccionado;
     }
-
+    
     public List<SelectItem> getListaServicios() {
         return listaServicios;
     }
-
+    
     public void setListaServicios(List<SelectItem> listaServicios) {
         this.listaServicios = listaServicios;
     }
-
+    
     public LazyDataModel<CfgPacientes> getListaPacientes() {
         return listaPacientes;
     }
-
+    
     public void setListaPacientes(LazyDataModel<CfgPacientes> listaPacientes) {
         this.listaPacientes = listaPacientes;
     }
-
+    
     public List<SelectItem> getListaEspecialidades() {
         return listaEspecialidades;
     }
-
+    
     public void setListaEspecialidades(List<SelectItem> listaEspecialidades) {
         this.listaEspecialidades = listaEspecialidades;
     }
-
+    
     public List<CitCitas> getListaCitas() {
         return listaCitas;
     }
-
+    
     public void setListaCitas(List<CitCitas> listaCitas) {
         this.listaCitas = listaCitas;
     }
-
+    
     public CfgUsuarios getPrestadorSeleccionado() {
         return prestadorSeleccionado;
     }
-
+    
     public void setPrestadorSeleccionado(CfgUsuarios prestadorSeleccionado) {
         this.prestadorSeleccionado = prestadorSeleccionado;
     }
-
+    
     public int getIdServicio() {
         return idServicio;
     }
-
+    
     public void setIdServicio(int idServicio) {
         this.idServicio = idServicio;
     }
-
+    
     public int getMotivoConsulta() {
         return motivoConsulta;
     }
-
+    
     public void setMotivoConsulta(int motivoConsulta) {
         this.motivoConsulta = motivoConsulta;
     }
-
+    
     public CitCitas getCitaSeleccionada() {
         return citaSeleccionada;
     }
-
+    
     public void setCitaSeleccionada(CitCitas citaSeleccionada) {
         this.citaSeleccionada = citaSeleccionada;
     }
-
+    
     public int getMotivoCancelacion() {
         return motivoCancelacion;
     }
-
+    
     public void setMotivoCancelacion(int motivoCancelacion) {
         this.motivoCancelacion = motivoCancelacion;
     }
-
+    
     public String getDescripcionCancelacion() {
         return descripcionCancelacion;
     }
-
+    
     public void setDescripcionCancelacion(String descripcionCancelacion) {
         this.descripcionCancelacion = descripcionCancelacion;
     }
-
+    
     public Date getHoraIni() {
         return horaIni;
     }
-
+    
     public void setHoraIni(Date horaIni) {
         this.horaIni = horaIni;
     }
-
+    
     public Date getHoraFin() {
         return horaFin;
     }
-
+    
     public void setHoraFin(Date horaFin) {
         this.horaFin = horaFin;
     }
-
+    
     public TreeNode getRoot() {
         return root;
     }
-
+    
     public void setRoot(TreeNode root) {
         this.root = root;
     }
-
+    
     public TreeNode[] getSelectedNodes() {
         return selectedNodes;
     }
-
+    
     public void setSelectedNodes(TreeNode[] selectedNodes) {
         this.selectedNodes = selectedNodes;
     }
-
+    
     public List<Integer> getIdsprestadores() {
         return idsprestadores;
     }
-
+    
     public void setIdsprestadores(List<Integer> idsprestadores) {
         this.idsprestadores = idsprestadores;
     }
-
+    
     public LazyDataModel<CitTurnos> getListaTurnos() {
         return listaTurnos;
     }
-
+    
     public void setListaTurnos(LazyDataModel<CitTurnos> listaTurnos) {
         this.listaTurnos = listaTurnos;
     }
-
+    
     public boolean isRenderizarListaTurnos() {
         return renderizarListaTurnos;
     }
-
+    
     public void setRenderizarListaTurnos(boolean renderizarListaTurnos) {
         this.renderizarListaTurnos = renderizarListaTurnos;
     }
-
+    
     public List<Integer> getDiassemana() {
         return diassemana;
     }
-
+    
     public void setDiassemana(List<Integer> diassemana) {
         this.diassemana = diassemana;
     }
-
+    
     public String getNombreServicio() {
         return nombreServicio;
     }
-
+    
     public void setNombreServicio(String nombreServicio) {
         this.nombreServicio = nombreServicio;
     }
-
+    
     public String getNumAutorizacion() {
         return numAutorizacion;
     }
-
+    
     public void setNumAutorizacion(String numAutorizacion) {
         this.numAutorizacion = numAutorizacion;
     }
-
+    
     public int getSesionesAutorizadas() {
         return sesionesAutorizadas;
     }
-
+    
     public void setSesionesAutorizadas(int sesionesAutorizadas) {
         this.sesionesAutorizadas = sesionesAutorizadas;
     }
-
+    
     public CitAutorizaciones getAutorizacionSeleccionada() {
         return autorizacionSeleccionada;
     }
-
+    
     public void setAutorizacionSeleccionada(CitAutorizaciones autorizacionSeleccionada) {
         this.autorizacionSeleccionada = autorizacionSeleccionada;
     }
-
+    
     public boolean isAutorizacionvalidada() {
         return autorizacionvalidada;
     }
-
+    
     public void setAutorizacionvalidada(boolean autorizacionvalidada) {
         this.autorizacionvalidada = autorizacionvalidada;
     }
-
+    
     public List<CitTurnos> getListaTurnosSeleccionado() {
         return listaTurnosSeleccionado;
     }
-
+    
     public void setListaTurnosSeleccionado(List<CitTurnos> listaTurnosSeleccionado) {
         this.listaTurnosSeleccionado = listaTurnosSeleccionado;
     }
-
+    
     public List<CitTurnos> getListaTurnosSeleccionadosRespaldo() {
         return listaTurnosSeleccionadosRespaldo;
     }
-
+    
     public void setListaTurnosSeleccionadosRespaldo(List<CitTurnos> listaTurnosSeleccionadosRespaldo) {
         this.listaTurnosSeleccionadosRespaldo = listaTurnosSeleccionadosRespaldo;
     }
-
+    
     public CitAutorizacionesServicios getAutorizacionServicioSeleccionado() {
         return autorizacionServicioSeleccionado;
     }
-
+    
     public void setAutorizacionServicioSeleccionado(CitAutorizacionesServicios autorizacionServicioSeleccionado) {
         this.autorizacionServicioSeleccionado = autorizacionServicioSeleccionado;
     }
@@ -1246,5 +1256,5 @@ public class CitasMasivasV2MB extends MetodosGenerales implements Serializable {
     public void setRendBtnAutorizacion(boolean rendBtnAutorizacion) {
         this.rendBtnAutorizacion = rendBtnAutorizacion;
     }
-
+    
 }
