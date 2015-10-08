@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="840" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" uuid="9f7fc654-ee1d-4b56-916d-b168aa7d7a43">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="840" columnWidth="515" leftMargin="40" rightMargin="40" topMargin="40" bottomMargin="40" uuid="9f7fc654-ee1d-4b56-916d-b168aa7d7a43">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="64"/>
+	<property name="ireport.x" value="207"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table 4">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -134,54 +134,55 @@
 		<fieldDescription><![CDATA[total]]></fieldDescription>
 	</field>
 	<field name="piePagina" class="java.lang.String"/>
+	<field name="clienteAdministradora" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="103">
+		<band height="115">
 			<frame>
-				<reportElement uuid="ff71112c-946c-4d69-83cc-3b85067e7004" style="table 4_TD" x="0" y="0" width="515" height="50"/>
+				<reportElement style="table 4_TD" x="0" y="0" width="515" height="50" uuid="ff71112c-946c-4d69-83cc-3b85067e7004"/>
 				<image scaleImage="FillFrame">
-					<reportElement uuid="ea8943ac-c473-4c91-bfa4-e2d29ad190f9" x="0" y="0" width="100" height="50"/>
+					<reportElement x="0" y="0" width="100" height="50" uuid="ea8943ac-c473-4c91-bfa4-e2d29ad190f9"/>
 					<imageExpression><![CDATA[$F{logoEmpresa}]]></imageExpression>
 				</image>
 				<textField>
-					<reportElement uuid="91e4cb86-b3ef-4103-a6f8-39ab5a83052a" style="table 4_TD" x="372" y="0" width="143" height="20" backcolor="#E6E6E6"/>
+					<reportElement style="table 4_TD" x="372" y="0" width="143" height="20" backcolor="#E6E6E6" uuid="91e4cb86-b3ef-4103-a6f8-39ab5a83052a"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="adbb9088-ba82-4177-b144-d000a00df28c" style="table 4_TD" x="372" y="20" width="143" height="30"/>
+					<reportElement style="table 4_TD" x="372" y="20" width="143" height="30" uuid="adbb9088-ba82-4177-b144-d000a00df28c"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="12"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{codigoDocumento}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="9f774698-7b92-43e9-a8f0-a4e6a2abbae4" x="100" y="0" width="272" height="13"/>
+					<reportElement x="100" y="0" width="272" height="13" uuid="9f774698-7b92-43e9-a8f0-a4e6a2abbae4"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{tituloFactura}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="26eb8335-7f3b-4783-9f06-0746672714d3" x="100" y="13" width="272" height="11"/>
+					<reportElement x="100" y="13" width="272" height="11" uuid="26eb8335-7f3b-4783-9f06-0746672714d3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{nitEmpresa}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="26eb8335-7f3b-4783-9f06-0746672714d3" x="100" y="37" width="272" height="11"/>
+					<reportElement x="100" y="37" width="272" height="11" uuid="26eb8335-7f3b-4783-9f06-0746672714d3"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{regimenEmpresa}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement uuid="9f774698-7b92-43e9-a8f0-a4e6a2abbae4" x="100" y="24" width="272" height="13"/>
+					<reportElement x="100" y="24" width="272" height="13" uuid="9f774698-7b92-43e9-a8f0-a4e6a2abbae4"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="10" isBold="true"/>
 					</textElement>
@@ -189,9 +190,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="50" width="515" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="0" y="60" width="515" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="5" y="0" width="505" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" mode="Transparent" x="5" y="0" width="510" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -199,9 +200,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="62" width="342" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="0" y="72" width="324" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="332" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="319" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -209,9 +210,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="74" width="342" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="0" y="84" width="324" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="332" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="319" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -219,9 +220,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="342" y="62" width="173" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="324" y="72" width="191" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="163" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="186" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -229,9 +230,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="342" y="74" width="173" height="12"/>
-				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="163" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="324" y="84" width="191" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
+				<textField>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="186" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -239,9 +240,9 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="342" y="86" width="173" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="324" y="96" width="191" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="163" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="186" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -249,13 +250,23 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="86" width="342" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="0" y="96" width="324" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="332" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="319" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{clienteTelefono}]]></textFieldExpression>
+				</textField>
+			</frame>
+			<frame>
+				<reportElement style="table 4_TD" x="0" y="48" width="515" height="12" uuid="b25c7224-3e97-4955-9487-4f9b79e584ef"/>
+				<textField>
+					<reportElement x="5" y="0" width="510" height="12" uuid="d93a5b7b-2f8c-4e22-b4c0-c1a0535ba8ee"/>
+					<textElement markup="html">
+						<font size="9"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{clienteAdministradora}]]></textFieldExpression>
 				</textField>
 			</frame>
 		</band>
@@ -263,17 +274,17 @@
 	<detail>
 		<band height="180" splitType="Prevent">
 			<frame>
-				<reportElement uuid="9c7fa719-646e-4283-a672-088f0e93c014" style="table 4_TD" x="0" y="0" width="515" height="55"/>
+				<reportElement style="table 4_TD" x="0" y="0" width="515" height="55" uuid="9c7fa719-646e-4283-a672-088f0e93c014"/>
 				<componentElement>
-					<reportElement uuid="73113f1d-e7f9-41dc-aada-b521cc68d682" key="table 4" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="515" height="55"/>
+					<reportElement key="table 4" stretchType="RelativeToTallestObject" mode="Transparent" x="0" y="0" width="515" height="55" uuid="73113f1d-e7f9-41dc-aada-b521cc68d682"/>
 					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 						<datasetRun subDataset="ItemsFacturaDataSource" uuid="e4929969-0f9a-4d3f-bb34-36432095c5fb">
 							<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{listaItemsFactura})]]></dataSourceExpression>
 						</datasetRun>
-						<jr:column uuid="180f3ace-5cb0-49c5-8b75-da90e703231f" width="50">
+						<jr:column width="50" uuid="180f3ace-5cb0-49c5-8b75-da90e703231f">
 							<jr:columnHeader style="table 4_TD" height="12" rowSpan="1">
 								<staticText>
-									<reportElement uuid="1c2fa9d1-2a67-4072-becf-252d102ca0a5" mode="Opaque" x="0" y="0" width="50" height="12" backcolor="#E6E6E6"/>
+									<reportElement mode="Opaque" x="0" y="0" width="50" height="12" backcolor="#E6E6E6" uuid="1c2fa9d1-2a67-4072-becf-252d102ca0a5"/>
 									<textElement textAlignment="Center">
 										<font size="9"/>
 									</textElement>
@@ -282,7 +293,7 @@
 							</jr:columnHeader>
 							<jr:detailCell height="12" rowSpan="1">
 								<textField>
-									<reportElement uuid="2faca823-b951-4eed-a895-a6f17c7a2ac5" x="0" y="0" width="50" height="12"/>
+									<reportElement x="0" y="0" width="50" height="12" uuid="2faca823-b951-4eed-a895-a6f17c7a2ac5"/>
 									<textElement textAlignment="Center">
 										<font size="9"/>
 									</textElement>
@@ -290,10 +301,10 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column uuid="4e47e7cb-0da7-4c48-9b26-b837b93b0a28" width="290">
+						<jr:column width="290" uuid="4e47e7cb-0da7-4c48-9b26-b837b93b0a28">
 							<jr:columnHeader style="table 4_TD" height="12" rowSpan="1">
 								<staticText>
-									<reportElement uuid="77ac9d19-7f87-4c42-82b3-128681d8f01a" mode="Opaque" x="0" y="0" width="290" height="12" backcolor="#E6E6E6"/>
+									<reportElement mode="Opaque" x="0" y="0" width="290" height="12" backcolor="#E6E6E6" uuid="77ac9d19-7f87-4c42-82b3-128681d8f01a"/>
 									<textElement textAlignment="Center">
 										<font size="9"/>
 									</textElement>
@@ -302,7 +313,7 @@
 							</jr:columnHeader>
 							<jr:detailCell height="12" rowSpan="1">
 								<textField>
-									<reportElement uuid="b514c4a9-87e1-4d06-8089-8d62ecc152cf" x="0" y="0" width="290" height="12"/>
+									<reportElement x="0" y="0" width="290" height="12" uuid="b514c4a9-87e1-4d06-8089-8d62ecc152cf"/>
 									<textElement>
 										<font size="9"/>
 										<paragraph leftIndent="5"/>
@@ -311,10 +322,10 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column uuid="3cc68de4-fc34-4801-b0cc-021af20c1efb" width="80">
+						<jr:column width="80" uuid="3cc68de4-fc34-4801-b0cc-021af20c1efb">
 							<jr:columnHeader style="table 4_TD" height="12" rowSpan="1">
 								<staticText>
-									<reportElement uuid="36c7f784-88a8-45a9-8d31-93e53a1adb4d" mode="Opaque" x="0" y="0" width="80" height="12" backcolor="#E6E6E6"/>
+									<reportElement mode="Opaque" x="0" y="0" width="80" height="12" backcolor="#E6E6E6" uuid="36c7f784-88a8-45a9-8d31-93e53a1adb4d"/>
 									<textElement textAlignment="Center">
 										<font size="9"/>
 									</textElement>
@@ -323,7 +334,7 @@
 							</jr:columnHeader>
 							<jr:detailCell height="12" rowSpan="1">
 								<textField>
-									<reportElement uuid="d1055aed-69e6-40f0-aab6-d9a1ad6a05d8" x="0" y="0" width="80" height="12"/>
+									<reportElement x="0" y="0" width="80" height="12" uuid="d1055aed-69e6-40f0-aab6-d9a1ad6a05d8"/>
 									<textElement textAlignment="Right">
 										<font size="9"/>
 										<paragraph rightIndent="5"/>
@@ -332,10 +343,10 @@
 								</textField>
 							</jr:detailCell>
 						</jr:column>
-						<jr:column uuid="83e7b2c1-066a-4b4c-a12d-bf46bf948dd1" width="95">
+						<jr:column width="95" uuid="83e7b2c1-066a-4b4c-a12d-bf46bf948dd1">
 							<jr:columnHeader style="table 4_TD" height="12" rowSpan="1">
 								<staticText>
-									<reportElement uuid="b0615cb8-5d60-44d5-84a7-b32b5feeeefb" mode="Opaque" x="0" y="0" width="95" height="12" backcolor="#E6E6E6"/>
+									<reportElement mode="Opaque" x="0" y="0" width="95" height="12" backcolor="#E6E6E6" uuid="b0615cb8-5d60-44d5-84a7-b32b5feeeefb"/>
 									<textElement textAlignment="Center">
 										<font size="9"/>
 									</textElement>
@@ -344,7 +355,7 @@
 							</jr:columnHeader>
 							<jr:detailCell height="12" rowSpan="1">
 								<textField>
-									<reportElement uuid="084e054e-9531-42d8-917a-0a73b34ecf12" x="0" y="0" width="95" height="12"/>
+									<reportElement x="0" y="0" width="95" height="12" uuid="084e054e-9531-42d8-917a-0a73b34ecf12"/>
 									<textElement textAlignment="Right">
 										<font size="9"/>
 										<paragraph rightIndent="5"/>
@@ -357,9 +368,9 @@
 				</componentElement>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="377" y="55" width="138" height="24"/>
+				<reportElement style="table 4_TD" positionType="Float" x="377" y="55" width="138" height="24" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="128" height="24"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="128" height="24" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement textAlignment="Right" markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -367,39 +378,39 @@
 				</textField>
 			</frame>
 			<staticText>
-				<reportElement uuid="73aedd6c-9240-4f78-b657-c0be542104a3" style="table 4_TD" x="280" y="55" width="97" height="24" backcolor="#E6E6E6"/>
+				<reportElement style="table 4_TD" x="280" y="55" width="97" height="24" backcolor="#E6E6E6" uuid="73aedd6c-9240-4f78-b657-c0be542104a3"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<text><![CDATA[ TOTAL]]></text>
 			</staticText>
 			<textField>
-				<reportElement uuid="abacb223-12b5-4833-a83a-be14d1208b67" style="table 4_TD" x="0" y="55" width="280" height="24"/>
+				<reportElement style="table 4_TD" x="0" y="55" width="280" height="24" uuid="abacb223-12b5-4833-a83a-be14d1208b67"/>
 				<textElement>
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{observaciones}]]></textFieldExpression>
 			</textField>
 			<frame>
-				<reportElement uuid="97299c74-398e-4097-bf36-df75d3e61678" style="table 4_TD" x="0" y="91" width="251" height="73"/>
+				<reportElement style="table 4_TD" x="0" y="91" width="251" height="73" uuid="97299c74-398e-4097-bf36-df75d3e61678"/>
 				<staticText>
-					<reportElement uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d" x="5" y="59" width="240" height="14"/>
+					<reportElement x="5" y="59" width="240" height="14" uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[Firma]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="4cf04521-e37c-48f5-ae97-7ecb464321b8" x="5" y="59" width="240" height="1"/>
+					<reportElement x="5" y="59" width="240" height="1" uuid="4cf04521-e37c-48f5-ae97-7ecb464321b8"/>
 				</line>
 				<staticText>
-					<reportElement uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d" x="5" y="2" width="240" height="14"/>
+					<reportElement x="5" y="2" width="240" height="14" uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d"/>
 					<textElement textAlignment="Left"/>
 					<text><![CDATA[Autoriza:]]></text>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" style="table 4_TD" positionType="Float" x="0" y="79" width="515" height="12"/>
+				<reportElement style="table 4_TD" positionType="Float" x="0" y="79" width="515" height="12" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="505" height="12"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="5" y="0" width="505" height="12" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
@@ -407,25 +418,25 @@
 				</textField>
 			</frame>
 			<frame>
-				<reportElement uuid="531b86d6-75d4-418b-9672-15f0909844cb" style="table 4_TD" x="251" y="91" width="264" height="73"/>
+				<reportElement style="table 4_TD" x="251" y="91" width="264" height="73" uuid="531b86d6-75d4-418b-9672-15f0909844cb"/>
 				<staticText>
-					<reportElement uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d" x="5" y="59" width="254" height="14"/>
+					<reportElement x="5" y="59" width="254" height="14" uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d"/>
 					<textElement textAlignment="Center"/>
 					<text><![CDATA[Firma]]></text>
 				</staticText>
 				<line>
-					<reportElement uuid="e19a43dd-fafc-4519-ba00-87c46d4064ba" x="5" y="59" width="254" height="1"/>
+					<reportElement x="5" y="59" width="254" height="1" uuid="e19a43dd-fafc-4519-ba00-87c46d4064ba"/>
 				</line>
 				<staticText>
-					<reportElement uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d" x="5" y="3" width="254" height="14"/>
+					<reportElement x="5" y="3" width="254" height="14" uuid="0996d54e-4635-42bd-9ebd-ecb9cbe4f54d"/>
 					<textElement textAlignment="Left"/>
 					<text><![CDATA[Acepta:]]></text>
 				</staticText>
 			</frame>
 			<frame>
-				<reportElement uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf" positionType="Float" x="0" y="164" width="515" height="14"/>
+				<reportElement positionType="Float" x="0" y="164" width="515" height="14" uuid="80c48727-2be9-4b8f-ae92-9fbe6a16dbdf"/>
 				<textField isStretchWithOverflow="true">
-					<reportElement uuid="a520721a-4d21-4583-941d-c71961057013" positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="515" height="14"/>
+					<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="515" height="14" uuid="a520721a-4d21-4583-941d-c71961057013"/>
 					<textElement textAlignment="Center" markup="html">
 						<font fontName="SansSerif" size="9"/>
 					</textElement>
