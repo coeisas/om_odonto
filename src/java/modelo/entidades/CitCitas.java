@@ -42,7 +42,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CitCitas.findByFechaRegistro", query = "SELECT c FROM CitCitas c WHERE c.fechaRegistro = :fechaRegistro"),
     @NamedQuery(name = "CitCitas.findByFechaCancelacion", query = "SELECT c FROM CitCitas c WHERE c.fechaCancelacion = :fechaCancelacion"),
     @NamedQuery(name = "CitCitas.findByFacturada", query = "SELECT c FROM CitCitas c WHERE c.facturada = :facturada"),
-    @NamedQuery(name = "CitCitas.findByNoPaqAplicado", query = "SELECT c FROM CitCitas c WHERE c.noPaqAplicado = :noPaqAplicado")})
+    @NamedQuery(name = "CitCitas.findByNoPaqAplicado", query = "SELECT c FROM CitCitas c WHERE c.noPaqAplicado = :noPaqAplicado"),
+    @NamedQuery(name = "CitCitas.findByTieneRegAsociado", query = "SELECT c FROM CitCitas c WHERE c.tieneRegAsociado = :tieneRegAsociado"),
+    @NamedQuery(name = "CitCitas.findByNumAutorizacion", query = "SELECT c FROM CitCitas c WHERE c.numAutorizacion = :numAutorizacion")})
 public class CitCitas implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -68,40 +70,42 @@ public class CitCitas implements Serializable {
     private Boolean facturada;
     @Column(name = "no_paq_aplicado")
     private Integer noPaqAplicado;
-    @JoinColumn(name = "id_servicio", referencedColumnName = "id_servicio")
-    @ManyToOne
-    private FacServicio idServicio;
-    @JoinColumn(name = "id_administradora", referencedColumnName = "id_administradora")
-    @ManyToOne
-    private FacAdministradora idAdministradora;
-    @JoinColumn(name = "id_turno", referencedColumnName = "id_turno", nullable = false)
-    @ManyToOne(optional = false)
-    private CitTurnos idTurno;
-    @JoinColumn(name = "id_paquete", referencedColumnName = "id_paq_maestro")
-    @ManyToOne
-    private CitPaqMaestro idPaquete;
-    @JoinColumn(name = "id_autorizacion", referencedColumnName = "id_autorizacion")
-    @ManyToOne
-    private CitAutorizaciones idAutorizacion;
-    @JoinColumn(name = "id_prestador", referencedColumnName = "id_usuario", nullable = false)
-    @ManyToOne(optional = false)
-    private CfgUsuarios idPrestador;
-    @JoinColumn(name = "id_paciente", referencedColumnName = "id_paciente", nullable = false)
-    @ManyToOne(optional = false)
-    private CfgPacientes idPaciente;
+    @Column(name = "tiene_reg_asociado")
+    private Boolean tieneRegAsociado;
+    @Column(name = "num_autorizacion", length = 15)
+    private String numAutorizacion;
     @JoinColumn(name = "motivo_cancelacion", referencedColumnName = "id")
     @ManyToOne
     private CfgClasificaciones motivoCancelacion;
     @JoinColumn(name = "tipo_cita", referencedColumnName = "id")
     @ManyToOne
     private CfgClasificaciones tipoCita;
-    @OneToMany(mappedBy = "idCita")
-    private List<HcRegistro> hcRegistroList;
+    @JoinColumn(name = "id_paciente", referencedColumnName = "id_paciente", nullable = false)
+    @ManyToOne(optional = false)
+    private CfgPacientes idPaciente;
+    @JoinColumn(name = "id_prestador", referencedColumnName = "id_usuario", nullable = false)
+    @ManyToOne(optional = false)
+    private CfgUsuarios idPrestador;
+    @JoinColumn(name = "id_autorizacion", referencedColumnName = "id_autorizacion")
+    @ManyToOne
+    private CitAutorizaciones idAutorizacion;
+    @JoinColumn(name = "id_paquete", referencedColumnName = "id_paq_maestro")
+    @ManyToOne
+    private CitPaqMaestro idPaquete;
+    @JoinColumn(name = "id_turno", referencedColumnName = "id_turno", nullable = false)
+    @ManyToOne(optional = false)
+    private CitTurnos idTurno;
+    @JoinColumn(name = "id_administradora", referencedColumnName = "id_administradora")
+    @ManyToOne
+    private FacAdministradora idAdministradora;
+    @JoinColumn(name = "id_servicio", referencedColumnName = "id_servicio")
+    @ManyToOne
+    private FacServicio idServicio;
     @OneToMany(mappedBy = "idCita")
     private List<FacFacturaPaciente> facFacturaPacienteList;
-    @Column(name = "tiene_reg_asociado")
-    private Boolean tieneRegAsociado;
-    
+    @OneToMany(mappedBy = "idCita")
+    private List<HcRegistro> hcRegistroList;
+
     public CitCitas() {
     }
 
@@ -181,60 +185,20 @@ public class CitCitas implements Serializable {
         this.noPaqAplicado = noPaqAplicado;
     }
 
-    public FacServicio getIdServicio() {
-        return idServicio;
+    public Boolean getTieneRegAsociado() {
+        return tieneRegAsociado;
     }
 
-    public void setIdServicio(FacServicio idServicio) {
-        this.idServicio = idServicio;
+    public void setTieneRegAsociado(Boolean tieneRegAsociado) {
+        this.tieneRegAsociado = tieneRegAsociado;
     }
 
-    public FacAdministradora getIdAdministradora() {
-        return idAdministradora;
+    public String getNumAutorizacion() {
+        return numAutorizacion;
     }
 
-    public void setIdAdministradora(FacAdministradora idAdministradora) {
-        this.idAdministradora = idAdministradora;
-    }
-
-    public CitTurnos getIdTurno() {
-        return idTurno;
-    }
-
-    public void setIdTurno(CitTurnos idTurno) {
-        this.idTurno = idTurno;
-    }
-
-    public CitPaqMaestro getIdPaquete() {
-        return idPaquete;
-    }
-
-    public void setIdPaquete(CitPaqMaestro idPaquete) {
-        this.idPaquete = idPaquete;
-    }
-
-    public CitAutorizaciones getIdAutorizacion() {
-        return idAutorizacion;
-    }
-
-    public void setIdAutorizacion(CitAutorizaciones idAutorizacion) {
-        this.idAutorizacion = idAutorizacion;
-    }
-
-    public CfgUsuarios getIdPrestador() {
-        return idPrestador;
-    }
-
-    public void setIdPrestador(CfgUsuarios idPrestador) {
-        this.idPrestador = idPrestador;
-    }
-
-    public CfgPacientes getIdPaciente() {
-        return idPaciente;
-    }
-
-    public void setIdPaciente(CfgPacientes idPaciente) {
-        this.idPaciente = idPaciente;
+    public void setNumAutorizacion(String numAutorizacion) {
+        this.numAutorizacion = numAutorizacion;
     }
 
     public CfgClasificaciones getMotivoCancelacion() {
@@ -252,22 +216,61 @@ public class CitCitas implements Serializable {
     public void setTipoCita(CfgClasificaciones tipoCita) {
         this.tipoCita = tipoCita;
     }
-    
-    public Boolean getTieneRegAsociado() {
-        return tieneRegAsociado;
+
+    public CfgPacientes getIdPaciente() {
+        return idPaciente;
     }
 
-    public void setTieneRegAsociado(Boolean tieneRegAsociado) {
-        this.tieneRegAsociado = tieneRegAsociado;
+    public void setIdPaciente(CfgPacientes idPaciente) {
+        this.idPaciente = idPaciente;
     }
 
-    @XmlTransient
-    public List<HcRegistro> getHcRegistroList() {
-        return hcRegistroList;
+    public CfgUsuarios getIdPrestador() {
+        return idPrestador;
     }
 
-    public void setHcRegistroList(List<HcRegistro> hcRegistroList) {
-        this.hcRegistroList = hcRegistroList;
+    public void setIdPrestador(CfgUsuarios idPrestador) {
+        this.idPrestador = idPrestador;
+    }
+
+    public CitAutorizaciones getIdAutorizacion() {
+        return idAutorizacion;
+    }
+
+    public void setIdAutorizacion(CitAutorizaciones idAutorizacion) {
+        this.idAutorizacion = idAutorizacion;
+    }
+
+    public CitPaqMaestro getIdPaquete() {
+        return idPaquete;
+    }
+
+    public void setIdPaquete(CitPaqMaestro idPaquete) {
+        this.idPaquete = idPaquete;
+    }
+
+    public CitTurnos getIdTurno() {
+        return idTurno;
+    }
+
+    public void setIdTurno(CitTurnos idTurno) {
+        this.idTurno = idTurno;
+    }
+
+    public FacAdministradora getIdAdministradora() {
+        return idAdministradora;
+    }
+
+    public void setIdAdministradora(FacAdministradora idAdministradora) {
+        this.idAdministradora = idAdministradora;
+    }
+
+    public FacServicio getIdServicio() {
+        return idServicio;
+    }
+
+    public void setIdServicio(FacServicio idServicio) {
+        this.idServicio = idServicio;
     }
 
     @XmlTransient
@@ -277,6 +280,15 @@ public class CitCitas implements Serializable {
 
     public void setFacFacturaPacienteList(List<FacFacturaPaciente> facFacturaPacienteList) {
         this.facFacturaPacienteList = facFacturaPacienteList;
+    }
+
+    @XmlTransient
+    public List<HcRegistro> getHcRegistroList() {
+        return hcRegistroList;
+    }
+
+    public void setHcRegistroList(List<HcRegistro> hcRegistroList) {
+        this.hcRegistroList = hcRegistroList;
     }
 
     @Override

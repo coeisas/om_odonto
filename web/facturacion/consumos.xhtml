@@ -296,7 +296,7 @@
         <h:form id="IdFormDialogs">
             <p:dialog header="Seleccionar paciente" widgetVar="dlgSeleccionarPaciente" modal="true" resizable="false" closable="true">                
                 <p:ajax event="close" oncomplete="PF('wvTablaPacientes').clearFilters(); PF('wvTablaPacientes').getPaginator().setPage(0);"/>
-                
+
                 <p:dataTable
                     id="IdTablaPacientes"
                     widgetVar="wvTablaPacientes"
@@ -347,7 +347,8 @@
                                 update="IdPanelAgregarServicio"/>
                         <f:selectItems value="#{consumosMB.listaServiciosManual}" var="servicio" itemLabel="#{servicio.facServicio.idServicio} - #{servicio.facServicio.nombreServicio}" itemValue="#{servicio.facServicio.idServicio}"/>
                     </p:selectOneMenu>
-
+                    <p:outputLabel styleClass="campoNoObligatorio" value="No Autorzacion"/>
+                    <p:inputText maxlength="15" value="#{consumosMB.autorizacionServicio}"/>
                     <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
                     <p:calendar navigator="true" locale="es" value="#{consumosMB.fechaServicio}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />
                     <h:outputText styleClass="campoObligatorio" value="Tipo tarifa"/>
@@ -484,6 +485,8 @@
                                 update="IdPanelAgregarInsumo"/>
                         <f:selectItems value="#{consumosMB.listaInsumosManual}" var="insumo" itemLabel="#{insumo.cfgInsumo.idInsumo} - #{insumo.cfgInsumo.nombreInsumo}" itemValue="#{insumo.cfgInsumo.idInsumo}"/>
                     </p:selectOneMenu>
+                    <p:outputLabel styleClass="campoNoObligatorio" value="No Autorzacion"/>
+                    <p:inputText maxlength="15" value="#{consumosMB.autorizacionInsumo}"/>
                     <p:outputLabel styleClass="campoObligatorio" value="Fecha" />
                     <p:calendar navigator="true" locale="es" value="#{consumosMB.fechaInsumo}" pattern="dd/MM/yyyy HH:mm:ss" mask="true" size="23" style="width: 200px;" />
                     <p:outputLabel value="Cantidad" styleClass="campoObligatorio"/>

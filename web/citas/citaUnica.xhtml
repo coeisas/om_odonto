@@ -98,6 +98,9 @@
                                 <p:ajax event="change" update="@form"/>
                             </p:selectOneMenu>                                
                             <p:outputLabel styleClass="labelFormularioBold" value="No Autorizacion:" rendered="#{!citasMB.rendBtnAutorizacion}"/>
+                            <p:inputText styleClass="campoFormulario" maxlength="15" value="#{citasMB.numeroAutorizacion}">
+                                <p:ajax event="keyup" update="@none"/>
+                            </p:inputText>
                             <p:outputLabel styleClass="labelFormulario" id="campoautorizacion" value="#{citasMB.autorizacionSeleccionada.numAutorizacion}"/>
 
                             <p:commandButton 

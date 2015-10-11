@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "FacConsumoServicio.findByValorFinal", query = "SELECT f FROM FacConsumoServicio f WHERE f.valorFinal = :valorFinal"),
     @NamedQuery(name = "FacConsumoServicio.findByTipoTarifa", query = "SELECT f FROM FacConsumoServicio f WHERE f.tipoTarifa = :tipoTarifa"),
     @NamedQuery(name = "FacConsumoServicio.findByDiagnosticoPrincipal", query = "SELECT f FROM FacConsumoServicio f WHERE f.diagnosticoPrincipal = :diagnosticoPrincipal"),
-    @NamedQuery(name = "FacConsumoServicio.findByDiagnosticoRelacionado", query = "SELECT f FROM FacConsumoServicio f WHERE f.diagnosticoRelacionado = :diagnosticoRelacionado")})
+    @NamedQuery(name = "FacConsumoServicio.findByDiagnosticoRelacionado", query = "SELECT f FROM FacConsumoServicio f WHERE f.diagnosticoRelacionado = :diagnosticoRelacionado"),
+    @NamedQuery(name = "FacConsumoServicio.findByNumeroAutorizacion", query = "SELECT f FROM FacConsumoServicio f WHERE f.numeroAutorizacion = :numeroAutorizacion")})
 public class FacConsumoServicio implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -63,15 +64,17 @@ public class FacConsumoServicio implements Serializable {
     private String diagnosticoPrincipal;
     @Column(name = "diagnostico_relacionado", length = 2147483647)
     private String diagnosticoRelacionado;
-    @JoinColumn(name = "id_servicio", referencedColumnName = "id_servicio")
-    @ManyToOne
-    private FacServicio idServicio;
-    @JoinColumn(name = "id_prestador", referencedColumnName = "id_usuario")
-    @ManyToOne
-    private CfgUsuarios idPrestador;
+    @Column(name = "numero_autorizacion", length = 15)
+    private String numeroAutorizacion;
     @JoinColumn(name = "id_paciente", referencedColumnName = "id_paciente", nullable = false)
     @ManyToOne(optional = false)
     private CfgPacientes idPaciente;
+    @JoinColumn(name = "id_prestador", referencedColumnName = "id_usuario")
+    @ManyToOne
+    private CfgUsuarios idPrestador;
+    @JoinColumn(name = "id_servicio", referencedColumnName = "id_servicio")
+    @ManyToOne
+    private FacServicio idServicio;
 
     public FacConsumoServicio() {
     }
@@ -149,12 +152,20 @@ public class FacConsumoServicio implements Serializable {
         this.diagnosticoRelacionado = diagnosticoRelacionado;
     }
 
-    public FacServicio getIdServicio() {
-        return idServicio;
+    public String getNumeroAutorizacion() {
+        return numeroAutorizacion;
     }
 
-    public void setIdServicio(FacServicio idServicio) {
-        this.idServicio = idServicio;
+    public void setNumeroAutorizacion(String numeroAutorizacion) {
+        this.numeroAutorizacion = numeroAutorizacion;
+    }
+
+    public CfgPacientes getIdPaciente() {
+        return idPaciente;
+    }
+
+    public void setIdPaciente(CfgPacientes idPaciente) {
+        this.idPaciente = idPaciente;
     }
 
     public CfgUsuarios getIdPrestador() {
@@ -165,12 +176,12 @@ public class FacConsumoServicio implements Serializable {
         this.idPrestador = idPrestador;
     }
 
-    public CfgPacientes getIdPaciente() {
-        return idPaciente;
+    public FacServicio getIdServicio() {
+        return idServicio;
     }
 
-    public void setIdPaciente(CfgPacientes idPaciente) {
-        this.idPaciente = idPaciente;
+    public void setIdServicio(FacServicio idServicio) {
+        this.idServicio = idServicio;
     }
 
     @Override

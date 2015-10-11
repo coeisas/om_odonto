@@ -59,16 +59,16 @@ public class RipsUs implements Serializable {
     @Column(name = "tip_usu", length = 1)
     private String tipUsu;
     @Size(max = 10)
-    @Column(name = "pri_ape", length = 10)
+    @Column(name = "pri_ape", length = 21)
     private String priApe;
     @Size(max = 10)
-    @Column(name = "seg_ape", length = 10)
+    @Column(name = "seg_ape", length = 21)
     private String segApe;
     @Size(max = 6)
-    @Column(name = "pri_nom", length = 6)
+    @Column(name = "pri_nom", length = 21)
     private String priNom;
     @Size(max = 30)
-    @Column(name = "seg_nom", length = 30)
+    @Column(name = "seg_nom", length = 21)
     private String segNom;
     @Column(name = "edad")
     private Integer edad;

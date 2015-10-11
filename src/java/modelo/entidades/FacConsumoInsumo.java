@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "FacConsumoInsumo.findByFecha", query = "SELECT f FROM FacConsumoInsumo f WHERE f.fecha = :fecha"),
     @NamedQuery(name = "FacConsumoInsumo.findByCantidad", query = "SELECT f FROM FacConsumoInsumo f WHERE f.cantidad = :cantidad"),
     @NamedQuery(name = "FacConsumoInsumo.findByValorUnitario", query = "SELECT f FROM FacConsumoInsumo f WHERE f.valorUnitario = :valorUnitario"),
-    @NamedQuery(name = "FacConsumoInsumo.findByValorFinal", query = "SELECT f FROM FacConsumoInsumo f WHERE f.valorFinal = :valorFinal")})
+    @NamedQuery(name = "FacConsumoInsumo.findByValorFinal", query = "SELECT f FROM FacConsumoInsumo f WHERE f.valorFinal = :valorFinal"),
+    @NamedQuery(name = "FacConsumoInsumo.findByNumeroAutorizacion", query = "SELECT f FROM FacConsumoInsumo f WHERE f.numeroAutorizacion = :numeroAutorizacion")})
 public class FacConsumoInsumo implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -54,15 +55,17 @@ public class FacConsumoInsumo implements Serializable {
     private Double valorUnitario;
     @Column(name = "valor_final", precision = 17, scale = 17)
     private Double valorFinal;
-    @JoinColumn(name = "id_prestador", referencedColumnName = "id_usuario")
-    @ManyToOne
-    private CfgUsuarios idPrestador;
-    @JoinColumn(name = "id_paciente", referencedColumnName = "id_paciente", nullable = false)
-    @ManyToOne(optional = false)
-    private CfgPacientes idPaciente;
+    @Column(name = "numero_autorizacion", length = 15)
+    private String numeroAutorizacion;
     @JoinColumn(name = "id_insumo", referencedColumnName = "id_insumo")
     @ManyToOne
     private CfgInsumo idInsumo;
+    @JoinColumn(name = "id_paciente", referencedColumnName = "id_paciente", nullable = false)
+    @ManyToOne(optional = false)
+    private CfgPacientes idPaciente;
+    @JoinColumn(name = "id_prestador", referencedColumnName = "id_usuario")
+    @ManyToOne
+    private CfgUsuarios idPrestador;
 
     public FacConsumoInsumo() {
     }
@@ -116,12 +119,20 @@ public class FacConsumoInsumo implements Serializable {
         this.valorFinal = valorFinal;
     }
 
-    public CfgUsuarios getIdPrestador() {
-        return idPrestador;
+    public String getNumeroAutorizacion() {
+        return numeroAutorizacion;
     }
 
-    public void setIdPrestador(CfgUsuarios idPrestador) {
-        this.idPrestador = idPrestador;
+    public void setNumeroAutorizacion(String numeroAutorizacion) {
+        this.numeroAutorizacion = numeroAutorizacion;
+    }
+
+    public CfgInsumo getIdInsumo() {
+        return idInsumo;
+    }
+
+    public void setIdInsumo(CfgInsumo idInsumo) {
+        this.idInsumo = idInsumo;
     }
 
     public CfgPacientes getIdPaciente() {
@@ -132,12 +143,12 @@ public class FacConsumoInsumo implements Serializable {
         this.idPaciente = idPaciente;
     }
 
-    public CfgInsumo getIdInsumo() {
-        return idInsumo;
+    public CfgUsuarios getIdPrestador() {
+        return idPrestador;
     }
 
-    public void setIdInsumo(CfgInsumo idInsumo) {
-        this.idInsumo = idInsumo;
+    public void setIdPrestador(CfgUsuarios idPrestador) {
+        this.idPrestador = idPrestador;
     }
 
     @Override

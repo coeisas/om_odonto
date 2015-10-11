@@ -101,7 +101,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     private CfgPacientes pacienteSeleccionadoTabla;
     private CfgPacientes pacienteSeleccionado;
     private FacManualTarifario manualTarifarioPaciente;
-
+    
     private List<FacManualTarifarioServicio> listaServiciosManual;
     private List<FacManualTarifarioInsumo> listaInsumosManual;
     private List<FacManualTarifarioMedicamento> listaMedicamentosManual;
@@ -145,6 +145,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     private double valorFinalServicio = 0;
     private String diagnosticoPrincipal = "";
     private String diagnosticoRelacionado = "";
+    private String autorizacionServicio = "";
     //-------------INSUMOS--------------
     private String tituloTabInsumos = "Insumos (0)";
     private String idPrestadorInsumo = "";
@@ -154,6 +155,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     //private String tipoTarifaInsumo;
     private double valorUnitarioInsumo = 0;
     private double valorFinalInsumo = 0;
+    private String autorizacionInsumo = "";
     //-------------MEDICAMENTOS--------------
     private String tituloTabMedicamentos = "Medicamentos (0)";
     private String idPrestadorMedicamento = "";
@@ -181,7 +183,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         listaPacientes = new LazyPacienteDataModel(pacientesFacade);
         //recargarListas();
     }
-
+    
     public ConsumosMB() {
     }
 
@@ -193,17 +195,17 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         insumoConsumoSeleccionado = null;
         medicamentoConsumoSeleccionado = null;
         paqueteConsumoSeleccionado = null;
-
+        
         listaServiciosConsumo = new ArrayList<>();
         listaInsumosConsumo = new ArrayList<>();
         listaMedicamentosConsumo = new ArrayList<>();
         listaPaquetesConsumo = new ArrayList<>();
-
+        
         listaServiciosConsumoFiltro = new ArrayList<>();
         listaInsumosConsumoFiltro = new ArrayList<>();
         listaMedicamentosConsumoFiltro = new ArrayList<>();
         listaPaquetesConsumoFiltro = new ArrayList<>();
-
+        
         FilaDataTable nuevaFila;
         if (pacienteSeleccionado != null) {
             List<FacConsumoServicio> listaServiciosCon = pacienteSeleccionado.getFacConsumoServicioList();
@@ -275,26 +277,26 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         if (pacienteTmp != null) {
             pacienteSeleccionadoTabla = pacienteTmp;
             cargarPaciente();
-
+            
         } else {
             RequestContext.getCurrentInstance().execute("PF('dlgSeleccionarPaciente').show();");
         }
     }
-
+    
     public void recargarPaciente() {//funcion que se llama cada vez que se carga completamente la pagina consumos.xhtml
         if (pacienteSeleccionadoTabla != null) {
             cargarPaciente();
         }
     }
-
+    
     public void cargarPaciente() {//cargar un paciente desde del dialogo de buscar paciente o al digitar una identificacion valida(esta en pacientes)
         if (pacienteSeleccionadoTabla != null) {
-
+            
             pacienteSeleccionado = pacientesFacade.find(pacienteSeleccionadoTabla.getIdPaciente());
             identificacionPaciente = "";
             mensajeConfiguracion = null;
             FacContrato contratoSeleccionado = null;
-
+            
             if (pacienteSeleccionado.getIdAdministradora() != null) {//SE VALIDA QUE SE PUEDA OBTENER EL MANUAL TARIFARIO
                 if (pacienteSeleccionado.getRegimen().getId() != null) {
                     FacAdministradora ad = pacienteSeleccionado.getIdAdministradora();
@@ -367,7 +369,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             } else {
                 administradoraPaciente = "";
             }
-
+            
             RequestContext.getCurrentInstance().execute("PF('dlgSeleccionarPaciente').hide();");
             RequestContext.getCurrentInstance().update("IdFormConsumos");
         } else {
@@ -385,7 +387,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             return null;
         }
     }
-
+    
     public void cambiaServicio() {//se debe determinar que tipos de tarifas contiene el servicio
         idPrestadorServicio = "";
         fechaServicio = new Date();
@@ -397,7 +399,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         valorFinalServicio = 0;
         calcularValoresServicio();
     }
-
+    
     private FacManualTarifarioServicio buscarEnListaServiciosManual(int idServicio) {
         if (listaServiciosManual != null && !listaServiciosManual.isEmpty()) {
             for (FacManualTarifarioServicio servicioManual : listaServiciosManual) {
@@ -408,7 +410,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         return null;
     }
-
+    
     public void calcularValoresServicio() {
         if (validarNoVacio(idServicioManual)) {
             FacManualTarifarioServicio s = buscarEnListaServiciosManual(Integer.parseInt(idServicioManual));
@@ -417,7 +419,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             valorFinalServicio = valorUnitarioServicio * cantidadServicio;
         }
     }
-
+    
     public void cargarDialogoAgregarServicio() {
         listaServiciosManual = manualTarifarioPaciente.getFacManualTarifarioServicioList();
         if (listaServiciosManual != null && !listaServiciosManual.isEmpty()) {
@@ -427,7 +429,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarServicio");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarServicio').show();");
     }
-
+    
     public void agregarServicio() {
         if (validacionCampoVacio(idServicioManual, "Servicio")) {
             return;
@@ -450,13 +452,17 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         nuevoConsumoServicio.setTipoTarifa(tipoTarifaServicio);
         nuevoConsumoServicio.setValorUnitario(valorUnitarioServicio);
         nuevoConsumoServicio.setValorFinal(valorFinalServicio);
+        if (!autorizacionServicio.trim().isEmpty()) {
+            nuevoConsumoServicio.setNumeroAutorizacion(autorizacionServicio);
+        }
         consumoServicioFacade.create(nuevoConsumoServicio);
+        autorizacionServicio = "";
         pacienteSeleccionado = pacientesFacade.find(pacienteSeleccionado.getIdPaciente());//recargar el manual        
         recargarListas();
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarServicio').hide(); PF('wvTablaServiciosConsumo').clearFilters(); PF('wvTablaServiciosConsumo').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormConsumos:IdTabView");
     }
-
+    
     public void quitarServicio() {
         if (servicioConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún servicio de la tabla", FacesMessage.SEVERITY_ERROR);
@@ -464,7 +470,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().execute("PF('dialogoQuitarServicio').show();");
     }
-
+    
     public void confirmarQuitarServicio() {
         if (servicioConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún servicio", FacesMessage.SEVERITY_ERROR);
@@ -494,7 +500,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         valorFinalPaquete = 0;
         calcularValoresPaquete();
     }
-
+    
     private FacManualTarifarioPaquete buscarEnListaPaquetesManual(int idPaquete) {
         if (listaPaquetesManual != null && !listaPaquetesManual.isEmpty()) {
             for (FacManualTarifarioPaquete servicioManual : listaPaquetesManual) {
@@ -505,7 +511,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         return null;
     }
-
+    
     public void calcularValoresPaquete() {
         if (validarNoVacio(idPaqueteManual)) {
             FacManualTarifarioPaquete s = buscarEnListaPaquetesManual(Integer.parseInt(idPaqueteManual));
@@ -514,7 +520,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             valorFinalPaquete = valorUnitarioPaquete * cantidadPaquete;
         }
     }
-
+    
     public void cargarDialogoAgregarPaquete() {
         listaPaquetesManual = manualTarifarioPaciente.getFacManualTarifarioPaqueteList();
         if (listaPaquetesManual != null && !listaPaquetesManual.isEmpty()) {
@@ -524,7 +530,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarPaquete");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarPaquete').show();");
     }
-
+    
     public void agregarPaquete() {
         if (validacionCampoVacio(idPaqueteManual, "Paquete")) {
             return;
@@ -551,7 +557,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarPaquete').hide(); PF('wvTablaPaquetesConsumo').clearFilters(); PF('wvTablaPaquetesConsumo').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormConsumos:IdTabView");
     }
-
+    
     public void quitarPaquete() {
         if (paqueteConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún paquete de la tabla", FacesMessage.SEVERITY_ERROR);
@@ -559,7 +565,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().execute("PF('dialogoQuitarPaquete').show();");
     }
-
+    
     public void confirmarQuitarPaquete() {
         if (paqueteConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún paquete", FacesMessage.SEVERITY_ERROR);
@@ -589,7 +595,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         valorFinalInsumo = 0;
         calcularValoresInsumo();
     }
-
+    
     private FacManualTarifarioInsumo buscarEnListaInsumosManual(int idInsumo) {
         if (listaInsumosManual != null && !listaInsumosManual.isEmpty()) {
             for (FacManualTarifarioInsumo servicioManual : listaInsumosManual) {
@@ -600,7 +606,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         return null;
     }
-
+    
     public void calcularValoresInsumo() {
         if (validarNoVacio(idInsumoManual)) {
             FacManualTarifarioInsumo s = buscarEnListaInsumosManual(Integer.parseInt(idInsumoManual));
@@ -609,7 +615,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             valorFinalInsumo = valorUnitarioInsumo * cantidadInsumo;
         }
     }
-
+    
     public void cargarDialogoAgregarInsumo() {
         listaInsumosManual = manualTarifarioPaciente.getFacManualTarifarioInsumoList();
         if (listaInsumosManual != null && !listaInsumosManual.isEmpty()) {
@@ -619,7 +625,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarInsumo");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarInsumo').show();");
     }
-
+    
     public void agregarInsumo() {
         if (validacionCampoVacio(idInsumoManual, "Insumo")) {
             return;
@@ -640,13 +646,17 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         //nuevoConsumoInsumo.setTipoTarifa(clasificacionesFacade.find(Integer.parseInt(tipoTarifaInsumo)));
         nuevoConsumoInsumo.setValorUnitario(valorUnitarioInsumo);
         nuevoConsumoInsumo.setValorFinal(valorFinalInsumo);
+        if (!autorizacionInsumo.trim().isEmpty()) {
+            nuevoConsumoInsumo.setNumeroAutorizacion(autorizacionInsumo);
+        }
         consumoInsumoFacade.create(nuevoConsumoInsumo);
+        autorizacionInsumo = "";
         pacienteSeleccionado = pacientesFacade.find(pacienteSeleccionado.getIdPaciente());//recargar el manual        
         recargarListas();
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarInsumo').hide(); PF('wvTablaInsumosConsumo').clearFilters(); PF('wvTablaInsumosConsumo').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormConsumos:IdTabView");
     }
-
+    
     public void quitarInsumo() {
         if (insumoConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún inusmo de la tabla", FacesMessage.SEVERITY_ERROR);
@@ -654,7 +664,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().execute("PF('dialogoQuitarInsumo').show();");
     }
-
+    
     public void confirmarQuitarInsumo() {
         if (insumoConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún insumo", FacesMessage.SEVERITY_ERROR);
@@ -684,7 +694,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         valorFinalMedicamento = 0;
         calcularValoresMedicamento();
     }
-
+    
     private FacManualTarifarioMedicamento buscarEnListaMedicamentosManual(int idMedicamento) {
         if (listaMedicamentosManual != null && !listaMedicamentosManual.isEmpty()) {
             for (FacManualTarifarioMedicamento servicioManual : listaMedicamentosManual) {
@@ -695,7 +705,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         return null;
     }
-
+    
     public void calcularValoresMedicamento() {
         if (validarNoVacio(idMedicamentoManual)) {
             FacManualTarifarioMedicamento s = buscarEnListaMedicamentosManual(Integer.parseInt(idMedicamentoManual));
@@ -704,7 +714,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
             valorFinalMedicamento = valorUnitarioMedicamento * cantidadMedicamento;
         }
     }
-
+    
     public void cargarDialogoAgregarMedicamento() {
         listaMedicamentosManual = manualTarifarioPaciente.getFacManualTarifarioMedicamentoList();
         if (listaMedicamentosManual != null && !listaMedicamentosManual.isEmpty()) {
@@ -714,7 +724,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().update("IdFormDialogs:IdPanelAgregarMedicamento");
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarMedicamento').show();");
     }
-
+    
     public void agregarMedicamento() {
         if (validacionCampoVacio(idMedicamentoManual, "Medicamento")) {
             return;
@@ -741,7 +751,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         RequestContext.getCurrentInstance().execute("PF('dialogoAgregarMedicamento').hide(); PF('wvTablaMedicamentosConsumo').clearFilters(); PF('wvTablaMedicamentosConsumo').getPaginator().setPage(0);");
         RequestContext.getCurrentInstance().update("IdFormConsumos:IdTabView");
     }
-
+    
     public void quitarMedicamento() {
         if (medicamentoConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún medicamento de la tabla", FacesMessage.SEVERITY_ERROR);
@@ -749,7 +759,7 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
         }
         RequestContext.getCurrentInstance().execute("PF('dialogoQuitarMedicamento').show();");
     }
-
+    
     public void confirmarQuitarMedicamento() {
         if (medicamentoConsumoSeleccionado == null) {
             imprimirMensaje("Error", "No se ha seleccionado ningún medicamento", FacesMessage.SEVERITY_ERROR);
@@ -773,311 +783,311 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     public LazyDataModel<CfgPacientes> getListaPacientes() {
         return listaPacientes;
     }
-
+    
     public void setListaPacientes(LazyDataModel<CfgPacientes> listaPacientes) {
         this.listaPacientes = listaPacientes;
     }
-
+    
     public CfgPacientes getPacienteTmp() {
         return pacienteTmp;
     }
-
+    
     public void setPacienteTmp(CfgPacientes pacienteTmp) {
         this.pacienteTmp = pacienteTmp;
     }
-
+    
     public CfgPacientes getPacienteSeleccionadoTabla() {
         return pacienteSeleccionadoTabla;
     }
-
+    
     public void setPacienteSeleccionadoTabla(CfgPacientes pacienteSeleccionadoTabla) {
         this.pacienteSeleccionadoTabla = pacienteSeleccionadoTabla;
     }
-
+    
     public CfgPacientes getPacienteSeleccionado() {
         return pacienteSeleccionado;
     }
-
+    
     public void setPacienteSeleccionado(CfgPacientes pacienteSeleccionado) {
         this.pacienteSeleccionado = pacienteSeleccionado;
     }
-
+    
     public String getIdentificacionPaciente() {
         return identificacionPaciente;
     }
-
+    
     public void setIdentificacionPaciente(String identificacionPaciente) {
         this.identificacionPaciente = identificacionPaciente;
     }
-
+    
     public String getTipoIdentificacion() {
         return tipoIdentificacion;
     }
-
+    
     public void setTipoIdentificacion(String tipoIdentificacion) {
         this.tipoIdentificacion = tipoIdentificacion;
     }
-
+    
     public String getNombrePaciente() {
         return nombrePaciente;
     }
-
+    
     public void setNombrePaciente(String nombrePaciente) {
         this.nombrePaciente = nombrePaciente;
     }
-
+    
     public String getGeneroPaciente() {
         return generoPaciente;
     }
-
+    
     public void setGeneroPaciente(String generoPaciente) {
         this.generoPaciente = generoPaciente;
     }
-
+    
     public String getEdadPaciente() {
         return edadPaciente;
     }
-
+    
     public void setEdadPaciente(String edadPaciente) {
         this.edadPaciente = edadPaciente;
     }
-
+    
     public String getAdministradoraPaciente() {
         return administradoraPaciente;
     }
-
+    
     public void setAdministradoraPaciente(String administradoraPaciente) {
         this.administradoraPaciente = administradoraPaciente;
     }
-
+    
     public FilaDataTable getInsumoConsumoSeleccionado() {
         return insumoConsumoSeleccionado;
     }
-
+    
     public void setInsumoConsumoSeleccionado(FilaDataTable insumoConsumoSeleccionado) {
         this.insumoConsumoSeleccionado = insumoConsumoSeleccionado;
     }
-
+    
     public String getIdPrestadorServicio() {
         return idPrestadorServicio;
     }
-
+    
     public void setIdPrestadorServicio(String idPrestadorServicio) {
         this.idPrestadorServicio = idPrestadorServicio;
     }
-
+    
     public Date getFechaServicio() {
         return fechaServicio;
     }
-
+    
     public void setFechaServicio(Date fechaServicio) {
         this.fechaServicio = fechaServicio;
     }
-
+    
     public int getCantidadServicio() {
         return cantidadServicio;
     }
-
+    
     public void setCantidadServicio(int cantidadServicio) {
         this.cantidadServicio = cantidadServicio;
     }
-
+    
     public String getIdPrestadorInsumo() {
         return idPrestadorInsumo;
     }
-
+    
     public void setIdPrestadorInsumo(String idPrestadorInsumo) {
         this.idPrestadorInsumo = idPrestadorInsumo;
     }
-
+    
     public Date getFechaInsumo() {
         return fechaInsumo;
     }
-
+    
     public void setFechaInsumo(Date fechaInsumo) {
         this.fechaInsumo = fechaInsumo;
     }
-
+    
     public int getCantidadInsumo() {
         return cantidadInsumo;
     }
-
+    
     public void setCantidadInsumo(int cantidadInsumo) {
         this.cantidadInsumo = cantidadInsumo;
     }
-
+    
     public String getIdPrestadorMedicamento() {
         return idPrestadorMedicamento;
     }
-
+    
     public void setIdPrestadorMedicamento(String idPrestadorMedicamento) {
         this.idPrestadorMedicamento = idPrestadorMedicamento;
     }
-
+    
     public Date getFechaMedicamento() {
         return fechaMedicamento;
     }
-
+    
     public void setFechaMedicamento(Date fechaMedicamento) {
         this.fechaMedicamento = fechaMedicamento;
     }
-
+    
     public int getCantidadMedicamento() {
         return cantidadMedicamento;
     }
-
+    
     public void setCantidadMedicamento(int cantidadMedicamento) {
         this.cantidadMedicamento = cantidadMedicamento;
     }
-
+    
     public String getIdPrestadorPaquete() {
         return idPrestadorPaquete;
     }
-
+    
     public void setIdPrestadorPaquete(String idPrestadorPaquete) {
         this.idPrestadorPaquete = idPrestadorPaquete;
     }
-
+    
     public Date getFechaPaquete() {
         return fechaPaquete;
     }
-
+    
     public void setFechaPaquete(Date fechaPaquete) {
         this.fechaPaquete = fechaPaquete;
     }
-
+    
     public int getCantidadPaquete() {
         return cantidadPaquete;
     }
-
+    
     public void setCantidadPaquete(int cantidadPaquete) {
         this.cantidadPaquete = cantidadPaquete;
     }
-
+    
     public List<FilaDataTable> getListaServiciosConsumo() {
         return listaServiciosConsumo;
     }
-
+    
     public void setListaServiciosConsumo(List<FilaDataTable> listaServiciosConsumo) {
         this.listaServiciosConsumo = listaServiciosConsumo;
     }
-
+    
     public List<FilaDataTable> getListaInsumosConsumo() {
         return listaInsumosConsumo;
     }
-
+    
     public void setListaInsumosConsumo(List<FilaDataTable> listaInsumosConsumo) {
         this.listaInsumosConsumo = listaInsumosConsumo;
     }
-
+    
     public List<FilaDataTable> getListaMedicamentosConsumo() {
         return listaMedicamentosConsumo;
     }
-
+    
     public void setListaMedicamentosConsumo(List<FilaDataTable> listaMedicamentosConsumo) {
         this.listaMedicamentosConsumo = listaMedicamentosConsumo;
     }
-
+    
     public List<FilaDataTable> getListaPaquetesConsumo() {
         return listaPaquetesConsumo;
     }
-
+    
     public void setListaPaquetesConsumo(List<FilaDataTable> listaPaquetesConsumo) {
         this.listaPaquetesConsumo = listaPaquetesConsumo;
     }
-
+    
     public List<FilaDataTable> getListaServiciosConsumoFiltro() {
         return listaServiciosConsumoFiltro;
     }
-
+    
     public void setListaServiciosConsumoFiltro(List<FilaDataTable> listaServiciosConsumoFiltro) {
         this.listaServiciosConsumoFiltro = listaServiciosConsumoFiltro;
     }
-
+    
     public List<FilaDataTable> getListaInsumosConsumoFiltro() {
         return listaInsumosConsumoFiltro;
     }
-
+    
     public void setListaInsumosConsumoFiltro(List<FilaDataTable> listaInsumosConsumoFiltro) {
         this.listaInsumosConsumoFiltro = listaInsumosConsumoFiltro;
     }
-
+    
     public List<FilaDataTable> getListaMedicamentosConsumoFiltro() {
         return listaMedicamentosConsumoFiltro;
     }
-
+    
     public void setListaMedicamentosConsumoFiltro(List<FilaDataTable> listaMedicamentosConsumoFiltro) {
         this.listaMedicamentosConsumoFiltro = listaMedicamentosConsumoFiltro;
     }
-
+    
     public List<FilaDataTable> getListaPaquetesConsumoFiltro() {
         return listaPaquetesConsumoFiltro;
     }
-
+    
     public void setListaPaquetesConsumoFiltro(List<FilaDataTable> listaPaquetesConsumoFiltro) {
         this.listaPaquetesConsumoFiltro = listaPaquetesConsumoFiltro;
     }
-
+    
     public FilaDataTable getServicioConsumoSeleccionado() {
         return servicioConsumoSeleccionado;
     }
-
+    
     public void setServicioConsumoSeleccionado(FilaDataTable servicioConsumoSeleccionado) {
         this.servicioConsumoSeleccionado = servicioConsumoSeleccionado;
     }
-
+    
     public FilaDataTable getMedicamentoConsumoSeleccionado() {
         return medicamentoConsumoSeleccionado;
     }
-
+    
     public void setMedicamentoConsumoSeleccionado(FilaDataTable medicamentoConsumoSeleccionado) {
         this.medicamentoConsumoSeleccionado = medicamentoConsumoSeleccionado;
     }
-
+    
     public FilaDataTable getPaqueteConsumoSeleccionado() {
         return paqueteConsumoSeleccionado;
     }
-
+    
     public void setPaqueteConsumoSeleccionado(FilaDataTable paqueteConsumoSeleccionado) {
         this.paqueteConsumoSeleccionado = paqueteConsumoSeleccionado;
     }
-
+    
     public String getTituloTabServicios() {
         return tituloTabServicios;
     }
-
+    
     public void setTituloTabServicios(String tituloTabServicios) {
         this.tituloTabServicios = tituloTabServicios;
     }
-
+    
     public String getTipoTarifaServicio() {
         return tipoTarifaServicio;
     }
-
+    
     public void setTipoTarifaServicio(String tipoTarifaServicio) {
         this.tipoTarifaServicio = tipoTarifaServicio;
     }
-
+    
     public double getValorUnitarioServicio() {
         return valorUnitarioServicio;
     }
-
+    
     public void setValorUnitarioServicio(double valorUnitarioServicio) {
         this.valorUnitarioServicio = valorUnitarioServicio;
     }
-
+    
     public double getValorFinalServicio() {
         return valorFinalServicio;
     }
-
+    
     public void setValorFinalServicio(double valorFinalServicio) {
         this.valorFinalServicio = valorFinalServicio;
     }
-
+    
     public String getTituloTabInsumos() {
         return tituloTabInsumos;
     }
-
+    
     public void setTituloTabInsumos(String tituloTabInsumos) {
         this.tituloTabInsumos = tituloTabInsumos;
     }
@@ -1092,23 +1102,23 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     public double getValorUnitarioInsumo() {
         return valorUnitarioInsumo;
     }
-
+    
     public void setValorUnitarioInsumo(double valorUnitarioInsumo) {
         this.valorUnitarioInsumo = valorUnitarioInsumo;
     }
-
+    
     public double getValorFinalInsumo() {
         return valorFinalInsumo;
     }
-
+    
     public void setValorFinalInsumo(double valorFinalInsumo) {
         this.valorFinalInsumo = valorFinalInsumo;
     }
-
+    
     public String getTituloTabMedicamentos() {
         return tituloTabMedicamentos;
     }
-
+    
     public void setTituloTabMedicamentos(String tituloTabMedicamentos) {
         this.tituloTabMedicamentos = tituloTabMedicamentos;
     }
@@ -1123,23 +1133,23 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     public double getValorUnitarioMedicamento() {
         return valorUnitarioMedicamento;
     }
-
+    
     public void setValorUnitarioMedicamento(double valorUnitarioMedicamento) {
         this.valorUnitarioMedicamento = valorUnitarioMedicamento;
     }
-
+    
     public double getValorFinalMedicamento() {
         return valorFinalMedicamento;
     }
-
+    
     public void setValorFinalMedicamento(double valorFinalMedicamento) {
         this.valorFinalMedicamento = valorFinalMedicamento;
     }
-
+    
     public String getTituloTabPaquetes() {
         return tituloTabPaquetes;
     }
-
+    
     public void setTituloTabPaquetes(String tituloTabPaquetes) {
         this.tituloTabPaquetes = tituloTabPaquetes;
     }
@@ -1154,105 +1164,121 @@ public class ConsumosMB extends MetodosGenerales implements Serializable {
     public double getValorUnitarioPaquete() {
         return valorUnitarioPaquete;
     }
-
+    
     public void setValorUnitarioPaquete(double valorUnitarioPaquete) {
         this.valorUnitarioPaquete = valorUnitarioPaquete;
     }
-
+    
     public double getValorFinalPaquete() {
         return valorFinalPaquete;
     }
-
+    
     public void setValorFinalPaquete(double valorFinalPaquete) {
         this.valorFinalPaquete = valorFinalPaquete;
     }
-
+    
     public String getMensajeConfiguracion() {
         return mensajeConfiguracion;
     }
-
+    
     public void setMensajeConfiguracion(String mensajeConfiguracion) {
         this.mensajeConfiguracion = mensajeConfiguracion;
     }
-
+    
     public String getIdServicioManual() {
         return idServicioManual;
     }
-
+    
     public void setIdServicioManual(String idServicioManual) {
         this.idServicioManual = idServicioManual;
     }
-
+    
     public String getIdInsumoManual() {
         return idInsumoManual;
     }
-
+    
     public void setIdInsumoManual(String idInsumoManual) {
         this.idInsumoManual = idInsumoManual;
     }
-
+    
     public String getIdMedicamentoManual() {
         return idMedicamentoManual;
     }
-
+    
     public void setIdMedicamentoManual(String idMedicamentoManual) {
         this.idMedicamentoManual = idMedicamentoManual;
     }
-
+    
     public String getIdPaqueteManual() {
         return idPaqueteManual;
     }
-
+    
     public void setIdPaqueteManual(String idPaqueteManual) {
         this.idPaqueteManual = idPaqueteManual;
     }
-
+    
     public List<FacManualTarifarioServicio> getListaServiciosManual() {
         return listaServiciosManual;
     }
-
+    
     public void setListaServiciosManual(List<FacManualTarifarioServicio> listaServiciosManual) {
         this.listaServiciosManual = listaServiciosManual;
     }
-
+    
     public List<FacManualTarifarioInsumo> getListaInsumosManual() {
         return listaInsumosManual;
     }
-
+    
     public void setListaInsumosManual(List<FacManualTarifarioInsumo> listaInsumosManual) {
         this.listaInsumosManual = listaInsumosManual;
     }
-
+    
     public List<FacManualTarifarioMedicamento> getListaMedicamentosManual() {
         return listaMedicamentosManual;
     }
-
+    
     public void setListaMedicamentosManual(List<FacManualTarifarioMedicamento> listaMedicamentosManual) {
         this.listaMedicamentosManual = listaMedicamentosManual;
     }
-
+    
     public List<FacManualTarifarioPaquete> getListaPaquetesManual() {
         return listaPaquetesManual;
     }
-
+    
     public void setListaPaquetesManual(List<FacManualTarifarioPaquete> listaPaquetesManual) {
         this.listaPaquetesManual = listaPaquetesManual;
     }
-
+    
     public String getDiagnosticoPrincipal() {
         return diagnosticoPrincipal;
     }
-
+    
     public void setDiagnosticoPrincipal(String diagnosticoPrincipal) {
         this.diagnosticoPrincipal = diagnosticoPrincipal;
     }
-
+    
     public String getDiagnosticoRelacionado() {
         return diagnosticoRelacionado;
     }
-
+    
     public void setDiagnosticoRelacionado(String diagnosticoRelacionado) {
         this.diagnosticoRelacionado = diagnosticoRelacionado;
     }
-
+    
+    public String getAutorizacionInsumo() {
+        return autorizacionInsumo;
+    }
+    
+    public void setAutorizacionInsumo(String autorizacionInsumo) {
+        this.autorizacionInsumo = autorizacionInsumo;
+    }
+    
+    public String getAutorizacionServicio() {
+        return autorizacionServicio;
+    }
+    
+    public void setAutorizacionServicio(String autorizacionServicio) {
+        this.autorizacionServicio = autorizacionServicio;
+    }
+    
 }

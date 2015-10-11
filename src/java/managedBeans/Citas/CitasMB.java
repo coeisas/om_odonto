@@ -83,6 +83,7 @@ public class CitasMB extends MetodosGenerales implements Serializable {
     private CitTurnos turnoSeleccionado;
     private CitCitas citaSeleccionada;
 
+    private String numeroAutorizacion;//numero de autorizacion. sin referencia a la tabla de autorizaciones.
     private boolean estado;
     private int motivoConsulta;
     private int motivoCancelacion;
@@ -407,6 +408,10 @@ public class CitasMB extends MetodosGenerales implements Serializable {
             } else {
                 nuevaCita.setIdAutorizacion(null);
             }
+
+            if (!numeroAutorizacion.trim().isEmpty()) {
+                nuevaCita.setNumAutorizacion(numeroAutorizacion);
+            }
             nuevaCita.setTieneRegAsociado(false);
             citasFacade.create(nuevaCita);
 
@@ -457,7 +462,7 @@ public class CitasMB extends MetodosGenerales implements Serializable {
         }
         //setIdPrestador(0);
         //idPaciente = 0;
-
+        numeroAutorizacion = null;
         motivoCancelacion = 0;
         descripcionCancelacion = null;
         idPrograma = 0;
@@ -703,11 +708,11 @@ public class CitasMB extends MetodosGenerales implements Serializable {
         }
         setEvenModel(new LazyAgendaModel(prestadorSeleccionado.getIdUsuario(), sede, turnosFacade, citasFacade, "citaUnica"));
     }
-    
+
     private String establerLimitesAgenda(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("ha");
         return format.format(date);
-    }    
+    }
 
     public void onEventSelect(SelectEvent selectEvent) {
         setEvent((ScheduleEvent) selectEvent.getObject());
@@ -1129,6 +1134,14 @@ public class CitasMB extends MetodosGenerales implements Serializable {
 
     public void setMaxTime(String maxTime) {
         this.maxTime = maxTime;
+    }
+
+    public String getNumeroAutorizacion() {
+        return numeroAutorizacion;
+    }
+
+    public void setNumeroAutorizacion(String numeroAutorizacion) {
+        this.numeroAutorizacion = numeroAutorizacion;
     }
 
 }
