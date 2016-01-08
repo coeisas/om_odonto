@@ -53,8 +53,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "FacFacturaAdmi.findByValorTotal", query = "SELECT f FROM FacFacturaAdmi f WHERE f.valorTotal = :valorTotal"),
     @NamedQuery(name = "FacFacturaAdmi.findByNumeroDocumento", query = "SELECT f FROM FacFacturaAdmi f WHERE f.numeroDocumento = :numeroDocumento"),
     @NamedQuery(name = "FacFacturaAdmi.findByObservacionAnulacion", query = "SELECT f FROM FacFacturaAdmi f WHERE f.observacionAnulacion = :observacionAnulacion"),
-    @NamedQuery(name = "FacFacturaAdmi.findByValorUsuarios", query = "SELECT f FROM FacFacturaAdmi f WHERE f.valorUsuarios = :valorUsuarios")})
+    @NamedQuery(name = "FacFacturaAdmi.findByValorUsuarios", query = "SELECT f FROM FacFacturaAdmi f WHERE f.valorUsuarios = :valorUsuarios"),
+    @NamedQuery(name = "FacFacturaAdmi.findByClasificacion", query = "SELECT f FROM FacFacturaAdmi f WHERE f.clasificacion = :clasificacion")})
 public class FacFacturaAdmi implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -102,6 +104,8 @@ public class FacFacturaAdmi implements Serializable {
     private String observacionAnulacion;
     @Column(name = "valor_usuarios", precision = 17, scale = 17)
     private Double valorUsuarios;
+    @Column(name = "clasificacion")
+    private Integer clasificacion;
     @JoinTable(name = "fac_factura_admi_detalle", joinColumns = {
         @JoinColumn(name = "id_factura_admi", referencedColumnName = "id_factura_admi", nullable = false)}, inverseJoinColumns = {
         @JoinColumn(name = "id_factura_paciente", referencedColumnName = "id_factura_paciente", nullable = false)})
@@ -319,6 +323,14 @@ public class FacFacturaAdmi implements Serializable {
     public void setTipoDocumento(CfgClasificaciones tipoDocumento) {
         this.tipoDocumento = tipoDocumento;
     }
+    
+    public Integer getClasificacion() {
+        return clasificacion;
+    }
+
+    public void setClasificacion(Integer clasificacion) {
+        this.clasificacion = clasificacion;
+    }    
 
     @Override
     public int hashCode() {
@@ -344,5 +356,5 @@ public class FacFacturaAdmi implements Serializable {
     public String toString() {
         return "entidades.FacFacturaAdmi[ idFactura=" + idFacturaAdmi + " ]";
     }
-    
+
 }

@@ -44,10 +44,10 @@ public class RipsCt implements Serializable {
     private String codPres;
     @Column(name = "fec_rem")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fecRem;
+    private Date fecRem;//FECHA DE CREACION DE LA FACTURA
     @Size(max = 20)
     @Column(name = "cod_arc", length = 20)
-    private String codArc;
+    private String codArc;//CODIGO ARCHIVO
     @Column(name = "total_reg")
     private Integer totalReg;
     @JoinColumn(name = "id_rip_almacenado", referencedColumnName = "id_rip_almacenado", nullable = false, insertable = false, updatable = false)

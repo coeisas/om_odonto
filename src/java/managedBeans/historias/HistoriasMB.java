@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -25,7 +26,6 @@ import javax.faces.model.SelectItem;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import managedBeans.facturacion.ConsecutivosMB;
 import managedBeans.seguridad.LoginMB;
 import modelo.entidades.CfgClasificaciones;
 import modelo.entidades.CfgDiagnostico;
@@ -35,7 +35,6 @@ import modelo.entidades.CfgPacientes;
 import modelo.entidades.CfgTxtPredefinidos;
 import modelo.entidades.CfgUsuarios;
 import modelo.entidades.CitCitas;
-import modelo.entidades.FacConsecutivo;
 import modelo.entidades.FacServicio;
 import modelo.entidades.HcCamposReg;
 import modelo.entidades.HcDetalle;
@@ -50,7 +49,6 @@ import modelo.fachadas.CfgTxtPredefinidosFacade;
 import modelo.fachadas.CfgUsuariosFacade;
 import modelo.fachadas.CitCitasFacade;
 import modelo.fachadas.CitTurnosFacade;
-import modelo.fachadas.FacConsecutivoFacade;
 import modelo.fachadas.FacServicioFacade;
 import modelo.fachadas.HcCamposRegFacade;
 import modelo.fachadas.HcRegistroFacade;
@@ -683,16 +681,18 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
 
         beanCollectionDataSource = new JRBeanCollectionDataSource(listaRegistrosParaPdf);
         httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
+        Map<String, Object> parametros = new HashMap<>();
         try (ServletOutputStream servletOutputStream = httpServletResponse.getOutputStream()) {
             httpServletResponse.setContentType("application/pdf");
+            parametros.put("fechaReg", regEncontrado.getFechaReg());
             ServletContext servletContext = (ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext();
-            JasperPrint jasperPrint = JasperFillManager.fillReport(servletContext.getRealPath(rutaReporte), new HashMap(), beanCollectionDataSource);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(servletContext.getRealPath(rutaReporte), parametros, beanCollectionDataSource);
             JasperExportManager.exportReportToPdfStream(jasperPrint, servletOutputStream);
             FacesContext.getCurrentInstance().responseComplete();
         }
     }
 
-//    public void generarPdfAgrupado() throws JRException, IOException {//genera un pdf de un serie de historias seleccionadas en el historial        
+    public void generarPdfAgrupado() throws JRException, IOException {//genera un pdf de un serie de historias seleccionadas en el historial        
 //        if (cargarFuenteDeDatosAgrupada()) {//si se puede cargar datos continuo
 //            JRBeanCollectionDataSource beanCollectionDataSource = new JRBeanCollectionDataSource(listaRegistrosParaPdf);
 //            HttpServletResponse httpServletResponse = (HttpServletResponse) FacesContext.getCurrentInstance().getExternalContext().getResponse();
@@ -704,7 +704,7 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
 //                FacesContext.getCurrentInstance().responseComplete();
 //            }
 //        }
-//    }
+    }
     //---------------------------------------------------
     //--------- FUNCIONES REGISTROS CLINICOS ------------
     //---------------------------------------------------

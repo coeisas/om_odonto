@@ -89,13 +89,13 @@ public class RipsAf implements Serializable {
     @Column(name = "num_poli", length = 10)
     private String numPoli;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "val_copa", precision = 17, scale = 17)
+    @Column(name = "val_copa", precision = 17, scale = 17)//COPAGO->FAC_FACTURA_ADMI
     private Double valCopa;
-    @Column(name = "val_com", precision = 17, scale = 17)
+    @Column(name = "val_com", precision = 17, scale = 17)//COMISION
     private Double valCom;
-    @Column(name = "val_desc", precision = 17, scale = 17)
+    @Column(name = "val_desc", precision = 17, scale = 17)//DESCUENTO
     private Double valDesc;
-    @Column(name = "val_net", precision = 17, scale = 17)
+    @Column(name = "val_net", precision = 17, scale = 17)//VALOR NETO DEL SERVICIO
     private Double valNet;
     @JoinColumn(name = "id_rip_almacenado", referencedColumnName = "id_rip_almacenado", nullable = false, insertable = false, updatable = false)
     @ManyToOne(optional = false)

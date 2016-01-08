@@ -38,6 +38,8 @@ public class CitaU {
     private String empresaTelefono;
     private String empresaDireccion;
     private String servicio;
+    private String dirPaciente;
+    private String telPaciente;
 
 
     private String codAdministradora;
@@ -470,6 +472,22 @@ public class CitaU {
 
     public void setCancelada(boolean cancelada) {
         this.cancelada = cancelada;
+    }
+
+    public String getDirPaciente() {
+        return dirPaciente;
+    }
+
+    public void setDirPaciente(String dirPaciente) {
+        this.dirPaciente = dirPaciente;
+    }
+
+    public String getTelPaciente() {
+        return telPaciente;
+    }
+
+    public void setTelPaciente(String telPaciente) {
+        this.telPaciente = telPaciente;
     }
 
 }

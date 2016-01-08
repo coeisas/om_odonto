@@ -9,9 +9,9 @@
         <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
         <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
         <link href="../recursos/css/iconFont.css" rel="stylesheet"/>  
-        <script type="text/javascript" src="../recursos/js/calendario.js"></script> 
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script>
     </h:head>
-    <h:body style="font-size: 11px; overflow: hidden;"> 
+    <h:body id="cuerpo" style="font-size: 11px; overflow: hidden;"> 
         #{facturarAdministradoraMB.recargarDatosFacturacion()}
         <h:form id="IdFormFacturacion">            
             <p:growl id="IdMensajeFacturacion"  showDetail="true" sticky="false" life="4000"/>
@@ -43,7 +43,9 @@
                                 <f:ajax event="change" listener="#{facturarAdministradoraMB.cambiaAdministradora}" render=":IdFormFacturacion"/>
                                 <f:selectItem itemLabel=""/>
                                 <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemValue="#{administradora.idAdministradora}" itemLabel="#{administradora.razonSocial}"/>
-                            </p:selectOneMenu>                        
+                            </p:selectOneMenu>
+                            <p:outputLabel styleClass="campoNoObligatorio" value="Generar"/>
+                            <p:inputText id="IdTipoDocumento" readonly="true" styleClass="campoFormulario" value="Factura de venta" size="15" style="#{facturarAdministradoraMB.estiloDocumento}"/>
                         </td>                        
                     </tr>                 
                     <tr>
@@ -53,10 +55,13 @@
                                 <f:ajax event="change" listener="#{facturarAdministradoraMB.cambiaContrato}" render=":IdFormFacturacion"/>
                                 <!-- f:selectItem itemValue="-1" itemLabel="Todos"/ -->
                                 <f:selectItems value="#{facturarAdministradoraMB.listaContratos}" var="contrato" itemValue="#{contrato.idContrato}" itemLabel="#{contrato.descripcion}"/>
-                            </p:selectOneMenu>                                                                    
-                            <p:outputLabel styleClass="campoNoObligatorio" value="Generar"/>
-                            <p:inputText id="IdTipoDocumento" readonly="true" styleClass="campoFormulario" value="Factura de venta" size="15" style="#{facturarAdministradoraMB.estiloDocumento}"/>
-
+                            </p:selectOneMenu>
+                            <p:outputLabel styleClass="campoObligatorio" value="Clasificacion"/>
+                            <p:selectOneMenu id="IdListaClasificacion" styleClass="campoFormulario" value="#{facturarAdministradoraMB.clasificacion}" filter="true" filterMatchMode="contains">
+                                <p:ajax event="change" listener="#{facturarAdministradoraMB.cambiaClasificacion}" oncomplete="remoteCommand()"/>
+                                <f:selectItem itemValue="1" itemLabel="Servicios"/>
+                                <f:selectItem itemValue="2" itemLabel="Insumos"/>
+                            </p:selectOneMenu>                                
                         </td>
                         <td>
                             <p:commandButton 
@@ -74,6 +79,7 @@
                                 style="font-size: 20px; width: 20px; height: 20px;"/> 
                             &nbsp;                              
                             <p:commandButton 
+                                id="IdBtnFacturar"
                                 title="Generar factura" value="&nbsp;"
                                 styleClass="icon-floppy fg-lightBlue bg-white no-border" 
                                 update="IdMensajeFacturacion"
@@ -84,7 +90,7 @@
                 </table>
             </p:panel>
             <p:tabView id="IdTabView" widgetVar="wvTabView" dynamic="true">
-                <p:tab title="#{facturarAdministradoraMB.tituloTabServiciosFactura}">
+                <p:tab title="#{facturarAdministradoraMB.tituloTabServiciosFactura}" rendered="#{facturarAdministradoraMB.renderTabServicios}">
 
                     <p:dataTable 
                         id="IdTablaServiciosFactura" 
@@ -123,9 +129,12 @@
                         <p:column headerText="CANTIDAD" width="50" filterBy="#{servicioFactura.columna6}" filterMatchMode="contains">
                             #{servicioFactura.columna6}
                         </p:column>
-                        <p:column headerText="VALOR" width="100" filterBy="#{servicioFactura.columna7}" filterMatchMode="contains">
+                        <p:column headerText="VR UNIT" width="100" filterBy="#{servicioFactura.columna7}" filterMatchMode="contains">
                             #{servicioFactura.columna7}
-                        </p:column>                                    
+                        </p:column>
+                        <p:column headerText="VR TOTAL" width="100" filterBy="#{servicioFactura.columna8}" filterMatchMode="contains">
+                            #{servicioFactura.columna8}
+                        </p:column>  
                     </p:dataTable>  
                     <table>
                         <tr>
@@ -149,7 +158,7 @@
                     </table>
 
                 </p:tab>
-                <p:tab title="#{facturarAdministradoraMB.tituloTabPaquetesFactura}">
+                <p:tab title="#{facturarAdministradoraMB.tituloTabPaquetesFactura}" rendered="false">
 
                     <p:dataTable 
                         id="IdTablaPaqueteFactura" 
@@ -193,7 +202,7 @@
                     </p:dataTable>  
                     <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
                 </p:tab>
-                <p:tab title="#{facturarAdministradoraMB.tituloTabMedicamentosFactura}"> 
+                <p:tab title="#{facturarAdministradoraMB.tituloTabMedicamentosFactura}" rendered="false"> 
 
                     <p:dataTable 
                         id="IdTablaMedicamentosFactura" 
@@ -237,7 +246,7 @@
                     </p:dataTable>  
                     <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
                 </p:tab>
-                <p:tab title="#{facturarAdministradoraMB.tituloTabInsumosFactura}">                    
+                <p:tab title="#{facturarAdministradoraMB.tituloTabInsumosFactura}"  rendered="#{facturarAdministradoraMB.renderTabInsumos}">                    
 
                     <p:dataTable 
                         id="IdTablaInsumosFactura" 
@@ -275,9 +284,12 @@
                         <p:column headerText="CANTIDAD" width="50" filterBy="#{insumoFactura.columna6}" filterMatchMode="contains">
                             #{insumoFactura.columna6}
                         </p:column>
-                        <p:column headerText="VALOR" width="100" filterBy="#{insumoFactura.columna7}" filterMatchMode="contains">
+                        <p:column headerText="VR UNIT" width="100" filterBy="#{insumoFactura.columna7}" filterMatchMode="contains">
                             #{insumoFactura.columna7}
                         </p:column>
+                        <p:column headerText="VR TOTAL" width="100" filterBy="#{insumoFactura.columna8}" filterMatchMode="contains">
+                            #{insumoFactura.columna8}
+                        </p:column>                        
                     </p:dataTable>         
                     <p:commandButton value="Observaciones Factura" style="left: 20px;" onclick="PF('dialogoObservacionesFactura').show()"/>
                 </p:tab>
@@ -288,25 +300,33 @@
                     <tr>
                         <td style="text-align: left;">
                             <p:outputLabel styleClass="campoNoObligatorio" value="VLR PARCIAL " />
-                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoParcial}"/>
-                            <p:outputLabel styleClass="campoNoObligatorio" value="IVA " />
-                            <p:outputLabel id="IdIva" styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoIva}"/>
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoParcial}">
+                                <f:convertNumber type="currency" maxFractionDigits="0"/>
+                            </p:outputLabel>
+                            <!--p:outputLabel styleClass="campoNoObligatorio" value="IVA " />
+                            <p:outputLabel id="IdIva" styleClass="labelFormulario"    value="# {facturarAdministradoraMB.acumuladoIva}"/>
                             <p:outputLabel styleClass="campoNoObligatorio" value="CREE" />
-                            <p:outputLabel id="IdCree" styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoCree}"/>
+                            <p:outputLabel id="IdCree" styleClass="labelFormulario"    value="# {facturarAdministradoraMB.acumuladoCree}"/-->
                             <p:outputLabel  styleClass="campoNoObligatorio" value="COPAGO" />
-                            <p:outputLabel  styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoCopago}"/>                            
+                            <p:outputLabel  styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoCopago}">
+                                <f:convertNumber type="currency" maxFractionDigits="0"/>
+                            </p:outputLabel>
                             <p:outputLabel  styleClass="campoNoObligatorio" value="CUOTA MOD." />
                             <p:outputLabel  styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoCuotaModeradora}"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">
+                            <!--/td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;"-->
                             <p:outputLabel styleClass="campoNoObligatorio" value="VLR EMPRESA" />
-                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoEmpresa}"/>
+                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoEmpresa}">
+                                <f:convertNumber type="currency" maxFractionDigits="0"/>
+                            </p:outputLabel>
                             <p:outputLabel styleClass="campoNoObligatorio" value="VLR USUARIO" />
                             <p:outputLabel styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoUsuario}"/>
                             <p:outputLabel styleClass="campoNoObligatorio" value="VLR FACTURA" />
-                            <p:outputLabel styleClass="labelFormulario"    value="#{facturarAdministradoraMB.acumuladoTotal}"/>
+                            <p:outputLabel styleClass="labelFormularioBold" style=""  value="#{facturarAdministradoraMB.acumuladoTotal}">
+                                <f:convertNumber type="currency" maxFractionDigits="0"/>
+                            </p:outputLabel>
                         </td>
                     </tr>
                 </table>
@@ -326,7 +346,7 @@
                     selectionMode="single"
                     rowKey="#{factura.columna1}"
                     paginator="true"
-                    style="width: 700px; height: 300px;"
+                    style="width: 800px; height: 300px;"
                     rows="10"
                     lazy="true"
                     resizableColumns="true"
@@ -340,13 +360,16 @@
                     <p:column headerText="FECHA" width="95" filterBy="#{factura.columna2}"> 
                         #{factura.columna2}
                     </p:column>  
-                    <p:column headerText="NUMERO" width="40" filterBy="#{factura.columna3}">
+                    <p:column headerText="NUMERO" width="60" filterBy="#{factura.columna3}">
                         #{factura.columna3}
                     </p:column>
-                    <p:column headerText="ESTADO" width="50" filterBy="#{factura.columna4}">
+                    <p:column headerText="CLASIFICACION">
+                        #{factura.columna7 eq '1' ? "SERVICIOS" : factura.columna7 eq '2' ? 'SUMINISTROS' :''}
+                    </p:column>
+                    <p:column headerText="ESTADO" width="55" filterBy="#{factura.columna4}">
                         #{factura.columna4}
                     </p:column>
-                    <p:column headerText="ADMINISTRADORA" width="200" filterBy="#{factura.columna5}">
+                    <p:column headerText="ADMINISTRADORA" width="300" filterBy="#{factura.columna5}">
                         #{factura.columna5}
                     </p:column>
                     <p:column headerText="VALOR" width="90" filterBy="#{factura.columna6}">
@@ -369,6 +392,7 @@
                         readonly="true" 
                         styleClass="textAreaDialogo"/>                    
                     <p:commandButton 
+                        id="IdBtnGuardarFactura"
                         value="Guardar"    
                         oncomplete="remoteCommand()"
                         update=":IdFormFacturacion"
@@ -391,6 +415,12 @@
                         actionListener="#{facturarAdministradoraMB.confirmarAnularFactura}"/>
                 </p:panelGrid>
             </p:dialog>
-        </h:form>        
+            <p:blockUI block="IdFormFacturacion" trigger="IdBtnGuardarFactura">
+                <p:panelGrid id="blockcontent" columns="2"> 
+                    <h:graphicImage value="../recursos/img/loading.gif" height="30px" width="30px" />
+                    <h:outputText value="Por favor espere, factura creándose ..."/>
+                </p:panelGrid>
+            </p:blockUI>
+        </h:form>
     </h:body>
 </html>

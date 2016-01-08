@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -38,6 +40,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "CfgInsumo.findByAplicaIva", query = "SELECT c FROM CfgInsumo c WHERE c.aplicaIva = :aplicaIva"),
     @NamedQuery(name = "CfgInsumo.findByAplicaCree", query = "SELECT c FROM CfgInsumo c WHERE c.aplicaCree = :aplicaCree")})
 public class CfgInsumo implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,6 +68,9 @@ public class CfgInsumo implements Serializable {
     private List<FacConsumoInsumo> facConsumoInsumoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cfgInsumo")
     private List<FacPaqueteInsumo> facPaqueteInsumoList;
+    @JoinColumn(name = "id_administradora", referencedColumnName = "id_administradora")
+    @ManyToOne
+    private FacAdministradora idAdministradora;
 
     public CfgInsumo() {
     }
@@ -165,6 +171,14 @@ public class CfgInsumo implements Serializable {
         this.facPaqueteInsumoList = facPaqueteInsumoList;
     }
 
+    public FacAdministradora getIdAdministradora() {
+        return idAdministradora;
+    }
+
+    public void setIdAdministradora(FacAdministradora idAdministradora) {
+        this.idAdministradora = idAdministradora;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -189,5 +203,5 @@ public class CfgInsumo implements Serializable {
     public String toString() {
         return "entidades.CfgInsumo[ idInsumo=" + idInsumo + " ]";
     }
-    
+
 }

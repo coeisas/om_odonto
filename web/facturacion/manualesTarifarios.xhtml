@@ -772,7 +772,7 @@
                                 <p:ajax event="change"
                                         listener="#{manualesTarifariosMB.cambiaInsumo}"
                                         update="IdPanelAgregarInsumo"/>
-                                <f:selectItems value="#{manualesTarifariosMB.listaInsumos}" var="insumo" itemLabel="#{insumo.nombreInsumo}" itemValue="#{insumo.idInsumo}"/>
+                                <f:selectItems value="#{manualesTarifariosMB.listaInsumos}" var="insumo" itemLabel="#{insumo.codigoInsumo}-#{insumo.nombreInsumo}" itemValue="#{insumo.idInsumo}"/>
                             </p:selectOneMenu>                    
                         </p:column>
                     </p:row>

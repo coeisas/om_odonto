@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CfgEmpresa.findByWebsite", query = "SELECT c FROM CfgEmpresa c WHERE c.website = :website"),
     @NamedQuery(name = "CfgEmpresa.findByObservaciones", query = "SELECT c FROM CfgEmpresa c WHERE c.observaciones = :observaciones"),
     @NamedQuery(name = "CfgEmpresa.findByCodigoEmpresa", query = "SELECT c FROM CfgEmpresa c WHERE c.codigoEmpresa = :codigoEmpresa"),
-    @NamedQuery(name = "CfgEmpresa.findByRegimen", query = "SELECT c FROM CfgEmpresa c WHERE c.regimen = :regimen")})
+    @NamedQuery(name = "CfgEmpresa.findByRegimen", query = "SELECT c FROM CfgEmpresa c WHERE c.regimen = :regimen"),
+    @NamedQuery(name = "CfgEmpresa.findByRazonRip", query = "SELECT c FROM CfgEmpresa c WHERE c.razonRip = :razonRip")})
 public class CfgEmpresa implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -69,21 +70,23 @@ public class CfgEmpresa implements Serializable {
     private String codigoEmpresa;
     @Column(name = "regimen", length = 50)
     private String regimen;
-    @JoinColumn(name = "logo", referencedColumnName = "id")
-    @ManyToOne
-    private CfgImagenes logo;
-    @JoinColumn(name = "tipo_doc_rep_legal", referencedColumnName = "id")
-    @ManyToOne
-    private CfgClasificaciones tipoDocRepLegal;
-    @JoinColumn(name = "tipo_doc", referencedColumnName = "id")
-    @ManyToOne
-    private CfgClasificaciones tipoDoc;
-    @JoinColumn(name = "cod_municipio", referencedColumnName = "id")
-    @ManyToOne
-    private CfgClasificaciones codMunicipio;
+    @Column(name = "razon_rip", length = 2147483647)
+    private String razonRip;
     @JoinColumn(name = "cod_departamento", referencedColumnName = "id")
     @ManyToOne
     private CfgClasificaciones codDepartamento;
+    @JoinColumn(name = "cod_municipio", referencedColumnName = "id")
+    @ManyToOne
+    private CfgClasificaciones codMunicipio;
+    @JoinColumn(name = "tipo_doc", referencedColumnName = "id")
+    @ManyToOne
+    private CfgClasificaciones tipoDoc;
+    @JoinColumn(name = "tipo_doc_rep_legal", referencedColumnName = "id")
+    @ManyToOne
+    private CfgClasificaciones tipoDocRepLegal;
+    @JoinColumn(name = "logo", referencedColumnName = "id")
+    @ManyToOne
+    private CfgImagenes logo;
 
     public CfgEmpresa() {
     }
@@ -196,28 +199,20 @@ public class CfgEmpresa implements Serializable {
         this.regimen = regimen;
     }
 
-    public CfgImagenes getLogo() {
-        return logo;
+    public String getRazonRip() {
+        return razonRip;
     }
 
-    public void setLogo(CfgImagenes logo) {
-        this.logo = logo;
+    public void setRazonRip(String razonRip) {
+        this.razonRip = razonRip;
     }
 
-    public CfgClasificaciones getTipoDocRepLegal() {
-        return tipoDocRepLegal;
+    public CfgClasificaciones getCodDepartamento() {
+        return codDepartamento;
     }
 
-    public void setTipoDocRepLegal(CfgClasificaciones tipoDocRepLegal) {
-        this.tipoDocRepLegal = tipoDocRepLegal;
-    }
-
-    public CfgClasificaciones getTipoDoc() {
-        return tipoDoc;
-    }
-
-    public void setTipoDoc(CfgClasificaciones tipoDoc) {
-        this.tipoDoc = tipoDoc;
+    public void setCodDepartamento(CfgClasificaciones codDepartamento) {
+        this.codDepartamento = codDepartamento;
     }
 
     public CfgClasificaciones getCodMunicipio() {
@@ -228,12 +223,41 @@ public class CfgEmpresa implements Serializable {
         this.codMunicipio = codMunicipio;
     }
 
-    public CfgClasificaciones getCodDepartamento() {
-        return codDepartamento;
+    public CfgClasificaciones getTipoDoc() {
+        return tipoDoc;
     }
 
-    public void setCodDepartamento(CfgClasificaciones codDepartamento) {
-        this.codDepartamento = codDepartamento;
+    public void setTipoDoc(CfgClasificaciones tipoDoc) {
+        this.tipoDoc = tipoDoc;
+    }
+
+    public CfgClasificaciones getTipoDocRepLegal() {
+        return tipoDocRepLegal;
+    }
+
+    public void setTipoDocRepLegal(CfgClasificaciones tipoDocRepLegal) {
+        this.tipoDocRepLegal = tipoDocRepLegal;
+    }
+
+    public CfgImagenes getLogo() {
+        return logo;
+    }
+
+    public void setLogo(CfgImagenes logo) {
+        this.logo = logo;
+    }
+
+    public String identificacionMasDigitoVerificacion() {
+        try {
+            if (!dv.trim().isEmpty()) {
+                String aux = "-".concat(dv);
+                return numIdentificacion.concat(aux);
+            } else {
+                return numIdentificacion;
+            }
+        } catch (Exception e) {
+            return numIdentificacion;
+        }
     }
 
     @Override
@@ -260,5 +284,5 @@ public class CfgEmpresa implements Serializable {
     public String toString() {
         return "modelo.entidades.CfgEmpresa[ codEmpresa=" + codEmpresa + " ]";
     }
-    
+
 }

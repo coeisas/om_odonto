@@ -69,14 +69,14 @@ public class RipsAc implements Serializable {
     @Column(name = "num_aut", length = 15)
     private String numAut;
     @Size(max = 20)
-    @Column(name = "cod_con", length = 20)
+    @Column(name = "cod_con", length = 20)//CODIGO DE LA ADMINISTRADORA FAC_ADMINISTRADORA
     private String codCon;
     @Size(max = 2)
     @Column(name = "fin_con", length = 2)
-    private String finCon;
+    private String finCon;//FINALIDAD CONSULTA POR DEFECTO 10
     @Size(max = 2)
     @Column(name = "cau_ext", length = 2)
-    private String cauExt;
+    private String cauExt;//CAUSA EXTERNA POR DEFECTO 13
     @Size(max = 4)
     @Column(name = "dx_ppal", length = 4)
     private String dxPpal;

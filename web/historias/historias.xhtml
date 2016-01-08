@@ -139,7 +139,8 @@
                             <h:outputText value="#{nodo.nombre}" />
                         </p:treeNode>                                                                                                                                            
                     </p:tree>
-                    <p:commandButton icon="ui-icon-pencil" id="IdBtnEditarHistorial" value="Editar" actionListener="#{historiasMB.cargarRegistroClinico}" disabled="#{historiasMB.btnHistorialDisabled}" rendered="#{historiasMB.btnEditarRendered}"/>                                        
+                    <!-- SE DESHABILITA LA OPCION DE EDITAR REGISTROS CLINICOS -->
+                    <p:commandButton icon="ui-icon-pencil" id="IdBtnEditarHistorial" value="Editar" actionListener="#{historiasMB.cargarRegistroClinico}" disabled="#{historiasMB.btnHistorialDisabled}" rendered="false"/>                                        
                     <p:commandButton icon="ui-icon-document" id="IdBtnPdfHistorial" value="PDF" actionListener="#{historiasMB.generarPdf}" ajax="false" onclick="this.form.target = '_blank'" disabled="#{historiasMB.btnHistorialDisabled}"/>
                     <p:commandButton icon="ui-icon-document" id="IdBtnPdfAgrupado" value="PDF Agrupado" actionListener="#{historiasMB.generarPdfAgrupado}" ajax="false" onclick="this.form.target = '_blank'" disabled="#{historiasMB.btnPdfAgrupadoDisabled}" rendered="false"/>                    
                 </p:panel>

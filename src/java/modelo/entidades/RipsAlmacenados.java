@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "RipsAlmacenados.findByFechaInicial", query = "SELECT r FROM RipsAlmacenados r WHERE r.fechaInicial = :fechaInicial"),
     @NamedQuery(name = "RipsAlmacenados.findByFechaFinal", query = "SELECT r FROM RipsAlmacenados r WHERE r.fechaFinal = :fechaFinal")})
 public class RipsAlmacenados implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,6 +78,8 @@ public class RipsAlmacenados implements Serializable {
     private List<RipsAc> ripsAcList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "ripsAlmacenados")
     private List<RipsUs> ripsUsList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "ripsAlmacenados")
+    private List<RipsAt> ripsAtList;
 
     public RipsAlmacenados() {
     }
@@ -194,6 +197,15 @@ public class RipsAlmacenados implements Serializable {
         this.ripsUsList = ripsUsList;
     }
 
+    @XmlTransient
+    public List<RipsAt> getRipsAtList() {
+        return ripsAtList;
+    }
+
+    public void setRipsAtList(List<RipsAt> ripsAtList) {
+        this.ripsAtList = ripsAtList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -218,5 +230,5 @@ public class RipsAlmacenados implements Serializable {
     public String toString() {
         return "modelo.entidades.RipsAlmacenados[ idRipAlmacenado=" + idRipAlmacenado + " ]";
     }
-    
+
 }

@@ -131,7 +131,8 @@ public class HcRegistroFacade extends AbstractFacade<HcRegistro> {
                     + " from hc_registro  \n"
                     + " where \n"
                     + " id_cita = " + idCita + " AND \n"
-                    + " id_tipo_reg in (1,2,5,7,8)  \n"
+//                    + " id_tipo_reg in (1,2,5,7,8)  \n"
+                    + " id_tipo_reg in (1,2)  \n"
                     + " ORDER BY fecha_reg DESC\n"
                     + " LIMIT 1", HcRegistro.class).getSingleResult();
         } catch (Exception e) {
@@ -146,7 +147,8 @@ public class HcRegistroFacade extends AbstractFacade<HcRegistro> {
                     + " from hc_registro  \n"
                     + " where \n"
                     + " id_paciente = " + idPaciente + " AND \n"
-                    + " id_tipo_reg in (1,2,5,7,8)  \n"
+//                    + " id_tipo_reg in (1,2,5,7,8)  \n"
+                    + " id_tipo_reg in (1,2)  \n"
                     + " ORDER BY fecha_reg DESC\n"
                     + " LIMIT 1", HcRegistro.class).getSingleResult();
         } catch (Exception e) {

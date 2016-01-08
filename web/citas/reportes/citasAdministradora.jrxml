@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="612" pageHeight="792" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="63608e1c-074c-4fc9-bc21-5677543b7165">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="752" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="63608e1c-074c-4fc9-bc21-5677543b7165">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="193"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="logoEmpresa" class="java.lang.String"/>
@@ -29,6 +29,8 @@
 	<field name="fecha" class="java.util.Date"/>
 	<field name="empresaDireccion" class="java.lang.String"/>
 	<field name="empresaTelefono" class="java.lang.String"/>
+	<field name="dirPaciente" class="java.lang.String"/>
+	<field name="telPaciente" class="java.lang.String"/>
 	<group name="Administradora Group">
 		<groupExpression><![CDATA[$F{codAdministradora}]]></groupExpression>
 		<groupHeader>
@@ -41,7 +43,7 @@
 					<textFieldExpression><![CDATA[$F{administradora}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="0" y="0" width="572" height="1" uuid="26b8ae1a-c85a-4f89-8f78-ded8cd322951"/>
+					<reportElement x="0" y="0" width="752" height="1" uuid="26b8ae1a-c85a-4f89-8f78-ded8cd322951"/>
 				</line>
 			</band>
 		</groupHeader>
@@ -58,32 +60,46 @@
 					<textFieldExpression><![CDATA["Dr(a) " + $F{prestadorPN}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="190" y="15" width="49" height="15" uuid="96293209-5be4-4c18-ada1-5dda4833ed19"/>
+					<reportElement x="18" y="16" width="49" height="15" uuid="96293209-5be4-4c18-ada1-5dda4833ed19"/>
 					<textElement verticalAlignment="Bottom">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Cita No]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="335" y="15" width="162" height="15" uuid="7b53214c-d38a-46eb-8a58-988432f62031"/>
+					<reportElement x="163" y="16" width="162" height="15" uuid="7b53214c-d38a-46eb-8a58-988432f62031"/>
 					<textElement verticalAlignment="Bottom">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Paciente]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="497" y="15" width="75" height="15" uuid="4fc31918-331a-4b77-a0e5-76306d307d32"/>
+					<reportElement x="677" y="15" width="75" height="15" uuid="4fc31918-331a-4b77-a0e5-76306d307d32"/>
 					<textElement verticalAlignment="Bottom">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Fecha]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="239" y="15" width="96" height="15" uuid="7030889d-9749-4543-b941-2af96ba08c3b"/>
+					<reportElement x="67" y="16" width="96" height="15" uuid="7030889d-9749-4543-b941-2af96ba08c3b"/>
 					<textElement verticalAlignment="Bottom">
 						<font size="8" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Identificacion]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="336" y="15" width="225" height="15" uuid="0882577d-fc33-4a64-9cea-07dc264b0b94"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Direccion]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="572" y="15" width="100" height="15" uuid="03a9f749-8154-46a1-a8dd-1267f0cbd725"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Telefono]]></text>
 				</staticText>
 			</band>
 		</groupHeader>
@@ -97,14 +113,14 @@
 	<pageHeader>
 		<band height="43" splitType="Stretch">
 			<rectangle radius="10">
-				<reportElement x="0" y="0" width="573" height="43" uuid="fd7e323e-d9e8-468a-9ad7-b0e6dcdc8805"/>
+				<reportElement x="0" y="0" width="752" height="43" uuid="fd7e323e-d9e8-468a-9ad7-b0e6dcdc8805"/>
 			</rectangle>
 			<image>
 				<reportElement x="8" y="2" width="100" height="39" uuid="ac3c30d9-5d10-4e2e-9231-161804307e3e"/>
 				<imageExpression><![CDATA[$P{logoEmpresa}]]></imageExpression>
 			</image>
 			<textField>
-				<reportElement x="0" y="3" width="572" height="39" uuid="67436369-4571-4fa5-ab1e-1dfd3ec30aef"/>
+				<reportElement x="0" y="3" width="752" height="39" uuid="67436369-4571-4fa5-ab1e-1dfd3ec30aef"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font size="14" isBold="true"/>
 				</textElement>
@@ -117,33 +133,47 @@
 	</columnHeader>
 	<detail>
 		<band height="19" splitType="Stretch">
-			<textField pattern="dd/MM/yyyy">
-				<reportElement x="497" y="2" width="75" height="15" uuid="23366d2d-4b54-4e0c-afcd-03a69b8d839b"/>
-				<textElement verticalAlignment="Top">
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="335" y="2" width="162" height="15" uuid="3164a6d2-c550-457c-be1f-3fd62c8b1744"/>
+				<reportElement x="163" y="3" width="162" height="15" uuid="3164a6d2-c550-457c-be1f-3fd62c8b1744"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pacientePN}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="239" y="2" width="96" height="15" uuid="ab704161-ec1b-4690-9e6d-94e592bdc974"/>
+				<reportElement x="67" y="3" width="96" height="15" uuid="ab704161-ec1b-4690-9e6d-94e592bdc974"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{pacienteTipoDoc}+" "+$F{pacienteNumDoc}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="190" y="2" width="49" height="15" uuid="315cef60-8ea4-4376-ae3d-9e71e8fe17cc"/>
+				<reportElement x="18" y="3" width="49" height="15" uuid="315cef60-8ea4-4376-ae3d-9e71e8fe17cc"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{idCita}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="336" y="4" width="225" height="15" uuid="6b368cd5-706f-46b6-b7e9-fb851fb944d1"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dirPaciente}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="677" y="4" width="75" height="15" uuid="23366d2d-4b54-4e0c-afcd-03a69b8d839b"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="572" y="3" width="100" height="15" uuid="08c8c182-1e39-4271-9769-0edf3ef8f8e8"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telPaciente}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -153,21 +183,21 @@
 	<pageFooter>
 		<band height="26" splitType="Stretch">
 			<textField>
-				<reportElement x="222" y="0" width="80" height="20" uuid="da1234e7-c4c2-4de1-9a67-19a5b987daf2"/>
+				<reportElement x="296" y="0" width="80" height="20" uuid="da1234e7-c4c2-4de1-9a67-19a5b987daf2"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
 			</textField>
 			<textField evaluationTime="Report">
-				<reportElement x="302" y="0" width="40" height="20" uuid="a1e1e7c2-2a9e-4103-9da7-df03715d7556"/>
+				<reportElement x="376" y="0" width="40" height="20" uuid="a1e1e7c2-2a9e-4103-9da7-df03715d7556"/>
 				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="239" height="20" uuid="a8a87f5b-4b30-4301-bc1a-de9a6ec658ec"/>
+				<reportElement x="0" y="0" width="279" height="20" uuid="a8a87f5b-4b30-4301-bc1a-de9a6ec658ec"/>
 				<textElement>
 					<font size="8"/>
 				</textElement>

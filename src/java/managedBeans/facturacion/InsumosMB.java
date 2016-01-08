@@ -12,8 +12,11 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 import modelo.entidades.CfgInsumo;
+import modelo.entidades.FacAdministradora;
 import modelo.fachadas.CfgInsumoFacade;
+import modelo.fachadas.FacAdministradoraFacade;
 import org.primefaces.context.RequestContext;
 
 /**
@@ -29,6 +32,8 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
     //---------------------------------------------------
     @EJB
     CfgInsumoFacade insumoFacade;
+    @EJB
+    FacAdministradoraFacade administradoraFacade;
     //---------------------------------------------------
     //-----------------ENTIDADES -------------------------
     //---------------------------------------------------
@@ -43,6 +48,7 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
     private String tituloTabInsumos = "Nuevo Insumo";
     private String codigoInsumo = "";
     private String nombreInsumo = "";
+    private int idAdministradora;
     private String observacion = "";
     private double valor = 0;
 
@@ -57,7 +63,7 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
     //--------------------------------------------------- 
     public void limpiarFormularioInsumos() {
         tituloTabInsumos = "Nuevo insumo";
-        insumoSeleccionado=null;
+        insumoSeleccionado = null;
         codigoInsumo = "";
         nombreInsumo = "";
         observacion = "";
@@ -79,6 +85,7 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
         codigoInsumo = insumoSeleccionado.getCodigoInsumo();
         nombreInsumo = insumoSeleccionado.getNombreInsumo();
         observacion = insumoSeleccionado.getObservacion();
+        idAdministradora = insumoSeleccionado.getIdAdministradora() != null ? insumoSeleccionado.getIdAdministradora().getIdAdministradora() : 0;
         valor = insumoSeleccionado.getValor();
         tituloTabInsumos = "Datos Insumo: " + nombreInsumo;
         RequestContext.getCurrentInstance().execute("PF('dialogoBuscarInsumos').hide();");
@@ -115,6 +122,11 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
         if (validacionCampoVacio(nombreInsumo, "Nombre insumo")) {
             return;
         }
+        if (idAdministradora == 0) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Seleccione una administradora"));
+            return;
+
+        }
         if (insumoSeleccionado == null) {
             guardarNuevoInsumo();
         } else {
@@ -127,6 +139,8 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
         nuevoInsumo.setCodigoInsumo(codigoInsumo);
         nuevoInsumo.setNombreInsumo(nombreInsumo);
         nuevoInsumo.setObservacion(observacion);
+        FacAdministradora administradora = administradoraFacade.find(idAdministradora);
+        nuevoInsumo.setIdAdministradora(administradora);
         nuevoInsumo.setValor(valor);
         insumoFacade.create(nuevoInsumo);
         limpiarFormularioInsumos();
@@ -137,18 +151,19 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
     private void actualizarInsumoExistente() {//realiza la actualizacion del consultorio        
         insumoSeleccionado.setCodigoInsumo(codigoInsumo);
         insumoSeleccionado.setNombreInsumo(nombreInsumo);
+        FacAdministradora administradora = administradoraFacade.find(idAdministradora);
+        insumoSeleccionado.setIdAdministradora(administradora);
         insumoSeleccionado.setObservacion(observacion);
         insumoSeleccionado.setValor(valor);
         insumoFacade.edit(insumoSeleccionado);
         limpiarFormularioInsumos();
         RequestContext.getCurrentInstance().update("IdFormInsumos");
         imprimirMensaje("Correcto", "El insumo ha sido actualizado.", FacesMessage.SEVERITY_INFO);
-    }    
+    }
 
     //---------------------------------------------------
     //-----------------FUNCIONES GET Y SET --------------
     //---------------------------------------------------
-
     public CfgInsumo getInsumoSeleccionado() {
         return insumoSeleccionado;
     }
@@ -212,5 +227,13 @@ public class InsumosMB extends MetodosGenerales implements Serializable {
     public void setValor(double valor) {
         this.valor = valor;
     }
-    
+
+    public int getIdAdministradora() {
+        return idAdministradora;
+    }
+
+    public void setIdAdministradora(int idAdministradora) {
+        this.idAdministradora = idAdministradora;
+    }
+
 }

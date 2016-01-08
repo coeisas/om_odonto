@@ -123,26 +123,31 @@ public class LazyFacturasAdmiDataModel extends LazyDataModel<FilaDataTable> {
                 + "            where id_administradora = fac_factura_admi.id_administradora\n"
                 + "         ) as administradora,\n"
                 + "         --------------------------------------\n"
-                + "         valor_total::text as valor\n"
+                + "         valor_total::text as valor,\n"
                 + "         ------------------------------------- \n"
+                + "          clasificacion"
                 + "     from fac_factura_admi \n"
                 + ")as consulta " + where;
 
         sqlResult = sqlResult + sql + " ORDER BY fecha DESC LIMIT " + String.valueOf(pageSize) + " OFFSET " + String.valueOf(first);
         sqlCount = sqlCount + sql;
-        //System.out.println(sqlResult + "---");
+//        System.out.println(sqlResult + "---");
         //System.out.println(sqlCount + "---");
 
         listaDatosFacturas = facturaAdmiFacade.consultaNativaArreglo(sqlResult);
         for (Object listaDatosFactura : listaDatosFacturas) {
             Object[] datosUnaFactura = (Object[]) listaDatosFactura;
+            if (datosUnaFactura[6] == null) {
+                datosUnaFactura[6] = 0;
+            }
             nuevaFila = new FilaDataTable(
                     datosUnaFactura[0].toString(),
                     datosUnaFactura[1].toString(),
                     datosUnaFactura[2].toString(),
                     datosUnaFactura[3].toString(),
                     datosUnaFactura[4].toString(),
-                    datosUnaFactura[5].toString());
+                    datosUnaFactura[5].toString(),
+                    datosUnaFactura[6].toString());
             dataSource.add(nuevaFila);
         }
         this.setRowCount(facturaAdmiFacade.consultaNativaConteo(sqlCount));

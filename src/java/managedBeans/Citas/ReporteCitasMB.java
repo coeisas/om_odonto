@@ -259,6 +259,8 @@ public class ReporteCitasMB extends MetodosGenerales implements Serializable {
                 if (cita.getTipoCita() != null) {
                     citaU.setMotivoConsulta(cita.getTipoCita().getDescripcion());
                 }
+                citaU.setDirPaciente(cita.getIdPaciente().getDireccion());
+                citaU.setTelPaciente(cita.getIdPaciente().getCelular());
                 int idServicio = cita.getIdServicio().getIdServicio();
                 citaU.setServicio(servicioFacade.find(idServicio).getNombreServicio());
                 if (cita.getCancelada()) {

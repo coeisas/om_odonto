@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:pe="http://primefaces.org/ui/extensions">  
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">  
     <h:head>        
         <title>Insumos</title>
         <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
@@ -49,7 +50,12 @@
                         <p:outputLabel styleClass="campoObligatorio" value="Código"/>
                         <p:inputText   value="#{insumosMB.codigoInsumo}" size="35" maxlength="10" />                    
                         <p:outputLabel styleClass="campoObligatorio" value="Nombre"/>
-                        <p:inputText   value="#{insumosMB.nombreInsumo}" size="35" maxlength="100" />                    
+                        <p:inputText   value="#{insumosMB.nombreInsumo}" size="35" maxlength="100" />
+                        <p:outputLabel styleClass="campoObligatorio" value="Administradora"/>
+                        <p:selectOneMenu value="#{insumosMB.idAdministradora}">
+                            <f:selectItem itemLabel="..." itemValue="#{null}"/>
+                            <f:selectItems value="#{aplicacionGeneralMB.listaAdministradoras}" var="administradora" itemLabel="#{administradora.razonSocial}" itemValue="#{administradora.idAdministradora}"/>
+                        </p:selectOneMenu>
                         <p:outputLabel styleClass="campoObligatorio" value="Valor"/>
                         <pe:inputNumber  styleClass="campoFormulario" decimalSeparator="," maxlength="15" minValue="0" value="#{insumosMB.valor}"/>
 
@@ -73,7 +79,7 @@
                                 rowKey="#{insumo.idInsumo}"  
                                 selection="#{insumosMB.insumoSeleccionadoTabla}" 
                                 paginator="true"
-                                style="width: 600px; height: 300px;"
+                                style="width: 700px; height: 300px;"
                                 rows="10"                                    
                                 paginatorPosition="bottom"                                
                                 emptyMessage="No hay insumos"
@@ -83,12 +89,15 @@
                                 pageLinks="5"
                                 selectionMode="single"
                                 resizableColumns="true">                                                                                               
-                                <p:column headerText="CODIGO" width="1" filterBy="#{insumo.codigoInsumo}" filterMatchMode="contains">
+                                <p:column headerText="CODIGO" width="25%" filterBy="#{insumo.codigoInsumo}" filterMatchMode="contains">
                                     #{insumo.codigoInsumo}
                                 </p:column>                                
-                                <p:column headerText="NOMBRE" width="20" filterBy="#{insumo.nombreInsumo}" filterMatchMode="contains">
+                                <p:column headerText="NOMBRE"  filterBy="#{insumo.nombreInsumo}" filterMatchMode="contains">
                                     #{insumo.nombreInsumo}
-                                </p:column>                                
+                                </p:column>
+                                <p:column headerText="ADMINISTRADORA" filterBy="#{insumo.idAdministradora.razonSocial}" filterMatchMode="contains">
+                                    #{insumo.idAdministradora != null ? insumo.idAdministradora.razonSocial:""}
+                                </p:column>
                             </p:dataTable>  
                         </td>    
                     </tr>
