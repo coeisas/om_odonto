@@ -536,7 +536,7 @@ public class AplicacionGeneralMB {
         List<SelectItem> listaRetorno = new ArrayList<>();
         List<CfgClasificaciones> listaClasificaciones = clasificacionesFacade.buscarPorMaestro(maestro);
         for (CfgClasificaciones clasificacion : listaClasificaciones) {
-            listaRetorno.add(new SelectItem(clasificacion.getId(), clasificacion.getCodigo() + " - " + clasificacion.getDescripcion()));
+            listaRetorno.add(new SelectItem(clasificacion.getId(), clasificacion.getDescripcion()));
         }
         return listaRetorno;
     }

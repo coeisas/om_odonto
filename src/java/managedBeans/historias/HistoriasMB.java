@@ -134,6 +134,7 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
     private String identificacionPaciente = "";
     private String tipoIdentificacion = "";
     private String nombrePaciente = "Paciente";
+    private String ocupacion;
     private String generoPaciente = "";
     private String edadPaciente = "";
     private String administradoraPaciente = "";
@@ -591,7 +592,6 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
         datosReporte.setValor(82, "<b>" + empresa.getTipoDoc().getDescripcion() + ": </b>  " + empresa.getNumIdentificacion());//NIT        
         datosReporte.setValor(83, empresa.getWebsite());//sitio web       
 
-        
         datosReporte.setValor(97, empresa.getNomRepLegal());//CONSTANSA PORTILLA BENAVIDES
         datosReporte.setValor(98, empresa.getTipoDoc().getDescripcion() + ":" + empresa.getNumIdentificacion() + " " + empresa.getObservaciones());//OPTOMETRA U.L SALLE-BOGOTA        
         datosReporte.setValor(100, empresa.getRazonSocial());//
@@ -705,6 +705,7 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
 //            }
 //        }
     }
+
     //---------------------------------------------------
     //--------- FUNCIONES REGISTROS CLINICOS ------------
     //---------------------------------------------------
@@ -1025,9 +1026,17 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
             } else {
                 tipoIdentificacion = "";
             }
+            if (pacienteSeleccionado.getOcupacion() != null) {
+                ocupacion = pacienteSeleccionado.getOcupacion().getDescripcion().toUpperCase();
+                if (ocupacion.length() > 45) {
+                    ocupacion = ocupacion.substring(0, 45);
+                }
+            } else {
+                ocupacion = "Sin definir";
+            }
             nombrePaciente = pacienteSeleccionado.nombreCompleto();
             if (pacienteSeleccionado.getGenero() != null) {
-                generoPaciente = pacienteSeleccionado.getGenero().getObservacion();
+                generoPaciente = pacienteSeleccionado.getGenero().getDescripcion();
             } else {
                 generoPaciente = "";
             }
@@ -1038,6 +1047,9 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
             }
             if (pacienteSeleccionado.getIdAdministradora() != null) {
                 administradoraPaciente = pacienteSeleccionado.getIdAdministradora().getRazonSocial();
+                if (administradoraPaciente.length() > 50) {
+                    administradoraPaciente = administradoraPaciente.substring(0, 50);
+                }
             } else {
                 administradoraPaciente = "";
             }
@@ -1514,6 +1526,10 @@ public class HistoriasMB extends MetodosGenerales implements Serializable {
 
     public void setMunicipio(String municipio) {
         this.municipio = municipio;
+    }
+
+    public String getOcupacion() {
+        return ocupacion;
     }
 
 }

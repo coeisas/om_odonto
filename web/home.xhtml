@@ -22,100 +22,98 @@
             }
             ;
         </script> 
+        <style>
+            /*ul.ui-menu-child {
+                white-space: nowrap;
+                width: auto !important;
+            }*/
+            ul.ui-widget-content.ui-menu-list.ui-menu-child {
+                width: 190px;
+            }
+        </style>        
     </h:head>
     <h:body style="font-size: 11px;">                
         <h:form id="IdFormHome">                                
             <p:remoteCommand name="rcTest" action="#{loginMB.cargarPacienteDesdeHistorias}" update=":IdFormCenter"/>                
             <p:remoteCommand name="rcCargarTab" action="#{loginMB.cargarTab}" update=":IdFormCenter"/>                
         </h:form> 
-        <p:layout fullPage="true"> 
-            <p:layoutUnit position="west" size="200" gutter="2" header="&nbsp;" collapsible="true" style="border: none; text-align: center;">
-                <h:form>
-                    <h:form style="overflow: hidden;">                            
-                        <p:panel style="width:190px; left: 0px; margin: 0px; padding: 0px; margin-left: 0px !important; padding-left: 0px !important;">
-                            <table>
-                                <tr>
-                                    <td>
-                                        <img src="recursos/img/logo.png" width="120" height="40" style="left: 100px;"/>                
-                                    </td>             
-                                </tr>
+        <div id="top" class="top">
+            <h:form>
+                <h:form style="overflow: hidden;">                            
+                    <p:toolbar>
+                        <f:facet name="left">
+                            <h1 class="titlelogo">OpenMedical</h1>
+                        </f:facet>
+                        <f:facet name="right">
+                            <!--styleClass="icon-switch fg-lightBlue bg-white no-border"
+style="font-size: 30px; width: 30px; height: 30px;"-->
+                            <p:commandButton 
+                                title="Cerrar sesión" value="&nbsp;"                    
+                                icon="ui-icon-power"
+                                style="width: 3em"
+                                actionListener="#{loginMB.cerrarSesion}" 
+                                />
+                        </f:facet>
 
-                                <!-- tr>
-                                    <td colspan="3">
-                                        <h:outputLabel value="BD # {loginMB.baseDeDatosActual}" styleClass="labelFormularioBold textoEnUnaLinea" />
-                                        
-                                    </td>
-                                </tr -->
-                                <tr>
-                                    <td >
-                                        <h:outputLabel  value="#{loginMB.centroDeAtencionactual.nombreSede}" style="width: 150px;" styleClass="labelFormularioBold textoEnUnaLinea" />                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>                                    
-                                        <h:outputLabel value="#{loginMB.usuarioActual.primerNombre} #{loginMB.usuarioActual.primerApellido}" style="width: 150px;" styleClass="labelFormulario textoEnUnaLinea" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <p:commandButton 
-                                            title="Inicio" value="&nbsp;"                                        
-                                            styleClass=" icon-home fg-lightBlue bg-white no-border"                            
-                                            onclick="cargarTab('Inicio', 'paginaInformativa.xhtml', '-');"
-                                            style="font-size: 30px; width: 30px; height: 30px;"/>
-                                        <p:commandButton 
-                                            title="Cerrar sesión" value="&nbsp;"                                        
-                                            styleClass="icon-switch fg-lightBlue bg-white no-border"                            
-                                            actionListener="#{loginMB.cerrarSesion}" 
-                                            style="font-size: 30px; width: 30px; height: 30px;"/>
+                    </p:toolbar>                                
 
-                                    </td>
-                                </tr>
-                            </table>
-                        </p:panel>
-                    </h:form>
+                    <!-- tr>
+                        <td colspan="3">
+                            <h:outputLabel value="BD # {loginMB.baseDeDatosActual}" styleClass="labelFormularioBold textoEnUnaLinea" />
+                            
+                        </td>
+                    </tr -->
+
+                    <!--h:outputLabel  value="# {loginMB.centroDeAtencionactual.nombreSede}" style="width: 150px;" styleClass="labelFormularioBold textoEnUnaLinea" />                                        
+
+                    <h:outputLabel value="# {loginMB.usuarioActual.primerNombre} # {loginMB.usuarioActual.primerApellido}" style="width: 150px;" styleClass="labelFormulario textoEnUnaLinea" /-->
+
+                    <!--p:commandButton 
+                        title="Inicio" value="&nbsp;"                                        
+                        styleClass=" icon-home fg-lightBlue bg-white no-border"                            
+                        onclick="cargarTab('Inicio', 'paginaInformativa.xhtml', '-');"
+                        style="font-size: 30px; width: 30px; height: 30px;"/-->
+
                 </h:form>
+            </h:form>
+            <br/>
+            <h:form  id="IdFormMenu">  
+                <p:growl id="messages" showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
+                <p:menubar
+                    model="#{loginMB.simpleMenuModel}"/>                                                                
                 <br/>
-                <h:form  id="IdFormMenu" style="overflow: hidden;">  
-                    <p:growl id="messages" showDetail="true" sticky="false" autoUpdate="true" life="2000"  />
-                    <p:slideMenu 
-                        style="width:180px; height: 350px; left: 2px;"
-                        backLabel="Regresar"
-                        model="#{loginMB.simpleMenuModel}"/>                                                                
-                    <br/>
-                </h:form>
+            </h:form>     
+        </div>
+        <div id="content" class="left_content"> 
 
-            </p:layoutUnit>
-            <p:layoutUnit position="center" gutter="2" style="overflow: hidden; border: none;">  
-                <!-- p:ajaxStatus 
-                    style=" position:fixed; 
-                    top: 5px; 
-                    right:35px; 
-                    width:17px;
-                    height:17px; 
-                    z-index: 21;"                        
-                    id="ajaxStatusPanel">  
-                    <f:facet name="start">  
-                        <h:graphicImage value="recursos/img/ajaxloading.gif" />                      
-                    </f:facet>          
-                    <f:facet name="complete">  
-                        <h:outputText value="&nbsp;" />  
-                    </f:facet>  
-                </p:ajaxStatus -->     
-                <h:form id="IdFormCenter" prependId="false" style="width: 100%; height: 100%;" >    
-                    <c:if test="#{loginMB.listadoDeTabs.size() != 0}">
-                        <p:tabView id="tabView" activeIndex="#{loginMB.indexTabActiva}" cache="true" scrollable="true" styleClass="bd-white" style="overflow: hidden; margin: 0px; padding: 0px;"> 
-                            <p:ajax event="tabClose" listener="#{loginMB.cerrarTab}" update=":IdFormCenter" />                
-                            <p:ajax event="tabChange" listener="#{loginMB.cambiaTab}" update=":IdFormCenter"/>                                                
-                            <c:forEach var="pagina" items="#{loginMB.listadoDeTabs}">                       
-                                <p:tab  title="#{pagina.titulo}" closable="true"/>
-                            </c:forEach>                
-                        </p:tabView> 
-                    </c:if>                                                                                                               
-                    <iframe  src="#{loginMB.urlTabActual}"   style="position: absolute;  border: 0px; border-width: 1px; border-color:  #adc9fe; width: 99.9%; height: calc(100% - 45px); margin: 0px; padding: 0px;"/>
-                </h:form>
-            </p:layoutUnit>
-        </p:layout>
+            <!-- p:ajaxStatus 
+                style=" position:fixed; 
+                top: 5px; 
+                right:35px; 
+                width:17px;
+                height:17px; 
+                z-index: 21;"                        
+                id="ajaxStatusPanel">  
+                <f:facet name="start">  
+                    <h:graphicImage value="recursos/img/ajaxloading.gif" />                      
+                </f:facet>          
+                <f:facet name="complete">  
+                    <h:outputText value="&nbsp;" />  
+                </f:facet>  
+            </p:ajaxStatus -->     
+            <h:form id="IdFormCenter" prependId="false" style="width: 100%; height: 100%;" >    
+                <c:if test="#{loginMB.listadoDeTabs.size() != 0}">
+                    <p:tabView id="tabView" activeIndex="#{loginMB.indexTabActiva}" cache="true" scrollable="true" styleClass="bd-white" style="overflow: hidden; margin: 0px; padding: 0px;"> 
+                        <p:ajax event="tabClose" listener="#{loginMB.cerrarTab}" update=":IdFormCenter" />                
+                        <p:ajax event="tabChange" listener="#{loginMB.cambiaTab}" update=":IdFormCenter"/>                                                
+                        <c:forEach var="pagina" items="#{loginMB.listadoDeTabs}">                       
+                            <p:tab  title="#{pagina.titulo}" closable="true"/>
+                        </c:forEach>                
+                    </p:tabView> 
+                </c:if>                                                                                                               
+                <iframe  src="#{loginMB.urlTabActual}"   style="position: absolute;  border: 0px; border-width: 1px; border-color:  #adc9fe; width: 99%; height: calc(100% - 45px); margin: 0px; padding: 0px;"/>
+            </h:form>
+        </div>
     </h:body>
 </html>
 

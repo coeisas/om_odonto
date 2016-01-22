@@ -1,3 +1,42 @@
+.imagenFondo {
+    /*position: relative;*/
+    background-image: url("../img/fondo6.jpg");
+    background-color: #cccccc;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+
+    /*    background-repeat:no-repeat;
+        background-size:cover;
+        background-position:center;    */
+}
+.titlelogo{
+    display: table-cell;
+    vertical-align: middle;    
+    padding-left: .5em;  
+    color: white;
+    margin: 0;
+    font-size: 3em;
+    text-shadow: 0.1em 0.1em black;
+}
+.contenido{
+    width: 100%;
+}
+
+.banner{
+    vertical-align: central;
+    display: table;
+    width: 100%;
+    height: 5em;
+    border-radius: 1em;
+    background: #08273D;
+    opacity: .6;
+    //box-shadow: 10px 10px 5px #888888;
+box-shadow: 7px 7px 2px #888888;
+
+}
+
 .InactivityLayer {
     display: none;
     position: absolute;
@@ -102,23 +141,28 @@ body{
 }
 
 .campoObligatorio{/* Nombres de campo de los formularios obligatorio*/
-    float: left; padding: 5px;  background-color: #eff5fa; margin: 0px; margin-right: 3px;   
+    /*float: left; padding: 5px;  background-color: #eff5fa; margin: 0px; margin-right: 3px;*/ 
+    background-color: #eff5fa; margin: 0px; margin-right: 3px;   
 }
 .campoObligatorio:after{
     color: red;    
     content: "  *";    
 }
 .campoNoObligatorio{
-    float: left; padding: 5px; background-color: #eff5fa; margin: 0px;  margin-right: 3px; 
+    /*float: left; padding: 5px; background-color: #eff5fa; margin: 0px;  margin-right: 3px;*/ 
+    background-color: #eff5fa; margin: 0px;  margin-right: 3px; 
 }
 .labelFormulario{
-    float: left; padding: 5px; margin: 0px;  margin-right: 3px; 
+    /*float: left; padding: 5px; margin: 0px;  margin-right: 3px;*/
+    margin: 0px;  margin-right: 3px; 
 }
 .labelFormularioBold{
-    float: left; padding: 5px; margin: 0px;  margin-right: 3px; font-weight: bold !important; 
+    //float: left; padding: 5px; margin: 0px;  margin-right: 3px; font-weight: bold !important; 
+    margin: 0px;  margin-right: 3px; font-weight: bold !important; 
 }
 .campoFormulario{
-    float: left; margin-right: 3px;
+    /*float: left; margin-right: 3px;*/
+    margin-right: 3px;
 }
 .tablaFormulario{
     margin: 10px;

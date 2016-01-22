@@ -19,7 +19,7 @@ public abstract class AbstractFacade<T> {
 
     private Class<T> entityClass;
 
-    @PersistenceContext(unitName = "OPENMEDICALPU")
+    @PersistenceContext(unitName = "OM_ODONTOPU")
     private EntityManager em;   
 
     @Inject

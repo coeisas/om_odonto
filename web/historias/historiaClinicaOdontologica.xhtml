@@ -1,0 +1,1154 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <link href="../recursos/css/estilos.css" rel="stylesheet"/>
+        <link href="../recursos/css/metro-bootstrap.css" rel="stylesheet"/>
+        <link href="../recursos/css/iconFont.css" rel="stylesheet"/>
+        <script type="text/javascript" src="../recursos/js/calendario.js"></script> 
+
+    </h:head>
+    <h:body>
+        <h:form id="IdFormRegistroClinicoOdontologico">
+            <p:tabView scrollable="true">
+                <p:tab title="ANAMENESIS">
+                    <br/>
+                    <p:panelGrid style="width: 90%;margin: 0 auto">
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel value="MOTIVO CONSULTA"/>
+                            </p:column>
+                            <p:column width="90%">
+                                <p:inputText />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:panelGrid style="width: 90%;margin: 0 auto">
+                        <p:row>
+                            <p:column><p:outputLabel value="TRATAMIENTO MEDICO ACTUAL"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="EMBARAZO"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="FIEBRE REUMATICA"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="TOMA MEDICAMENTOS"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="DIABETES"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="IRRADIACIONES"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="ENFERMEDADES RENALES"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="ORALES"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="RESPIRATORIA"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="TRASTORNOS GASTRICOS"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="EPILEPSIA"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="CARDIOPATIAS"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="CIRUGIAS (INCLUSO ORALES)"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="HEPATITIS"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="INMUNOSUPRESION"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="ALTERACION PRESION ARTERIAL"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="ALERGIAS"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                            <p:column><p:outputLabel value="ENF. SANGUINEAS"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="TRASTORNOS EMOCIONALES"/></p:column>
+                            <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>                             
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="TEMPERATURA"/></p:column>
+                            <p:column><p:inputText /></p:column>
+                            <p:column><p:outputLabel value="PULSACIONES MINUTO"/></p:column>
+                            <p:column><p:inputText /></p:column>
+                            <p:column><p:outputLabel value="PRESION ARTERIAL"/></p:column>
+                            <p:column><p:inputText /></p:column> 
+                        </p:row>
+                        <p:row>
+                            <p:column><p:outputLabel value="FREC. RESP"/></p:column>
+                            <p:column><p:inputText /></p:column>
+                            <p:column colspan="2"><p:outputLabel value="ANTECEDENTES FAMILIARES"/></p:column>
+                            <p:column colspan="2"><p:inputText /></p:column> 
+                        </p:row>
+                    </p:panelGrid>
+                    <br/>
+                    <p:watermark for="IdTextAreaAntecedentes" value="Antecedentes Familiares"/>
+                    <p:panelGrid columns="1" style="margin: 0 auto; width: 90%">
+
+                        <p:inputTextarea id="IdTextAreaAntecedentes"  style="width: 100%;margin: 0 auto" 
+                                         />
+
+                    </p:panelGrid>
+                </p:tab>
+                <p:tab title="EXAMENES">
+                    <br/>
+                    <p:accordionPanel>
+                        <p:tab title="EXAMEN ESTOMATOLOGICO">
+                            <p:panelGrid style="width: 90%;margin: 0 auto;">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="4">TEJIDOS BLANDOS</p:column>
+                                        <p:column colspan="2">ATM OCLUSION</p:column>
+                                        <p:column colspan="2">TEJIDOS DENTALES</p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column><p:outputLabel value="LABIO SUPERIOR"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="PALADAR"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="DOLOR MUSCULAR"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>
+                                    <p:column><p:outputLabel value="CAMBIO FORMA"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="LABIO INFERIOR"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="OROFARINGE"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="DOLOR ARTICULAR"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>
+                                    <p:column><p:outputLabel value="CAMBIO TAMAÑO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>                
+                                <p:row>
+                                    <p:column><p:outputLabel value="COMISURAS"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="LENGUA"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="RUIDO ARTICULAR"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>
+                                    <p:column><p:outputLabel value="CAMBIO NUMERO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="MUCOSA ORAL"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="PISO BOCA"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="ALT. MOVIMIENTO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>
+                                    <p:column><p:outputLabel value="CAMBIO COLOR"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="SURCOS YUGALES"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="REBORDES"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="MAL OCLUSIONES"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>
+                                    <p:column><p:outputLabel value="CAMBIO POSICION"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="FRENILOS"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="G. SALIVALES"/></p:column>
+                                    <p:column><p:selectBooleanCheckbox /></p:column>
+                                    <p:column><p:outputLabel value="CORRECTO DESARROLLO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column>
+                                    <p:column><p:outputLabel value="IMPACTADOS"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>                
+                            </p:panelGrid>
+                        </p:tab>
+                        <p:tab title="OTROS">
+                            <p:panelGrid style="width: 90%;margin: 0 auto">
+                                <f:facet name="header">
+                                    <p:row>
+                                        <p:column colspan="2">EXAMEN PERIODONTAL</p:column>
+                                        <p:column colspan="2">EXAMEN PULPAR</p:column>
+                                        <p:column colspan="2">HABITOS ORALES</p:column>
+                                    </p:row>
+                                </f:facet>
+                                <p:row>
+                                    <p:column><p:outputLabel value="SANGRADO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="ALTERACION VITALIDAD"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="RESPIRADOR ORAL"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="MOVILIDAD"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="DOLOR PERCUSION"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="SECCION DIGITAL"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="RESECIONES"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="MOVILIDAD DENTAL"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="LENGUA PROTRACTIL"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="PLACA BACTERIANA"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="SENSIBILIDAD"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="QUELOSFAGIA"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="CALCULOS"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="FISTULA"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="FUMADOR"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                                <p:row>
+                                    <p:column><p:outputLabel value="ABCESO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="DIENTE TRATADO"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                    <p:column><p:outputLabel value="ONICOFAGIA"/></p:column>
+                                    <p:column><p:selectBooleanButton onLabel="Si" offLabel="No" /></p:column> 
+                                </p:row>
+                            </p:panelGrid>
+                        </p:tab>
+                    </p:accordionPanel>
+                </p:tab>
+                <p:tab title="ODONTOGRAMA">
+                    <div class="odontograma-container">
+                        <div id="diente-18" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-17" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-16" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-15" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-14" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-13" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-12" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-11" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="diente-21" class="fila-1" >
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-22" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-23" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-24" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-25" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-26" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-27" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-28" class="fila-1">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="diente-55" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-54" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-53" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-52" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-51" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="diente-61" class="fila-2" >
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-62" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-63" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-64" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-65" class="fila-2">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="diente-85" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-84" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-83" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-82" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-81" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="diente-71" class="fila-3" >
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-72" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-73" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-74" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-75" class="fila-3">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>                            
+
+                        <div id="diente-48" class="fila-4" >
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-47" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-46" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-45" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-44" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-43" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-42" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-41" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="diente-31" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-32" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-33" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-34" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-35" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-36" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-37" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+                        <div id="diente-38" class="fila-4">
+                            <div class="rectangulo-top"/>
+                            <div class="trapecio-top"/>
+                            <div class="trapecio-left"/>
+                            <div class="rectangulo-center" />
+                            <div class="trapecio-right"/>
+                            <div class="trapecio-bottom"/>
+                            <div class="rectangulo-bottom"/>
+                        </div>
+
+                        <div id="IdConvenciones">
+                            <table border="1">
+                                <tr>
+                                    <td><div id="IdSano" class="paletaConvencion"/></td>
+                                    <td><div id="IdCaries" class="paletaConvencion"/></td>
+                                    <td><div id="IdAmalgama" class="paletaConvencion"/></td>
+                                    <td><div id="IdResina" class="paletaConvencion"/></td>                                        
+                                </tr>
+                                <tr class="title-convencion">
+                                    <td>Sano</td>
+                                    <td>Caries</td>
+                                    <td>Amalgama</td>
+                                    <td>Resina</td>                                        
+                                </tr>
+                                <tr>
+                                    <td><div id="IdImagen1" class="imagenConvencion"/></td>
+                                    <td><div id="IdImagen2" class="imagenConvencion"/></td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>                            
+                </p:tab>
+                <p:tab title="ACCION PREVENTIVA">
+
+                </p:tab>
+                <p:tab title="INDICE O'LEARY">
+
+                </p:tab>
+                <p:tab title="DIAGNOSTICOS">
+
+                </p:tab>
+                <p:tab title="TRATAMIENTO">
+
+                </p:tab>
+
+            </p:tabView>                       
+        </h:form>
+        <style>
+
+            .title-convencion{
+                font-size: .8em;
+            }
+            .paletaConvencion{
+                width: 35px; 
+                height: 10px;
+            }
+            .imagenConvencion{
+                width: 40px;
+                height: 75px;
+            }
+            #IdImagen1{
+                background-image: url(../recursos/img/incluido.png);
+            }
+            #IdImagen2{
+                background-image: url(../recursos/img/sinincluido.png);
+            }
+            #IdSano{
+                background-color: #A6E5E2;
+            }
+            #IdCaries{                
+                background-color: red;
+            }
+            #IdAmalgama{
+                background-color: blue;
+            }
+            #IdResina{
+                background-color: green;
+            }
+            #IdConvenciones {
+                border-left: solid #92c0e0;
+                padding: 10px;
+                position: absolute;
+                margin-left: 750px;
+                width: 200px;
+                height: 400px;
+            }
+            .fila-1{
+                margin-top: 17px;
+            }
+
+            .fila-4{
+                margin-top: 270px;
+            }
+
+            .fila-2{
+                margin-top: 117px;
+            }
+
+            .fila-3{
+                margin-top: 197px;
+            }
+
+            .fila-4{
+                margin-top: 297px;
+            }
+
+            #diente-18, #diente-48 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 2px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+            #diente-17, #diente-47 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 44px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }            
+
+            #diente-16, #diente-46 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 88px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-15, #diente-45, #diente-55, #diente-85 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 132px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-14, #diente-44, #diente-54, #diente-84 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 176px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-13, #diente-43, #diente-53, #diente-83 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 220px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-12, #diente-42, #diente-52, #diente-82 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 264px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-11, #diente-41, #diente-51, #diente-81 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 308px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-21, #diente-31, #diente-61, #diente-71 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 396px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-22, #diente-32, #diente-62, #diente-72 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 440px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-23, #diente-33, #diente-63, #diente-73 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 484px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-24, #diente-34, #diente-64, #diente-74 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 528px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-25, #diente-35, #diente-65, #diente-75 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 572px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-26, #diente-36 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 616px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-27, #diente-37 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 660px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+
+            #diente-28, #diente-38 {
+                position: absolute;
+                //margin-top: 0px;
+                margin-left: 704px;
+                /*border: tomato solid;*/
+                width: 40px;
+                height: 73px;
+            }
+            .odontograma-container {
+                position: relative;
+                margin-top: 2px;
+                height: 430px;
+            }
+            .rectangulo-top {
+                position: absolute;
+                margin-top: 2px;
+                margin-left: 3px;
+                width: 35px; 
+                height: 10px; 
+                background: #A6E5E2;
+            }
+
+            .rectangulo-center {
+                position: absolute;
+                margin-top: 26px;
+                margin-left: 14px;
+                width: 12px; 
+                height: 22px; 
+                background: #A6E5E2;
+            }
+
+            .rectangulo-bottom {
+                position: absolute;
+                margin-top: 62px;
+                margin-left: 3px;
+                width: 35px; 
+                height: 10px; 
+                background: #A6E5E2;
+            }
+            .trapecio-top {
+                position: absolute;
+                margin-left: 2px;
+                margin-top: 14px;
+                width: 20px;
+                height: 0px;
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-top: 10px solid #A6E5E2;
+            }
+
+            .trapecio-right {
+                position: absolute;
+                margin-top: 32px;
+                margin-left: 15px;
+                width: 20px;
+                height: 0px;
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-top: 10px solid #A6E5E2;
+                transform: rotate(90deg);
+            }
+
+            .trapecio-left {
+                margin-top: 32px;
+                margin-left: -10px;
+                position: absolute;
+                width: 20px;
+                height: 0px;
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-top: 10px solid #A6E5E2;
+                transform: rotate(270deg);
+            }
+
+            .trapecio-bottom { 
+                position: absolute;
+                margin-top: 50px;
+                margin-left: 2px;
+                width: 20px;
+                height: 0px;
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-bottom: 10px solid #A6E5E2;
+            }
+        </style>
+        <script>
+            $(document).ready(function () {
+                colorSeleccionado = "#A6E5E2";
+                imagenSeleccionada = null;
+                $(".imagenConvencion").click(function () {
+                    imagenSeleccionada = $(this).css("background-image");
+                    console.log(imagenSeleccionada);
+                });
+                $(".paletaConvencion").click(function () {
+                    colorSeleccionado = $(this).css("background-color");
+                    imagenSeleccionada = null;
+                });
+                $(".rectangulo-top").click(function () {
+                    color = $(this).css("background");
+                    /*console.log("rectangulo top " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("background", determinarColorRectangulo(color));
+                    }
+
+                });
+                $(".trapecio-top").click(function () {
+                    color = $(this).css("border-top");
+                    /*console.log("superior " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("border-top", determinarColorTrapecio(color));
+                    }
+                });
+                $(".trapecio-left").click(function () {
+                    color = $(this).css("border-top");
+                    /*console.log("izquierda " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("border-top", determinarColorTrapecio(color));
+                    }
+
+                });
+                $(".rectangulo-center").click(function () {
+                    color = $(this).css("background");
+                    /*console.log("rectangulo center " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("background", determinarColorRectangulo(color));
+                    }
+                });
+                $(".trapecio-right").click(function () {
+                    color = $(this).css("border-top");
+                    /*console.log("derecha " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("border-top", determinarColorTrapecio(color));
+                    }
+                });
+                $(".trapecio-bottom").click(function () {
+                    color = $(this).css("border-bottom");
+                    /*console.log("inferior " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("border-bottom", determinarColorTrapecio(color));
+                    }
+                });
+                $(".rectangulo-bottom").click(function () {
+                    color = $(this).css("background");
+                    /*console.log("rectangulo bottom " + color);*/
+                    if (imagenSeleccionada != null) {
+                        $(this).parent().css("background-image", imagenSeleccionada);
+                        $(this).parent().children().css('opacity', '0.5');
+                        /*console.log($(this).parent().attr("id"));*/
+                    } else {
+                        $(this).css("background", determinarColorRectangulo(color));
+                    }
+                });
+                function determinarColorTrapecio(color) {
+                    color = "10px solid " + colorSeleccionado;
+                    return color;
+                }
+
+                function determinarColorRectangulo(color) {
+                    color = colorSeleccionado;
+                    return color;
+                }
+            });
+        </script>
+    </h:body>
+</html>
+

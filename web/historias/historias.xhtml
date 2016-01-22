@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://java.sun.com/jsf/core">  
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">  
     <h:head>
         <title>Historias</title>
         <link href="../recursos/css/estilos.css" rel="stylesheet"/>        
@@ -15,39 +16,146 @@
         #{historiasMB.inicializar()}
         <h:form id="IdFormHistorias">  
             <p:growl id="IdMensajeHistorias"  showDetail="true" sticky="false" autoUpdate="true" life="3000"  />             
-            <p:panel id="IdpanelDatosPaciente" style="position: relative; width: 100%; height: 100px; left: -5px;">
+            <p:panel id="IdpanelDatosPaciente" style="position: relative; width: 100%; height: 160px; left: -5px;">
                 <!-- p:commandButton value="mostrar" actionListener="# {historiasMB.mostrarValorObjeto}"/ -->
                 <table style="margin-left: auto; margin-right: auto;">
                     <tr>
                         <td>
                             <table>
                                 <tr>
-                                    <td style="vertical-align: top; ">
+                                    <!--style="vertical-align: top; "-->
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" style="width: 12px;" value="Identificacion Paciente" rendered="#{historiasMB.hayPacienteSeleccionado eq false}"/>                            
                                         <p:outputLabel styleClass="labelFormularioBold" style="width: 12px;" value="#{historiasMB.tipoIdentificacion}" rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
-                                        <p:inputText id="IdTxtIdentificacion" styleClass="campoFormulario"     size="30" value="#{historiasMB.identificacionPaciente}">                        
+                                    </td>
+                                    <td>
+                                        <p:inputText id="IdTxtIdentificacion" styleClass="campoFormulario"   title="Identificacion Paciente"  size="15" value="#{historiasMB.identificacionPaciente}">                        
                                             <p:ajax event="blur" listener="#{historiasMB.validarIdentificacion}" update="IdTablaPacientes IdpanelDatosPaciente IdPanelRegistroClinico"/>
-                                        </p:inputText>  
-                                        <p:watermark for="IdTxtIdentificacion" value="Digite identificación paciente"/>
+                                        </p:inputText>
+                                        <p:watermark for="IdTxtIdentificacion" value="Identificación"/>
                                         <p:commandButton styleClass="campoFormulario"     style="width: 22px; height: 22px;" title="Buscar paciente"    icon="ui-icon-search" onclick="PF('dlgSeleccionarPaciente').show();"/>
                                         <p:commandButton styleClass="campoFormulario"     style="height: 22px;" title="Editiar Paciente"    icon="ui-icon-pencil" actionListener="#{historiasMB.editarPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
-                                        <p:commandButton styleClass="campoFormulario"     style="height: 22px;" title="Historial Paciente" actionListener="#{historiasMB.cargarHistorialCompleto}" icon="ui-icon-calendar" rendered="#{historiasMB.hayPacienteSeleccionado}" oncomplete="PF('dlgHistorico').show();" update=":IdFormHistorias:IdPanelHistorico"/>                            
+                                        <p:commandButton styleClass="campoFormulario"     style="height: 22px;" title="Historial Paciente" actionListener="#{historiasMB.cargarHistorialCompleto}" icon="ui-icon-calendar" rendered="#{historiasMB.hayPacienteSeleccionado}" oncomplete="PF('dlgHistorico').show();" update=":IdFormHistorias:IdPanelHistorico"/>                                                                
+                                    </td> 
+                                    <td class="columanaLabel">
                                         <p:outputLabel   styleClass="labelFormularioBold" value="Nombre" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
                                         <p:outputLabel   styleClass="labelFormulario"     value="#{historiasMB.nombrePaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
                                     </td>
-                                </tr>
-                                <tr>
+                                    <td  class="columanaLabel">
+                                        <p:outputLabel   styleClass="labelFormularioBold" value="RH" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
                                     <td>
-                                        <p:outputLabel   styleClass="labelFormularioBold" style="font-weight: bold;" value="Género: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
-                                        <p:outputLabel   styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.generoPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
-                                        <p:outputLabel styleClass="labelFormularioBold" style="font-weight: bold;" value="Edad: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
-                                        <p:outputLabel styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.edadPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
-                                        <p:outputLabel styleClass="labelFormularioBold" value="Administradora: " style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
-                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.administradoraPaciente}" style="margin-left: 10px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                        <p:outputLabel   styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.grupoSanguineo != null ? historiasMB.pacienteSeleccionado.grupoSanguineo.descripcion : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel   styleClass="labelFormularioBold" style="font-weight: bold;" value="Fec Nacimiento: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
                                     <td>
+                                        <p:outputLabel   styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.pacienteSeleccionado.fechaNacimiento != null ? historiasMB.pacienteSeleccionado.fechaNacimiento : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                        </p:outputLabel>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" style="font-weight: bold;" value="Edad: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.edadPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                            
+                                    </td>                                    
+                                    <td class="columanaLabel">
+                                        <p:outputLabel   styleClass="labelFormularioBold" style="font-weight: bold;" value="Género: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel   styleClass="labelFormulario"     style="font-weight: bold;" value="#{historiasMB.generoPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Estado Civil: " style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.estadoCivil != null ? historiasMB.pacienteSeleccionado.estadoCivil.descripcion : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Ocupacion: " style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td colspan="3">
+                                        <p:outputLabel styleClass="labelFormulario"  value="#{historiasMB.ocupacion}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Telefono:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.telefonoResidencia != null ? historiasMB.pacienteSeleccionado.telefonoResidencia : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Celular:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.celular != null ? historiasMB.pacienteSeleccionado.celular : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Administradora:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.administradoraPaciente}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                </tr>                                
+                                <tr>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Departamento:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.departamento != null ? historiasMB.pacienteSeleccionado.departamento.descripcion.toUpperCase() : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Municipio:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.municipio != null ? historiasMB.pacienteSeleccionado.municipio.descripcion.toUpperCase() : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Zona:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.zona != null ? historiasMB.pacienteSeleccionado.zona.descripcion.toUpperCase() : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Barrio:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.barrio != null ? historiasMB.pacienteSeleccionado.barrio.toUpperCase() : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Direccion:" style="width: 80px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                    <td colspan="3">
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.pacienteSeleccionado.direccion != null ? historiasMB.pacienteSeleccionado.direccion.toUpperCase() : ''}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                    </td>
+                                </tr>
+                                <tr>           
+                                    <td class="columanaLabel">
+                                        <p:outputLabel styleClass="labelFormularioBold" value="Fec. Actual: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>                    
+                                    </td>
+                                    <td>
+                                        <p:clock pattern="dd/MM/yyyy h:mm a" mode="server" rendered="#{historiasMB.hayPacienteSeleccionado}"/>
+                                        <!--p:outputLabel styleClass="cacampoFormulario" value="#{historiasMB.fechaSis}">
+                                            <f:convertDateTime locale="es" pattern="MMMM dd HH:mm ss- yyyy" timeZone="America/Bogota"/>
+                                        </p:outputLabel-->
+                                    </td>
+                                    <td class="columanaLabel">
+
                                         <p:outputLabel styleClass="labelFormularioBold" value="Tipos de registro: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>                    
+                                    </td>
+                                    <td>
                                         <p:selectOneMenu styleClass="campoFormulario" style="width: 270px;" value="#{historiasMB.tipoRegistroClinico}" rendered="#{historiasMB.hayPacienteSeleccionado}">
                                             <f:ajax 
                                                 event="change"
@@ -56,8 +164,12 @@
                                             <f:selectItem itemLabel="" itemValue=""/>
                                             <f:selectItems value="#{aplicacionGeneralMB.listaTipoRegistroClinico}" var="tipoRegistro" itemValue="#{tipoRegistro.idTipoReg}" itemLabel="#{tipoRegistro.nombre}"/>
                                         </p:selectOneMenu>
+                                    </td>
+                                    <td class="columanaLabel">
                                         <p:outputLabel styleClass="labelFormularioBold" value="Turno cita: " rendered="#{historiasMB.hayPacienteSeleccionado}"/>                    
-                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.turnoCita}" style="margin-left: 10px;" rendered="#{historiasMB.hayPacienteSeleccionado}"/>                              
+                                    </td>
+                                    <td>
+                                        <p:outputLabel styleClass="labelFormulario"     value="#{historiasMB.turnoCita}"  rendered="#{historiasMB.hayPacienteSeleccionado}"/>                              
                                     </td>
                                 </tr>
                             </table>
@@ -146,7 +258,13 @@
                 </p:panel>
                 <br/>                
             </p:dialog>
-        </h:form>        
+        </h:form>   
+        <style>
+            .columanaLabel{
+                text-align: right;
+                color: #718BCC;
+            }
+        </style>
     </h:body>
 </html>
 

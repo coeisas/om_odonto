@@ -214,7 +214,7 @@ public class PacientesMB extends MetodosGenerales implements Serializable {
         }
         limpiarFormulario();        
         pacienteSeleccionado = pacientesFachada.find(pacienteSeleccionadoTabla.getIdPaciente());
-        tituloTabPacientes = "Datos paciente: " + pacienteSeleccionado.nombreCompleto();
+        tituloTabPacientes = "Paciente: " + pacienteSeleccionado.nombreCompleto();
         archivoFirma = null;
         archivoFoto = null;
         fotoTomadaWebCam = false;
